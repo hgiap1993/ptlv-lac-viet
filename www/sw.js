@@ -1,14 +1,14 @@
-const CACHE_NAME = 'lacviet-daoquan-v1.0';
+const CACHE_NAME = 'lacviet-daoquan-v2.0';
 const ASSETS = [
   './',
   './index.html',
-  './css/style.css',
-  './js/data-lyhoc.js',
-  './js/engine-amlich.js',
-  './js/engine-luantuoi.js',
-  './js/engine-trachcat.js',
-  './js/engine-tuvi-phongthuy.js',
-  './js/app.js',
+  './css/style.css?v=2.0',
+  './js/data-lyhoc.js?v=2.0',
+  './js/engine-amlich.js?v=2.0',
+  './js/engine-luantuoi.js?v=2.0',
+  './js/engine-trachcat.js?v=2.0',
+  './js/engine-tuvi-phongthuy.js?v=2.0',
+  './js/app.js?v=2.0',
   './manifest.json'
 ];
 
@@ -30,6 +30,12 @@ self.addEventListener('activate', (event) => {
 
 self.addEventListener('fetch', (event) => {
   event.respondWith(
-    caches.match(event.request).then((cached) => cached || fetch(event.request))
+    fetch(event.request)
+      .then((res) => {
+        const copy = res.clone();
+        caches.open(CACHE_NAME).then((cache) => cache.put(event.request, copy)).catch(() => {});
+        return res;
+      })
+      .catch(() => caches.match(event.request))
   );
 });

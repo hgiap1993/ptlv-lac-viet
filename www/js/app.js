@@ -11,6 +11,7 @@
 
   // State cho Luận Tuổi Gia Đạo
   let currentChildrenYears = [2018, 2026];
+  let currentLuanTuoiMode = 'children'; // 'couple' | 'children' | 'findBaby'
   let currentTuViChart = null;
   let selectedPalaceIdx = null;
   let audioCtx = null;
@@ -92,14 +93,11 @@
   function updateModeButtonsUI() {
     const btnCouple = document.getElementById('btnModeCoupleOnly');
     const btnWithKids = document.getElementById('btnModeWithChildren');
-    if (btnCouple && btnWithKids) {
-      if (currentChildrenYears.length === 0) {
-        btnCouple.classList.add('active');
-        btnWithKids.classList.remove('active');
-      } else {
-        btnCouple.classList.remove('active');
-        btnWithKids.classList.add('active');
-      }
+    const btnFindBaby = document.getElementById('btnModeFindBabyYear');
+    if (btnCouple && btnWithKids && btnFindBaby) {
+      btnCouple.classList.toggle('active', currentLuanTuoiMode === 'couple');
+      btnWithKids.classList.toggle('active', currentLuanTuoiMode === 'children');
+      btnFindBaby.classList.toggle('active', currentLuanTuoiMode === 'findBaby');
     }
   }
 
@@ -107,8 +105,12 @@
     updateModeButtonsUI();
     const container = document.getElementById('childrenListContainer');
     if (!container) return;
+    if (currentLuanTuoiMode === 'findBaby') {
+      container.innerHTML = `<div style="color:var(--jade-light);font-size:0.88rem;padding:10px 12px;background:rgba(16,185,129,0.12);border-left:4px solid var(--jade-primary);border-radius:8px;">🌟 Đang ở chế độ <b>"3. Tìm Năm Đẹp Sinh Con (2025 – 2036)"</b>: Bảng xếp hạng các năm sinh con hợp tuổi Bố Mẹ nhất đã được hiển thị ngay đầu phần kết quả bên dưới! Bạn có thể bấm nút <b>"+ Thử làm Con Út"</b> ở bất kỳ năm nào để xem chi tiết vận khí gia đình.</div>`;
+      return;
+    }
     if (currentChildrenYears.length === 0) {
-      container.innerHTML = `<div style="color:var(--jade-light);font-size:0.86rem;padding:8px 4px;">✨ Đang ở chế độ <b>"Chỉ Xem 2 Vợ Chồng / Người Yêu (Chưa Có Con)"</b>. Nếu bạn đã có con, hãy bấm nút <b>"+ Thêm Năm Sinh Con"</b> ở trên để xem vận khí gia đình hội tụ tại Con Út.</div>`;
+      container.innerHTML = `<div style="color:var(--jade-light);font-size:0.86rem;padding:8px 4px;">✨ Đang ở chế độ <b>"1. Chỉ Xem 2 Vợ Chồng / Người Yêu (Chưa Có Con)"</b>. Nếu bạn đã có con, hãy bấm nút <b>"+ Thêm Năm Sinh Con"</b> ở trên để xem vận khí gia đình hội tụ tại Con Út.</div>`;
       return;
     }
     container.innerHTML = currentChildrenYears.map((yr, idx) => {
@@ -239,7 +241,58 @@
         </div>
       `;
 
+    const babyYearsCardHtml = `
+      <!-- BẢNG ĐỀ XUẤT NĂM VÀNG SINH CON ÚT (2025 - 2036) -->
+      <div class="card" id="babyYearsTableCard" style="${currentLuanTuoiMode === 'findBaby' ? 'border:2px solid var(--gold-primary);box-shadow:0 0 24px rgba(229,184,92,0.22);' : ''}">
+        <div class="card-header">
+          <div>
+            <div class="card-title">🌟 Bảng Xếp Hạng Năm Đẹp Nhất Để Sinh Con / Sinh Thêm Con Út (2025 – 2036)</div>
+            <div class="card-subtitle">Đã sắp xếp từ năm Tốt Nhất xuống thấp dần cho Chồng <b>${res.father.info.year} (${res.father.info.canChi})</b> và Vợ <b>${res.mother.info.year} (${res.mother.info.canChi})</b> · Bấm <b>"+ Thử làm Con Út"</b> để xem thử kết quả ngay!</div>
+          </div>
+          <span class="badge badge-good">Gợi ý Năm Vàng 2025 – 2036</span>
+        </div>
+        <div class="table-wrap">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Hạng</th>
+                <th>Năm Sinh Bé</th>
+                <th>Mạng Lạc Việt</th>
+                <th>Độ Hợp Cha</th>
+                <th>Độ Hợp Mẹ</th>
+                <th>Giải Thích Vì Sao Năm Này Tốt Cho Gia Đình</th>
+                <th>Điểm Tổng</th>
+                <th>Xem Thử</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${recYears.map((item, idx) => `
+                <tr>
+                  <td><b>#${idx + 1}</b></td>
+                  <td><b>Năm ${item.year} (${item.cInfo.canChi})</b></td>
+                  <td><span class="badge hanh-${item.cInfo.lacVietHanh}">${item.cInfo.lacVietHanh}</span></td>
+                  <td>${item.withF.totalScore}/100</td>
+                  <td>${item.withM.totalScore}/100</td>
+                  <td style="font-size:0.83rem;">
+                    <div><b>${item.bridgeTag}</b></div>
+                    <div style="color:var(--text-muted);margin-top:2px;">${item.whyGood}</div>
+                  </td>
+                  <td><span class="badge ${item.score >= 78 ? 'badge-good' : (item.score >= 62 ? 'badge-neutral' : 'badge-warn')}">${item.score}/100</span></td>
+                  <td>
+                    <button type="button" class="btn-secondary btn-try-child-year" data-year="${item.year}" style="padding:5px 10px;font-size:0.76rem;white-space:nowrap;">
+                      + Thử làm Con Út
+                    </button>
+                  </td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    `;
+
     outBox.innerHTML = `
+      ${currentLuanTuoiMode === 'findBaby' ? babyYearsCardHtml : ''}
       <!-- TỔNG KẾT CỤC DIỆN GIA ĐẠO DỄ ĐỌC CHO KHÁCH HÀNG -->
       <div class="card" style="background:linear-gradient(145deg, #172236, #0e1524);border-width:1.5px;">
         <div class="card-header">
@@ -333,53 +386,7 @@
 
       ${childrenDetailHtml}
       ${mythHtml}
-
-      <!-- BẢNG ĐỀ XUẤT NĂM VÀNG SINH CON ÚT (2025 - 2036) -->
-      <div class="card" id="babyYearsTableCard">
-        <div class="card-header">
-          <div>
-            <div class="card-title">🌟 Bảng Xếp Hạng Năm Đẹp Nhất Để Sinh Con / Sinh Thêm Con Út (2025 – 2036)</div>
-            <div class="card-subtitle">Đã sắp xếp từ năm Tốt Nhất xuống thấp dần cho Chồng <b>${res.father.info.year} (${res.father.info.canChi})</b> và Vợ <b>${res.mother.info.year} (${res.mother.info.canChi})</b> · Bấm <b>"+ Thử làm Con Út"</b> để xem thử kết quả ngay!</div>
-          </div>
-        </div>
-        <div class="table-wrap">
-          <table class="data-table">
-            <thead>
-              <tr>
-                <th>Hạng</th>
-                <th>Năm Sinh Bé</th>
-                <th>Mạng Lạc Việt</th>
-                <th>Độ Hợp Cha</th>
-                <th>Độ Hợp Mẹ</th>
-                <th>Giải Thích Vì Sao Năm Này Tốt Cho Gia Đình</th>
-                <th>Điểm Tổng</th>
-                <th>Xem Thử</th>
-              </tr>
-            </thead>
-            <tbody>
-              ${recYears.map((item, idx) => `
-                <tr>
-                  <td><b>#${idx + 1}</b></td>
-                  <td><b>Năm ${item.year} (${item.cInfo.canChi})</b></td>
-                  <td><span class="badge hanh-${item.cInfo.lacVietHanh}">${item.cInfo.lacVietHanh}</span></td>
-                  <td>${item.withF.totalScore}/100</td>
-                  <td>${item.withM.totalScore}/100</td>
-                  <td style="font-size:0.83rem;">
-                    <div><b>${item.bridgeTag}</b></div>
-                    <div style="color:var(--text-muted);margin-top:2px;">${item.whyGood}</div>
-                  </td>
-                  <td><span class="badge ${item.score >= 78 ? 'badge-good' : (item.score >= 62 ? 'badge-neutral' : 'badge-warn')}">${item.score}/100</span></td>
-                  <td>
-                    <button type="button" class="btn-secondary btn-try-child-year" data-year="${item.year}" style="padding:5px 10px;font-size:0.76rem;white-space:nowrap;">
-                      + Thử làm Con Út
-                    </button>
-                  </td>
-                </tr>
-              `).join('')}
-            </tbody>
-          </table>
-        </div>
-      </div>
+      ${currentLuanTuoiMode !== 'findBaby' ? babyYearsCardHtml : ''}
     `;
 
     const speakBtn = document.getElementById('btnSpeakLuanTuoi');
@@ -393,9 +400,10 @@
       btn.addEventListener('click', (e) => {
         const y = parseInt(e.currentTarget.getAttribute('data-year'), 10);
         currentChildrenYears.push(y);
+        currentLuanTuoiMode = 'children';
         renderChildrenInputs();
         runLuanTuoiAnalysis();
-        window.scrollTo({ top: 180, behavior: 'smooth' });
+        document.getElementById('luanTuoiResultBox')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
       });
     });
   }
@@ -1187,28 +1195,35 @@
 
     document.getElementById('btnModeCoupleOnly')?.addEventListener('click', () => {
       playBronzeBell(528, 0.5);
+      currentLuanTuoiMode = 'couple';
       currentChildrenYears = [];
       renderChildrenInputs();
       runLuanTuoiAnalysis();
+      document.getElementById('luanTuoiResultBox')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     });
     document.getElementById('btnModeWithChildren')?.addEventListener('click', () => {
       playBronzeBell(528, 0.5);
+      currentLuanTuoiMode = 'children';
       if (currentChildrenYears.length === 0) currentChildrenYears = [2026];
       renderChildrenInputs();
       runLuanTuoiAnalysis();
     });
     document.getElementById('btnModeFindBabyYear')?.addEventListener('click', () => {
       playBronzeBell(528, 0.5);
+      currentLuanTuoiMode = 'findBaby';
+      renderChildrenInputs();
       runLuanTuoiAnalysis();
-      document.getElementById('babyYearRecommenderCard')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      document.getElementById('babyYearsTableCard')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     });
 
     document.getElementById('btnAddChild')?.addEventListener('click', () => {
+      currentLuanTuoiMode = 'children';
       currentChildrenYears.push(2026);
       renderChildrenInputs();
       runLuanTuoiAnalysis();
     });
     document.getElementById('btnClearChildren')?.addEventListener('click', () => {
+      currentLuanTuoiMode = 'couple';
       currentChildrenYears = [];
       renderChildrenInputs();
       runLuanTuoiAnalysis();
@@ -1232,6 +1247,7 @@
         document.getElementById('inputFatherYear').value = f;
         document.getElementById('inputMotherYear').value = m;
         currentChildrenYears = cStr ? cStr.split(',').map(Number) : [];
+        currentLuanTuoiMode = currentChildrenYears.length === 0 ? 'couple' : 'children';
         renderChildrenInputs();
         runLuanTuoiAnalysis();
       });
