@@ -850,8 +850,286 @@ a:hover {
   font-weight: 800;
 }
 
+/* ============================================================================
+   NÂNG CẤP DÀNH CHO NGƯỜI LỚN TUỔI (CỠ CHỮ LỚN, NỀN SÁNG GIẤY DÓ, LỊCH BLOC, TTS)
+   ============================================================================ */
+
+html.font-lg {
+  font-size: 18.5px;
+}
+
+html.font-xl {
+  font-size: 21px;
+}
+
+html.font-lg .form-input,
+html.font-lg .form-select,
+html.font-lg .btn-primary,
+html.font-lg .btn-secondary,
+html.font-xl .form-input,
+html.font-xl .form-select,
+html.font-xl .btn-primary,
+html.font-xl .btn-secondary {
+  min-height: 48px;
+  font-size: 1rem;
+}
+
+/* CHẾ ĐỘ NỀN SÁNG (GIẤY DÓ / LỊCH BLOC TRUYỀN THỐNG DỊU MẮT CHO NGƯỜI LỚN TUỔI) */
+body.theme-light {
+  --bg-deep: #fcf6e8;
+  --bg-card: #ffffff;
+  --bg-card-alt: #f7efe0;
+  --bg-glass: rgba(252, 246, 232, 0.96);
+  --gold-primary: #b45309;
+  --gold-light: #991b1b;
+  --gold-dark: #78350f;
+  --jade-primary: #047857;
+  --jade-light: #065f46;
+  --crimson-warn: #be123c;
+  --amber-warn: #b45309;
+  --text-main: #1c1917;
+  --text-muted: #44403c;
+  --border-gold: rgba(180, 83, 9, 0.35);
+  --border-subtle: rgba(28, 25, 23, 0.15);
+  --shadow-royal: 0 6px 22px rgba(120, 80, 20, 0.12);
+  background: radial-gradient(circle at 50% 0%, #fffdf9 0%, #fcf6e8 70%, #f5ebd6 100%) !important;
+  color: #1c1917 !important;
+}
+
+body.theme-light .app-header {
+  background: rgba(255, 252, 245, 0.96) !important;
+  border-bottom: 2px solid rgba(180, 83, 9, 0.35);
+  box-shadow: 0 4px 14px rgba(120, 80, 20, 0.1);
+}
+
+body.theme-light .brand-title {
+  background: linear-gradient(90deg, #991b1b, #b45309, #78350f);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+body.theme-light .card,
+body.theme-light .tuvi-cell,
+body.theme-light .tuvi-center,
+body.theme-light .modal-content,
+body.theme-light #childrenSectionBox {
+  background: #ffffff !important;
+  color: #1c1917 !important;
+  border-color: rgba(180, 83, 9, 0.32) !important;
+}
+
+body.theme-light .form-input,
+body.theme-light .form-select,
+body.theme-light .zodiac-helper-select {
+  background: #fffcf5 !important;
+  color: #1c1917 !important;
+  border: 1.5px solid rgba(180, 83, 9, 0.45) !important;
+  font-weight: 600;
+}
+
+body.theme-light .btn-secondary,
+body.theme-light .btn-pill,
+body.theme-light .tab-btn,
+body.theme-light .mode-pill,
+body.theme-light .palace-pill-btn {
+  background: #f8f0e0 !important;
+  color: #1c1917 !important;
+  border-color: rgba(180, 83, 9, 0.35) !important;
+}
+
+body.theme-light .tab-btn.active,
+body.theme-light .mode-pill.active,
+body.theme-light .palace-pill-btn.active {
+  background: linear-gradient(135deg, #b45309, #991b1b) !important;
+  color: #ffffff !important;
+  border-color: #78350f !important;
+}
+
+body.theme-light .data-table th {
+  background: #f3e8d2 !important;
+  color: #78350f !important;
+}
+
+body.theme-light .data-table td,
+body.theme-light .card-title,
+body.theme-light b,
+body.theme-light strong {
+  color: #1c1917;
+}
+
+body.theme-light .star-chinh {
+  color: #991b1b !important;
+}
+
+body.theme-light .star-cat {
+  color: #065f46 !important;
+}
+
+body.theme-light .star-sat {
+  color: #be123c !important;
+}
+
+body.theme-light .mobile-dock {
+  background: rgba(255, 252, 245, 0.98) !important;
+  border-top: 2px solid rgba(180, 83, 9, 0.35);
+}
+
+/* CHỌN NHANH TUỔI CON GIÁP (CAN CHI + CON GIÁP) */
+.zodiac-helper-select {
+  width: 100%;
+  margin-top: 5px;
+  padding: 7px 10px;
+  border-radius: 8px;
+  background: rgba(229, 184, 92, 0.1);
+  border: 1px dashed var(--border-gold);
+  color: var(--gold-light);
+  font-size: 0.84rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* TỜ LỊCH BLOC TRUYỀN THỐNG CHỮ ĐẠI (TAB 2) */
+.lich-bloc-card {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  padding: 18px;
+  border-radius: 16px;
+  border: 2px solid var(--gold-primary);
+  background: linear-gradient(135deg, rgba(185, 28, 28, 0.18), rgba(229, 184, 92, 0.12));
+  margin-bottom: 16px;
+  text-align: center;
+}
+
+.lich-bloc-side {
+  padding: 12px;
+  border-radius: 12px;
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid var(--border-gold);
+}
+
+body.theme-light .lich-bloc-side {
+  background: #fffcf5;
+}
+
+.lich-bloc-label {
+  font-size: 0.82rem;
+  font-weight: 800;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  color: var(--gold-light);
+}
+
+.lich-bloc-big-num {
+  font-size: 3.1rem;
+  font-weight: 900;
+  line-height: 1.1;
+  margin: 6px 0;
+  color: var(--gold-primary);
+}
+
+.lich-bloc-sub {
+  font-size: 0.92rem;
+  font-weight: 700;
+}
+
+/* BỘ NÚT CHỌN VIỆC CẦN LÀM (ĐỘNG THỔ, CƯỚI HỎI, KHAI TRƯƠNG...) */
+.purpose-filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.purpose-pill {
+  padding: 9px 14px;
+  border-radius: 10px;
+  border: 1px solid var(--border-gold);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text-main);
+  font-size: 0.86rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.purpose-pill:hover,
+.purpose-pill.active {
+  background: linear-gradient(135deg, rgba(229, 184, 92, 0.28), rgba(16, 185, 129, 0.22));
+  border-color: var(--gold-primary);
+  color: var(--gold-light);
+  box-shadow: 0 3px 10px rgba(229, 184, 92, 0.25);
+}
+
+/* CHẾ ĐỘ BÀN CỜ TỬ VI CHỮ TO (THU GỌN SAO PHỤ NHỎ CHO NGƯỜI LỚN TUỔI) */
+.tuvi-board.senior-simple-board .cell-substars {
+  display: none;
+}
+
+.tuvi-board.senior-simple-board .star-chinh {
+  font-size: 1.02rem;
+  margin: 4px 0;
+}
+
+.tuvi-board.senior-simple-board .cell-cung-name {
+  font-size: 0.98rem;
+}
+
+/* THANH ĐIỀU KHIỂN GIỌNG ĐỌC NỔI (FLOATING TTS BAR) */
+.tts-floating-bar {
+  position: fixed;
+  bottom: 76px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 95;
+  background: rgba(15, 23, 42, 0.96);
+  border: 2px solid var(--gold-primary);
+  border-radius: 999px;
+  padding: 8px 16px;
+  display: none;
+  align-items: center;
+  gap: 10px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.65);
+  max-width: 96vw;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.tts-floating-bar.active {
+  display: flex;
+}
+
+body.theme-light .tts-floating-bar {
+  background: #fffdf9;
+  color: #1c1917;
+}
+
+/* THÔNG BÁO NHANH (TOAST COPY ZALO) */
+.senior-toast {
+  position: fixed;
+  top: 82px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 120;
+  background: #065f46;
+  color: #ffffff;
+  border: 2px solid #34d399;
+  padding: 12px 22px;
+  border-radius: 12px;
+  font-weight: 800;
+  font-size: 0.95rem;
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.5);
+  display: none;
+  text-align: center;
+  max-width: 92vw;
+}
+
+.senior-toast.show {
+  display: block;
+}
+
 @media (max-width: 960px) {
-  .lineage-grid, .mode-selector-bar, .summary-3-grid {
+  .lineage-grid, .mode-selector-bar, .summary-3-grid, .lich-bloc-card {
     grid-template-columns: 1fr;
   }
   .grid-2, .grid-3, .grid-4 {

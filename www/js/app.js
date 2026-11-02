@@ -9,17 +9,153 @@
   const TC = window.LacVietTrachCat;
   const TV = window.LacVietTuViPhongThuy;
 
-  // State cho Luận Tuổi Gia Đạo
+  // State cho Luận Tuổi Gia Đạo & Tiện ích Người Lớn Tuổi
   let currentChildrenYears = [2018, 2026];
   let currentLuanTuoiMode = 'children'; // 'couple' | 'children' | 'findBaby'
+  let selectedTrachCatPurpose = 'all';  // 'all' | 'dongtho' | 'cuoihoi' | 'khaitruong' | 'nhaptrach' | 'xuathanh' | 'cunggio'
+  let isSimpleSeniorTuViBoard = false;
   let currentTuViChart = null;
   let selectedPalaceIdx = null;
   let audioCtx = null;
   let ambientOsc = null;
   let isAmbientPlaying = false;
+  let ttsSpeedRate = 0.9; // Mặc định đọc chậm rõ (0.9x) cho người lớn tuổi
+  let lastSpokenText = '';
+  let modalDocFontStep = 1; // 0: Thường, 1: Lớn (mặc định cho người lớn tuổi), 2: Rất lớn
+
+  const ZODIAC_ANIMALS = {
+    'Tý': { icon: '🐭', animal: 'Con Chuột' },
+    'Sửu': { icon: '🐮', animal: 'Con Trâu' },
+    'Dần': { icon: '🐯', animal: 'Con Hổ' },
+    'Mão': { icon: '🐱', animal: 'Con Mèo' },
+    'Thìn': { icon: '🐉', animal: 'Con Rồng' },
+    'Tỵ': { icon: '🐍', animal: 'Con Rắn' },
+    'Ngọ': { icon: '🐴', animal: 'Con Ngựa' },
+    'Mùi': { icon: '🐐', animal: 'Con Dê' },
+    'Thân': { icon: '🐵', animal: 'Con Khỉ' },
+    'Dậu': { icon: '🐔', animal: 'Con Gà' },
+    'Tuất': { icon: '🐶', animal: 'Con Chó' },
+    'Hợi': { icon: '🐷', animal: 'Con Heo' }
+  };
+
+  function getYearOptionLabel(year) {
+    const info = AL.getYearInfo(year);
+    const z = ZODIAC_ANIMALS[info.chi] || { icon: '🌟', animal: '' };
+    const age = 2026 - year + 1;
+    const ageStr = age > 0 ? `${age} tuổi` : 'Dự kiến sinh';
+    return `${z.icon} Năm ${year} — Tuổi ${info.canChi} (${z.animal} · ${ageStr} · Mạng ${info.lacVietHanh})`;
+  }
+
+  function buildYearSelectHtml(selectedYear, minYear = 1935, maxYear = 2036, extraClass = '', dataIdx = '') {
+    const opts = [];
+    for (let y = maxYear; y >= minYear; y--) {
+      opts.push(`<option value="${y}" ${y === Number(selectedYear) ? 'selected' : ''}>${getYearOptionLabel(y)}</option>`);
+    }
+    return `<select class="zodiac-helper-select ${extraClass}" ${dataIdx !== '' ? `data-idx="${dataIdx}"` : ''} title="Chọn nhanh theo Tuổi Con Giáp (Can Chi)">${opts.join('')}</select>`;
+  }
+
+  function attachZodiacSelectToYearInput(inputId, minYear = 1935, maxYear = 2035, onChangeCallback = null) {
+    const inp = document.getElementById(inputId);
+    if (!inp) return;
+    let sel = inp.parentElement.querySelector('.zodiac-helper-select');
+    if (!sel) {
+      sel = document.createElement('select');
+      sel.className = 'zodiac-helper-select';
+      sel.title = 'Chọn nhanh theo Tuổi Con Giáp (Can Chi)';
+      const opts = [];
+      for (let y = maxYear; y >= minYear; y--) {
+        opts.push(`<option value="${y}">${getYearOptionLabel(y)}</option>`);
+      }
+      sel.innerHTML = opts.join('');
+      inp.insertAdjacentElement('afterend', sel);
+
+      sel.addEventListener('change', () => {
+        inp.value = sel.value;
+        saveUserState();
+        if (onChangeCallback) onChangeCallback();
+      });
+      inp.addEventListener('input', () => {
+        const v = parseInt(inp.value, 10);
+        if (v >= minYear && v <= maxYear) sel.value = String(v);
+      });
+    }
+    sel.value = String(inp.value);
+  }
+
+  function showSeniorToast(msg) {
+    const t = document.getElementById('seniorToast');
+    if (!t) return;
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(t._timer);
+    t._timer = setTimeout(() => t.classList.remove('show'), 4500);
+  }
+
+  async function shareOrCopyZalo(title, plainText) {
+    const fullText = `${title}\n\n${plainText}\n\n👉 Xem chi tiết tại ứng dụng Lạc Việt Đạo Quán (PTLV): https://hgiap1993.github.io/ptlv-lac-viet/`;
+    try {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        await navigator.clipboard.writeText(fullText);
+      }
+    } catch (e) {}
+    if (navigator.share) {
+      try {
+        await navigator.share({ title, text: fullText, url: 'https://hgiap1993.github.io/ptlv-lac-viet/' });
+        showSeniorToast('✅ Đã chia sẻ kết quả thành công!');
+        return;
+      } catch (e) {}
+    }
+    showSeniorToast('✅ Đã sao chép kết quả! Bạn chỉ cần mở Zalo hoặc Tin nhắn và bấm "Dán" (Paste) để gửi cho con cháu.');
+  }
+
+  function saveUserState() {
+    try {
+      const state = {
+        fatherYear: parseInt(document.getElementById('inputFatherYear')?.value, 10) || 1988,
+        motherYear: parseInt(document.getElementById('inputMotherYear')?.value, 10) || 1990,
+        childrenYears: currentChildrenYears,
+        luanTuoiMode: currentLuanTuoiMode,
+        trachCatOwnerYear: parseInt(document.getElementById('inputTrachCatOwnerYear')?.value, 10) || 1990,
+        buildYear: parseInt(document.getElementById('inputBuildYear')?.value, 10) || 2026,
+        tuViName: document.getElementById('inputTuViName')?.value || 'Nguyễn Văn An',
+        tuViGender: document.getElementById('inputTuViGender')?.value || 'Nam',
+        tuViCalType: document.getElementById('selectTuViCalType')?.value || 'solar',
+        tuViDay: parseInt(document.getElementById('inputTuViDay')?.value, 10) || 15,
+        tuViMonth: parseInt(document.getElementById('inputTuViMonth')?.value, 10) || 6,
+        tuViYear: parseInt(document.getElementById('inputTuViYear')?.value, 10) || 1990,
+        tuViHour: parseInt(document.getElementById('inputTuViHour')?.value, 10) || 6,
+        phongThuyYear: parseInt(document.getElementById('inputPhongThuyYear')?.value, 10) || 1984,
+        phongThuyGender: document.getElementById('inputPhongThuyGender')?.value || 'Nam'
+      };
+      localStorage.setItem('ptlv_senior_profile_v1', JSON.stringify(state));
+    } catch (e) {}
+  }
+
+  function loadUserState() {
+    try {
+      const raw = localStorage.getItem('ptlv_senior_profile_v1');
+      if (!raw) return;
+      const s = JSON.parse(raw);
+      if (s.fatherYear && document.getElementById('inputFatherYear')) document.getElementById('inputFatherYear').value = s.fatherYear;
+      if (s.motherYear && document.getElementById('inputMotherYear')) document.getElementById('inputMotherYear').value = s.motherYear;
+      if (Array.isArray(s.childrenYears)) currentChildrenYears = s.childrenYears;
+      if (s.luanTuoiMode) currentLuanTuoiMode = s.luanTuoiMode;
+      if (s.trachCatOwnerYear && document.getElementById('inputTrachCatOwnerYear')) document.getElementById('inputTrachCatOwnerYear').value = s.trachCatOwnerYear;
+      if (s.buildYear && document.getElementById('inputBuildYear')) document.getElementById('inputBuildYear').value = s.buildYear;
+      if (s.tuViName && document.getElementById('inputTuViName')) document.getElementById('inputTuViName').value = s.tuViName;
+      if (s.tuViGender && document.getElementById('inputTuViGender')) document.getElementById('inputTuViGender').value = s.tuViGender;
+      if (s.tuViCalType && document.getElementById('selectTuViCalType')) document.getElementById('selectTuViCalType').value = s.tuViCalType;
+      if (s.tuViDay && document.getElementById('inputTuViDay')) document.getElementById('inputTuViDay').value = s.tuViDay;
+      if (s.tuViMonth && document.getElementById('inputTuViMonth')) document.getElementById('inputTuViMonth').value = s.tuViMonth;
+      if (s.tuViYear && document.getElementById('inputTuViYear')) document.getElementById('inputTuViYear').value = s.tuViYear;
+      if (s.tuViHour !== undefined && document.getElementById('inputTuViHour')) document.getElementById('inputTuViHour').value = s.tuViHour;
+      if (s.phongThuyYear && document.getElementById('inputPhongThuyYear')) document.getElementById('inputPhongThuyYear').value = s.phongThuyYear;
+      if (s.phongThuyGender && document.getElementById('inputPhongThuyGender')) document.getElementById('inputPhongThuyGender').value = s.phongThuyGender;
+    } catch (e) {}
+  }
 
   // --------------------------------------------------------------------------
-  // ÂM THANH CHUÔNG ĐỒNG ĐÔNG SƠN & GIỌNG ĐỌC TIẾNG VIỆT (TTS)
+  // ÂM THANH CHUÔNG ĐỒNG ĐÔNG SƠN & GIỌNG ĐỌC TIẾNG VIỆT (TTS CÓ ĐIỀU KHIỂN)
   // --------------------------------------------------------------------------
   function playBronzeBell(freq = 528, duration = 1.2) {
     try {
@@ -63,12 +199,30 @@
   }
 
   function speakVietnamese(text) {
-    if (!('speechSynthesis' in window)) return;
+    if (!('speechSynthesis' in window)) {
+      showSeniorToast('⚠️ Trình duyệt trên thiết bị này chưa hỗ trợ đọc giọng nói.');
+      return;
+    }
     window.speechSynthesis.cancel();
-    const clean = text.replace(/[#*>`_~]/g, '').slice(0, 1200);
+    const clean = text.replace(/<[^>]+>/g, ' ').replace(/[#*>`_~]/g, '').replace(/\s+/g, ' ').trim().slice(0, 1800);
+    lastSpokenText = clean;
     const utter = new SpeechSynthesisUtterance(clean);
     utter.lang = 'vi-VN';
-    utter.rate = 1.02;
+    utter.rate = ttsSpeedRate;
+
+    const bar = document.getElementById('ttsFloatingBar');
+    const pauseBtn = document.getElementById('btnTtsPauseResume');
+    const statusLbl = document.getElementById('ttsStatusLabel');
+    if (bar) bar.classList.add('active');
+    if (pauseBtn) pauseBtn.innerHTML = '⏸️ Tạm Dừng';
+    if (statusLbl) statusLbl.innerHTML = '🔊 Đang đọc tư vấn to rõ...';
+
+    utter.onend = () => {
+      if (bar) bar.classList.remove('active');
+    };
+    utter.onerror = () => {
+      if (bar) bar.classList.remove('active');
+    };
     window.speechSynthesis.speak(utter);
   }
 
@@ -120,9 +274,12 @@
         ? 'Con thứ 1 (Con Đầu kiêm Con Út)'
         : (isLast ? `Con thứ ${idx + 1} (🌟 CON ÚT - Quyết định vận khí)` : `Con thứ ${idx + 1}`);
       return `
-        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;flex-wrap:wrap;">
-          <span class="badge ${isLast ? 'badge-good' : 'badge-neutral'}" style="min-width:235px;">${label}</span>
-          <input type="number" class="form-input child-year-input" data-idx="${idx}" value="${yr}" min="1940" max="2045" style="width:110px;" />
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;flex-wrap:wrap;padding:8px;background:rgba(255,255,255,0.03);border-radius:8px;">
+          <span class="badge ${isLast ? 'badge-good' : 'badge-neutral'}" style="min-width:225px;">${label}</span>
+          <input type="number" class="form-input child-year-input" data-idx="${idx}" value="${yr}" min="1940" max="2045" style="width:105px;" />
+          <div style="flex:1;min-width:240px;">
+            ${buildYearSelectHtml(yr, 1960, 2038, 'child-zodiac-select', idx)}
+          </div>
           <span class="badge hanh-${yInfo.lacVietHanh}">${yInfo.canChi} · Mạng Lạc Việt: ${yInfo.lacVietHanh}</span>
           <button type="button" class="btn-secondary btn-remove-child" data-idx="${idx}" style="padding:6px 10px;font-size:0.75rem;">✕ Xóa</button>
         </div>
@@ -135,6 +292,20 @@
         const val = parseInt(e.target.value, 10);
         if (!isNaN(val)) {
           currentChildrenYears[i] = val;
+          saveUserState();
+          renderChildrenInputs();
+          runLuanTuoiAnalysis();
+        }
+      });
+    });
+
+    container.querySelectorAll('.child-zodiac-select').forEach(sel => {
+      sel.addEventListener('change', (e) => {
+        const i = parseInt(e.target.getAttribute('data-idx'), 10);
+        const val = parseInt(e.target.value, 10);
+        if (!isNaN(val)) {
+          currentChildrenYears[i] = val;
+          saveUserState();
           renderChildrenInputs();
           runLuanTuoiAnalysis();
         }
@@ -145,6 +316,7 @@
       btn.addEventListener('click', (e) => {
         const i = parseInt(e.currentTarget.getAttribute('data-idx'), 10);
         currentChildrenYears.splice(i, 1);
+        saveUserState();
         renderChildrenInputs();
         runLuanTuoiAnalysis();
       });
@@ -152,8 +324,13 @@
   }
 
   function runLuanTuoiAnalysis() {
+    saveUserState();
     const fYear = parseInt(document.getElementById('inputFatherYear').value, 10) || 1988;
     const mYear = parseInt(document.getElementById('inputMotherYear').value, 10) || 1990;
+    const fSel = document.getElementById('inputFatherYear')?.parentElement?.querySelector('.zodiac-helper-select');
+    if (fSel) fSel.value = String(fYear);
+    const mSel = document.getElementById('inputMotherYear')?.parentElement?.querySelector('.zodiac-helper-select');
+    if (mSel) mSel.value = String(mYear);
     const res = LT.analyzeFamilyLacViet(fYear, mYear, currentChildrenYears);
     const recYears = LT.recommendChildYears(fYear, mYear, 2025, 2036);
 
@@ -300,11 +477,12 @@
             <div class="card-title">🏛️ Kết Quả Tổng Quan Cho Gia Đình Bạn (Đọc Hiểu Ngay Trong 10 Giây)</div>
             <div class="card-subtitle">Chồng sinh năm <b>${res.father.info.year} (${res.father.info.canChi})</b> & Vợ sinh năm <b>${res.mother.info.year} (${res.mother.info.canChi})</b></div>
           </div>
-          <div style="display:flex;align-items:center;gap:8px;">
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
             <span class="badge ${res.overallScore >= 72 ? 'badge-good' : (res.overallScore >= 55 ? 'badge-neutral' : 'badge-warn')}" style="font-size:0.96rem;padding:7px 14px;">
               Điểm Vận Khí Gia Đạo: ${res.overallScore}/100
             </span>
             <button type="button" class="btn-pill" id="btnSpeakLuanTuoi">🔊 Nghe Đọc Tư Vấn</button>
+            <button type="button" class="btn-pill" id="btnShareLuanTuoiZalo" style="border-color:var(--jade-primary);color:var(--jade-light);font-weight:700;">📤 Gửi Qua Zalo Cho Con Cháu</button>
           </div>
         </div>
 
@@ -396,6 +574,23 @@
       });
     }
 
+    const shareZaloBtn = document.getElementById('btnShareLuanTuoiZalo');
+    if (shareZaloBtn) {
+      shareZaloBtn.addEventListener('click', () => {
+        const plain = [
+          `📌 KẾT QUẢ LUẬN TUỔI GIA ĐẠO LẠC VIỆT (${res.overallScore}/100 điểm)`,
+          `• Chồng: ${res.father.info.year} (${res.father.info.canChi} - Mạng Lạc Việt: ${res.father.info.lacVietHanh})`,
+          `• Vợ: ${res.mother.info.year} (${res.mother.info.canChi} - Mạng Lạc Việt: ${res.mother.info.lacVietHanh})`,
+          res.childrenAnalyses.length > 0 ? `• Các con: ${res.childrenAnalyses.map(c => `${c.person.info.year} (${c.person.info.canChi})`).join(', ')}` : '• Chế độ: Xem 2 vợ chồng',
+          `1. Hòa khí: ${res.customerSummary.hoaKhi.replace(/<[^>]+>/g, '')}`,
+          `2. Tài lộc: ${res.customerSummary.taiLoc.replace(/<[^>]+>/g, '')}`,
+          `3. Lời khuyên: ${res.customerSummary.loiKhuyen.replace(/<[^>]+>/g, '')}`,
+          `🌟 Top 3 năm đẹp nhất sinh con (2025-2036): ${recYears.slice(0, 3).map(r => `${r.year} (${r.cInfo.canChi} - ${r.score}/100đ)`).join(', ')}`
+        ].join('\n');
+        shareOrCopyZalo('Kết Quả Luận Tuổi Gia Đạo Lạc Việt', plain);
+      });
+    }
+
     outBox.querySelectorAll('.btn-try-child-year').forEach(btn => {
       btn.addEventListener('click', (e) => {
         const y = parseInt(e.currentTarget.getAttribute('data-year'), 10);
@@ -435,13 +630,39 @@
   }
 
   // --------------------------------------------------------------------------
-  // TAB 2: CHỌN NGÀY GIỜ TỐT LẠC VIỆT (TRẠCH CÁT, LỤC NHÂM QUÝ NHÂN ĐĂNG THIÊN MÔN)
+  // TAB 2: CHỌN NGÀY GIỜ TỐT LẠC VIỆT (TRẠCH CÁT, LỊCH BLOC CHỮ ĐẠI & LỌC VIỆC)
   // --------------------------------------------------------------------------
+  const PURPOSE_CONFIG = {
+    all: { label: 'Tất Cả Mọi Việc', goodTruc: ['Kiến', 'Mãn', 'Bình', 'Định', 'Chấp', 'Thành', 'Khai'], keywords: [] },
+    dongtho: { label: 'Động Thổ / Làm Nhà / Sửa Nhà', goodTruc: ['Định', 'Thành', 'Khai', 'Mãn', 'Bình'], keywords: ['động thổ', 'xây dựng', 'khởi công', 'sửa chữa', 'nhập trạch'] },
+    cuoihoi: { label: 'Cưới Hỏi / Ăn Hỏi', goodTruc: ['Định', 'Thành', 'Mãn', 'Khai', 'Bình'], keywords: ['cưới', 'hôn', 'giá thú', 'mọi việc'] },
+    khaitruong: { label: 'Khai Trương / Mở Hàng / Ký Kết', goodTruc: ['Khai', 'Thành', 'Mãn', 'Định', 'Kiến'], keywords: ['khai trương', 'cầu tài', 'giao dịch', 'mở hàng', 'xuất hành'] },
+    nhaptrach: { label: 'Nhập Trạch / Về Nhà Mới', goodTruc: ['Thành', 'Khai', 'Định', 'Mãn'], keywords: ['nhập trạch', 'di chuyển', 'xây dựng', 'an sàng'] },
+    xuathanh: { label: 'Xuất Hành / Đi Xa / Mua Xe', goodTruc: ['Khai', 'Thành', 'Kiến', 'Mãn', 'Bình'], keywords: ['xuất hành', 'đi xa', 'nhận chức', 'cầu tài'] },
+    cunggio: { label: 'Cúng Giỗ / Tế Tự / Cầu Phúc', goodTruc: ['Mãn', 'Định', 'Thành', 'Khai', 'Chấp', 'Thu'], keywords: ['tế tự', 'cầu phúc', 'cúng', 'mọi việc'] }
+  };
+
+  function isDayGoodForPurpose(d, purposeKey) {
+    if (purposeKey === 'all') return true;
+    const cfg = PURPOSE_CONFIG[purposeKey] || PURPOSE_CONFIG.all;
+    const nen = (d.saoInfo?.nenLam || '').toLowerCase();
+    const kieng = (d.saoInfo?.kiengCu || '').toLowerCase();
+    const truc = d.trucInfo?.name || '';
+    const hasBadKeyword = cfg.keywords.some(kw => kieng.includes(kw));
+    if (hasBadKeyword) return false;
+    const hasGoodKeyword = cfg.keywords.some(kw => nen.includes(kw)) || nen.includes('mọi việc');
+    return cfg.goodTruc.includes(truc) || hasGoodKeyword;
+  }
+
   function runTrachCatAnalysis() {
+    saveUserState();
     const dateVal = document.getElementById('inputTrachCatDate').value || '2026-11-01';
     const [yy, mm, dd] = dateVal.split('-').map(Number);
     const ownerYear = parseInt(document.getElementById('inputTrachCatOwnerYear').value, 10) || 1990;
     const buildYear = parseInt(document.getElementById('inputBuildYear').value, 10) || yy;
+
+    const ownerSel = document.getElementById('inputTrachCatOwnerYear')?.parentElement?.querySelector('.zodiac-helper-select');
+    if (ownerSel) ownerSel.value = String(ownerYear);
 
     const evalRes = TC.evaluateDayFull(dd, mm, yy, ownerYear);
     const monthScan = TC.scanGoodDaysInMonth(mm, yy, ownerYear);
@@ -451,22 +672,57 @@
     if (!out) return;
 
     const f = evalRes.full;
+    const dowNames = ['Chủ Nhật', 'Thứ Hai', 'Thứ Ba', 'Thứ Tư', 'Thứ Năm', 'Thứ Sáu', 'Thứ Bảy'];
+    const jsDate = new Date(yy, mm - 1, dd);
+    const dowStr = dowNames[jsDate.getDay()] || '';
+    const purposeCfg = PURPOSE_CONFIG[selectedTrachCatPurpose] || PURPOSE_CONFIG.all;
+    const fitsSelectedPurpose = evalRes.taboos.length === 0 && evalRes.score >= 65 && isDayGoodForPurpose(evalRes, selectedTrachCatPurpose);
+
+    const filteredGoodDays = monthScan.goodDays.filter(d => isDayGoodForPurpose(d, selectedTrachCatPurpose));
+    const displayDays = filteredGoodDays.length > 0 ? filteredGoodDays : monthScan.goodDays;
+
+    const hdListStr = evalRes.hours12.filter(h => h.hoangDao).map(h => `${h.chi} (${h.timeRange})`).join(' · ');
+
     out.innerHTML = `
-      <!-- CHI TIẾT NGÀY ĐANG CHỌN -->
+      <!-- TỜ LỊCH BLOC TRUYỀN THỐNG CHỮ ĐẠI DỄ ĐỌC CHO NGƯỜI LỚN TUỔI -->
       <div class="card" style="background:linear-gradient(145deg, #172236, #0e1524);">
         <div class="card-header">
           <div>
             <div class="card-title">
-              📅 Kiểm Định Chi Tiết Ngày Dương Lịch ${String(dd).padStart(2,'0')}/${String(mm).padStart(2,'0')}/${yy}
-              ➔ Âm Lịch: Ngày ${f.lunar.lunarDay} Tháng ${f.lunar.lunarMonth}${f.lunar.lunarLeap ? ' (Nhuận)' : ''} Năm ${f.yearInfo.canChi}
+              📅 Tờ Lịch Vạn Niên Lạc Việt — ${dowStr}, Ngày ${String(dd).padStart(2,'0')}/${String(mm).padStart(2,'0')}/${yy}
             </div>
             <div class="card-subtitle">
-              Tứ Trụ Ngày: Năm <b>${f.yearInfo.canChi}</b> · Tháng <b>${f.month.canChi}</b> · Ngày <b>${f.day.canChi}</b> (Mạng Lạc Thư: <b>${f.day.lacVietHanh}</b>) · Tiết Khí: <b>${f.solarTerm.name}</b>
+              Đối chiếu với Gia Chủ sinh năm <b>${ownerYear} (${buildCheck.bInfo.canChi} – Mạng ${buildCheck.bInfo.lacVietHanh})</b> · Mục đích đang xem: <b style="color:var(--gold-light);">${purposeCfg.label}</b>
             </div>
           </div>
-          <span class="badge ${evalRes.ratingClass}" style="font-size:0.95rem;padding:6px 14px;">
-            ${evalRes.ratingLabel} (${evalRes.score}/100 điểm)
-          </span>
+          <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+            <span class="badge ${evalRes.ratingClass}" style="font-size:0.95rem;padding:6px 14px;">
+              ${evalRes.ratingLabel} (${evalRes.score}/100 điểm)
+            </span>
+            <button type="button" class="btn-pill" id="btnSpeakTrachCat">🔊 Nghe Đọc Ngày Này</button>
+            <button type="button" class="btn-pill" id="btnShareTrachCatZalo" style="border-color:var(--jade-primary);color:var(--jade-light);font-weight:700;">📤 Gửi Qua Zalo</button>
+          </div>
+        </div>
+
+        <div class="lich-bloc-card">
+          <div class="lich-bloc-side">
+            <div class="lich-bloc-label">☀️ DƯƠNG LỊCH (LỊCH TÂY)</div>
+            <div class="lich-bloc-big-num">${String(dd).padStart(2, '0')}</div>
+            <div class="lich-bloc-sub">${dowStr} · Tháng ${mm} Năm ${yy}</div>
+            <div style="font-size:0.84rem;color:var(--text-muted);margin-top:4px;">Tiết khí: <b>${f.solarTerm.name}</b></div>
+          </div>
+          <div class="lich-bloc-side">
+            <div class="lich-bloc-label">🌙 ÂM LỊCH LẠC VIỆT (LỊCH TA)</div>
+            <div class="lich-bloc-big-num" style="color:var(--jade-light);">${String(f.lunar.lunarDay).padStart(2, '0')}</div>
+            <div class="lich-bloc-sub">Tháng ${f.lunar.lunarMonth}${f.lunar.lunarLeap ? ' (Nhuận)' : ''} · Năm ${f.yearInfo.canChi}</div>
+            <div style="font-size:0.84rem;color:var(--gold-light);margin-top:4px;">Ngày <b>${f.day.canChi}</b> (Mạng Lạc Việt: <b>${f.day.lacVietHanh}</b>) · Tháng <b>${f.month.canChi}</b></div>
+          </div>
+        </div>
+
+        <div style="padding:12px 16px;border-radius:10px;margin-bottom:14px;background:${fitsSelectedPurpose ? 'rgba(16,185,129,0.14)' : 'rgba(245,158,11,0.14)'};border-left:4px solid ${fitsSelectedPurpose ? 'var(--jade-primary)' : 'var(--amber-warn)'};font-size:0.95rem;">
+          ${fitsSelectedPurpose
+            ? `✅ <b>KẾT LUẬN CHO VIỆC "${purposeCfg.label.toUpperCase()}":</b> Ngày ${dd}/${mm}/${yy} (${f.lunar.lunarDay}/${f.lunar.lunarMonth} ÂL) là ngày <b>RẤT TỐT (${evalRes.score}/100 điểm)</b>, không phạm ngày kỵ và hợp với việc <b>${purposeCfg.label}</b> của gia chủ tuổi ${buildCheck.bInfo.canChi}!`
+            : `⚠️ <b>LƯU Ý CHO VIỆC "${purposeCfg.label.toUpperCase()}":</b> Ngày ${dd}/${mm}/${yy} chưa phải ngày tối ưu nhất cho việc <b>${purposeCfg.label}</b>. Bác/Anh/Chị hãy chọn một trong <b>các Ngày Đẹp Nhất trong tháng ${mm}/${yy}</b> ở bảng bên dưới nhé!`}
         </div>
 
         <div class="grid-3" style="margin-bottom:14px;">
@@ -588,9 +844,10 @@
       <div class="card">
         <div class="card-header">
           <div>
-            <div class="card-title">🌟 Danh Sách Các Ngày Tốt Nhất Trong Tháng ${mm}/${yy} Cho Gia Chủ Tuổi ${ownerYear} (${buildCheck.bInfo.canChi})</div>
-            <div class="card-subtitle">Đã tự động loại trừ Dương Công Kỵ Nhật, Tam Nương, Nguyệt Kỵ, Sát Chủ, Thọ Tử, Vãng Vong, Ngày Xung Tuổi</div>
+            <div class="card-title">🌟 Các Ngày Tốt Nhất Tháng ${mm}/${yy} Cho Việc "${purposeCfg.label}" — Gia Chủ Tuổi ${ownerYear} (${buildCheck.bInfo.canChi})</div>
+            <div class="card-subtitle">Đã tự động loại trừ Dương Công Kỵ Nhật, Tam Nương, Nguyệt Kỵ, Sát Chủ, Thọ Tử, Vãng Vong, Ngày Xung Tuổi · Bấm <b>"Xem ngày này"</b> để mở tờ lịch chi tiết</div>
           </div>
+          <span class="badge badge-good">Tìm thấy ${displayDays.length} ngày đẹp</span>
         </div>
         <div class="table-wrap">
           <table class="data-table">
@@ -607,7 +864,7 @@
               </tr>
             </thead>
             <tbody>
-              ${monthScan.goodDays.slice(0, 15).map(d => {
+              ${displayDays.slice(0, 15).map(d => {
                 const s = d.full.solar;
                 const l = d.full.lunar;
                 const qHours = d.quyNhanHours.hours.map(h => `${h.chi} (${h.timeRange})`).join(', ');
@@ -615,14 +872,14 @@
                 return `
                   <tr>
                     <td><b>${String(s.day).padStart(2,'0')}/${String(s.month).padStart(2,'0')}/${s.year}</b></td>
-                    <td>${l.lunarDay}/${l.lunarMonth} ÂL</td>
+                    <td><b>${l.lunarDay}/${l.lunarMonth} ÂL</b></td>
                     <td><b>${d.full.day.canChi}</b> <span class="badge hanh-${d.full.day.lacVietHanh}">${d.full.day.lacVietHanh}</span></td>
                     <td>${d.hoangDaoInfo.name} · Trực ${d.trucInfo.name} · Sao ${d.saoInfo.name}</td>
                     <td style="font-size:0.78rem;">${qHours ? `👑 Quý Nhân: <b>${qHours}</b><br>` : ''}Hoàng đạo: ${hdHours}</td>
                     <td style="font-size:0.78rem;">Hỷ: ${d.huong.hyThan}<br>Tài: ${d.huong.taiThan}</td>
                     <td><span class="badge badge-good">${d.score}/100</span></td>
                     <td>
-                      <button type="button" class="btn-secondary btn-pick-date" data-date="${s.year}-${String(s.month).padStart(2,'0')}-${String(s.day).padStart(2,'0')}" style="padding:4px 8px;font-size:0.74rem;">
+                      <button type="button" class="btn-secondary btn-pick-date" data-date="${s.year}-${String(s.month).padStart(2,'0')}-${String(s.day).padStart(2,'0')}" style="padding:5px 10px;font-size:0.78rem;">
                         Xem ngày này
                       </button>
                     </td>
@@ -634,6 +891,24 @@
         </div>
       </div>
     `;
+
+    document.getElementById('btnSpeakTrachCat')?.addEventListener('click', () => {
+      speakVietnamese(`Tờ lịch ngày Dương lịch ${dd} tháng ${mm} năm ${yy}, tức ngày Âm lịch ${f.lunar.lunarDay} tháng ${f.lunar.lunarMonth} năm ${f.yearInfo.canChi}, ngày ${f.day.canChi}, mạng Lạc Việt ${f.day.lacVietHanh}. Đánh giá chung: ${evalRes.ratingLabel}, đạt ${evalRes.score} trên 100 điểm. Giờ Hoàng Đạo trong ngày gồm: ${hdListStr}. ${buildCheck.summary.replace(/<[^>]+>/g, '')}`);
+    });
+
+    document.getElementById('btnShareTrachCatZalo')?.addEventListener('click', () => {
+      const top3Days = displayDays.slice(0, 5).map(d => `• Dương lịch ${d.full.solar.day}/${d.full.solar.month}/${d.full.solar.year} (${d.full.lunar.lunarDay}/${d.full.lunar.lunarMonth} ÂL - Ngày ${d.full.day.canChi}): ${d.score}/100 điểm`).join('\n');
+      const plain = [
+        `📅 XEM NGÀY GIỜ TỐT LẠC VIỆT (${purposeCfg.label})`,
+        `• Gia chủ: Sinh năm ${ownerYear} (${buildCheck.bInfo.canChi} - Mạng ${buildCheck.bInfo.lacVietHanh})`,
+        `• Ngày đang xem: Dương lịch ${dd}/${mm}/${yy} ➔ Âm lịch ${f.lunar.lunarDay}/${f.lunar.lunarMonth} năm ${f.yearInfo.canChi} (Ngày ${f.day.canChi})`,
+        `• Đánh giá: ${evalRes.ratingLabel} (${evalRes.score}/100 điểm) · Trực ${evalRes.trucInfo.name} · Sao ${evalRes.saoInfo.name}`,
+        `• Giờ Hoàng Đạo: ${hdListStr}`,
+        `• Hướng tốt xuất hành: Hỷ Thần ${evalRes.huong.hyThan}, Tài Thần ${evalRes.huong.taiThan}`,
+        `🌟 Các ngày đẹp nhất trong tháng ${mm}/${yy} cho việc ${purposeCfg.label}:\n${top3Days}`
+      ].join('\n');
+      shareOrCopyZalo(`Xem Ngày Tốt Tháng ${mm}/${yy} - Lạc Việt Đạo Quán`, plain);
+    });
 
     out.querySelectorAll('.btn-pick-date').forEach(btn => {
       btn.addEventListener('click', (e) => {
@@ -747,12 +1022,16 @@
   }
 
   function runTuViGeneration() {
+    saveUserState();
     const name = document.getElementById('inputTuViName')?.value || 'Quý Khách';
     const gender = document.getElementById('inputTuViGender')?.value || 'Nam';
     const calType = document.getElementById('selectTuViCalType')?.value || 'solar';
     let dd = parseInt(document.getElementById('inputTuViDay')?.value, 10) || 15;
     let mm = parseInt(document.getElementById('inputTuViMonth')?.value, 10) || 6;
     let yy = parseInt(document.getElementById('inputTuViYear')?.value, 10) || 1990;
+
+    const tvYearSel = document.getElementById('inputTuViYear')?.parentElement?.querySelector('.zodiac-helper-select');
+    if (tvYearSel) tvYearSel.value = String(yy);
 
     if (dd < 1) dd = 1;
     if (dd > 31) dd = 31;
@@ -802,9 +1081,14 @@
               Hệ thống đã tự động dịch toàn bộ các sao Tử Vi của bạn thành ngôn ngữ đời thường dễ đọc nhất · Bản mệnh Lạc Thư: <b>${m.yInfo.lacVietName} (${m.yInfo.lacVietHanh})</b> · Cục: <b>${m.cucLacViet.name}</b>
             </div>
           </div>
-          <button type="button" class="btn-secondary" id="btnSpeakTuViSummary" style="padding:7px 12px;font-size:0.8rem;">
-            🔊 Nghe Đọc Luận Giải Tử Vi
-          </button>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;">
+            <button type="button" class="btn-secondary" id="btnSpeakTuViSummary" style="padding:7px 12px;font-size:0.8rem;">
+              🔊 Nghe Đọc Luận Giải Tử Vi
+            </button>
+            <button type="button" class="btn-secondary" id="btnShareTuViZalo" style="padding:7px 12px;font-size:0.8rem;border-color:var(--jade-primary);color:var(--jade-light);font-weight:700;">
+              📤 Gửi Qua Zalo Cho Con Cháu
+            </button>
+          </div>
         </div>
 
         <div class="grid-2" style="gap:12px;">
@@ -826,11 +1110,16 @@
       </div>
     `;
 
-    // Thanh chọn nhanh 12 cung cho điện thoại & máy tính
+    // Thanh chọn nhanh 12 cung cho điện thoại & máy tính + nút Bàn Cờ Chữ To
     const quickNavHtml = `
       <div class="card" style="padding:14px 18px;margin-bottom:14px;">
-        <div style="font-size:0.83rem;font-weight:700;color:var(--gold-light);margin-bottom:4px;">
-          👆 Bấm chọn nhanh từng cung để xem giải nghĩa chi tiết (hoặc bấm trực tiếp vào từng ô trên lá số bên dưới):
+        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:6px;">
+          <div style="font-size:0.86rem;font-weight:700;color:var(--gold-light);">
+            👆 Bấm chọn nhanh từng cung để xem giải nghĩa chi tiết (hoặc bấm trực tiếp vào từng ô trên lá số):
+          </div>
+          <button type="button" class="btn-pill" id="btnToggleSimpleTuViBoard" style="font-weight:700;">
+            ${isSimpleSeniorTuViBoard ? '🔍 Đang bật: Bàn Cờ Chữ To (Bấm để hiện đủ sao phụ)' : '👓 Chế Độ Bàn Cờ Chữ To (Ẩn sao phụ nhỏ cho dễ nhìn)'}
+          </button>
         </div>
         <div class="palace-quick-nav">
           ${p.map(pal => `
@@ -848,7 +1137,7 @@
     // Hàng 3: Mão (3),  [TRUNG CUNG], Tuất (10)
     // Hàng 4: Dần (2), Sửu (1), Tý (0), Hợi (11)
     const boardHtml = `
-      <div class="tuvi-board">
+      <div class="tuvi-board ${isSimpleSeniorTuViBoard ? 'senior-simple-board' : ''}" id="tuViMainGridBoard">
         ${renderTuViCell(p[5])}
         ${renderTuViCell(p[6])}
         ${renderTuViCell(p[7])}
@@ -941,6 +1230,18 @@
         });
       });
 
+      const toggleBoardBtn = document.getElementById('btnToggleSimpleTuViBoard');
+      if (toggleBoardBtn) {
+        toggleBoardBtn.addEventListener('click', () => {
+          isSimpleSeniorTuViBoard = !isSimpleSeniorTuViBoard;
+          const boardEl = document.getElementById('tuViMainGridBoard');
+          if (boardEl) boardEl.classList.toggle('senior-simple-board', isSimpleSeniorTuViBoard);
+          toggleBoardBtn.innerHTML = isSimpleSeniorTuViBoard
+            ? '🔍 Đang bật: Bàn Cờ Chữ To (Bấm để hiện đủ sao phụ)'
+            : '👓 Chế Độ Bàn Cờ Chữ To (Ẩn sao phụ nhỏ cho dễ nhìn)';
+        });
+      }
+
       const speakTuViBtn = document.getElementById('btnSpeakTuViSummary');
       if (speakTuViBtn) {
         speakTuViBtn.addEventListener('click', () => {
@@ -950,6 +1251,20 @@
           speakVietnamese(`Bản luận giải Tử Vi Lạc Việt của ${m.name}, tuổi ${m.tuTru.nam}, bản mệnh ${m.yInfo.lacVietName}. ${plain}`);
         });
       }
+
+      const shareTuViBtn = document.getElementById('btnShareTuViZalo');
+      if (shareTuViBtn) {
+        shareTuViBtn.addEventListener('click', () => {
+          const plain = [
+            `🌌 BẢN LUẬN GIẢI LÁ SỐ TỬ VI LẠC VIỆT — ${m.name.toUpperCase()} (${m.amDuongNamNu})`,
+            `• Ngày sinh Dương lịch: ${m.solarDateStr} (Âm lịch: ${m.lunarDateStr})`,
+            `• Tứ Trụ: Năm ${m.tuTru.nam} · Tháng ${m.tuTru.thang} · Ngày ${m.tuTru.ngay} · Giờ ${m.tuTru.gio}`,
+            `• Bản mệnh Lạc Thư: ${m.yInfo.lacVietName} (${m.yInfo.lacVietHanh}) · Cục: ${m.cucLacViet.name}`,
+            ...(chart.lifeSummary6 || []).map(s => `${s.icon} ${s.title}:\n${s.content.replace(/<[^>]+>/g, ' ')}`)
+          ].join('\n\n');
+          shareOrCopyZalo(`Lá Số Tử Vi Lạc Việt - ${m.name}`, plain);
+        });
+      }
     }
   }
 
@@ -957,7 +1272,10 @@
   // TAB 4: ĐỊA LÝ PHONG THỦY BÁT TRẠCH – HUYỀN KHÔNG LẠC VIỆT (HÀ ĐỒ PHỐI HẬU THIÊN)
   // --------------------------------------------------------------------------
   function runPhongThuyAnalysis() {
+    saveUserState();
     const birthYear = parseInt(document.getElementById('inputPhongThuyYear').value, 10) || 1984;
+    const ptSel = document.getElementById('inputPhongThuyYear')?.parentElement?.querySelector('.zodiac-helper-select');
+    if (ptSel) ptSel.value = String(birthYear);
     const gender = document.getElementById('inputPhongThuyGender').value || 'Nam';
     const res = TV.calculateBatTrachLacViet(birthYear, gender);
 
@@ -1155,6 +1473,25 @@
     });
   }
 
+  function applyModalDocFontSize() {
+    const bodyEl = document.getElementById('modalDocBody');
+    const btnEl = document.getElementById('btnModalFontSize');
+    if (!bodyEl) return;
+    if (modalDocFontStep === 0) {
+      bodyEl.style.fontSize = '0.96rem';
+      bodyEl.style.lineHeight = '1.75';
+      if (btnEl) btnEl.textContent = '🔍 Cỡ chữ đọc sách: Thường';
+    } else if (modalDocFontStep === 1) {
+      bodyEl.style.fontSize = '1.15rem';
+      bodyEl.style.lineHeight = '1.9';
+      if (btnEl) btnEl.textContent = '🔍 Cỡ chữ đọc sách: Lớn (A+)';
+    } else {
+      bodyEl.style.fontSize = '1.36rem';
+      bodyEl.style.lineHeight = '2.0';
+      if (btnEl) btnEl.textContent = '🔍 Cỡ chữ đọc sách: Rất Lớn (A++)';
+    }
+  }
+
   function openDocModal(docId) {
     const list = window.LYHOC_TANGKINHCAC || [];
     const doc = list.find(d => d.id === docId);
@@ -1164,6 +1501,7 @@
     document.getElementById('modalDocTitle').textContent = doc.title;
     document.getElementById('modalDocMeta').textContent = `${doc.author} · Chuyên mục: ${doc.category}`;
     document.getElementById('modalDocBody').textContent = doc.content;
+    applyModalDocFontSize();
     modal.classList.add('open');
 
     const speakDocBtn = document.getElementById('btnSpeakModalDoc');
@@ -1176,6 +1514,82 @@
   // KHỞI ĐỘNG ỨNG DỤNG
   // --------------------------------------------------------------------------
   window.addEventListener('DOMContentLoaded', () => {
+    // 0. Khôi phục Hồ sơ Gia đình & Cài đặt Cỡ chữ / Nền sáng của Người lớn tuổi
+    loadUserState();
+
+    let fontStep = parseInt(localStorage.getItem('ptlv_font_step') || '0', 10);
+    const btnFont = document.getElementById('btnCycleFontSize');
+    const applyFontStep = () => {
+      document.documentElement.classList.remove('font-lg', 'font-xl');
+      if (fontStep === 1) {
+        document.documentElement.classList.add('font-lg');
+        if (btnFont) btnFont.innerHTML = '🔍 Cỡ chữ: Lớn (A+)';
+      } else if (fontStep === 2) {
+        document.documentElement.classList.add('font-xl');
+        if (btnFont) btnFont.innerHTML = '🔍 Cỡ chữ: Rất Lớn (A++)';
+      } else {
+        if (btnFont) btnFont.innerHTML = '🔍 Cỡ chữ: Thường (A+)';
+      }
+      try { localStorage.setItem('ptlv_font_step', String(fontStep)); } catch (e) {}
+    };
+    applyFontStep();
+    if (btnFont) {
+      btnFont.addEventListener('click', () => {
+        fontStep = (fontStep + 1) % 3;
+        applyFontStep();
+        showSeniorToast(fontStep === 0 ? 'Đã chuyển về Cỡ chữ Thường' : (fontStep === 1 ? '🔍 Đã bật Chữ Lớn (A+) dễ đọc!' : '🔍 Đã bật Chữ Rất Lớn (A++) cho người lớn tuổi!'));
+      });
+    }
+
+    let isLightTheme = localStorage.getItem('ptlv_theme_light') === '1';
+    const btnTheme = document.getElementById('btnToggleLightTheme');
+    const applyThemeMode = () => {
+      document.body.classList.toggle('theme-light', isLightTheme);
+      if (btnTheme) {
+        btnTheme.innerHTML = isLightTheme ? '🌙 Đổi Nền Tối' : '☀️ Nền Sáng (Dịu Mắt)';
+      }
+      try { localStorage.setItem('ptlv_theme_light', isLightTheme ? '1' : '0'); } catch (e) {}
+    };
+    applyThemeMode();
+    if (btnTheme) {
+      btnTheme.addEventListener('click', () => {
+        isLightTheme = !isLightTheme;
+        applyThemeMode();
+        showSeniorToast(isLightTheme ? '☀️ Đã bật Chế độ Nền Sáng (Giấy Dó truyền thống dịu mắt)!' : '🌙 Đã chuyển về Chế độ Nền Tối!');
+      });
+    }
+
+    // Thanh điều khiển Giọng đọc nổi (Floating TTS Bar)
+    document.getElementById('btnTtsSpeed')?.addEventListener('click', (e) => {
+      if (ttsSpeedRate === 0.9) {
+        ttsSpeedRate = 0.78;
+        e.currentTarget.innerHTML = '🐢 Tốc độ: Rất Chậm (0.78x)';
+      } else if (ttsSpeedRate === 0.78) {
+        ttsSpeedRate = 1.05;
+        e.currentTarget.innerHTML = '🚶 Tốc độ: Bình Thường (1.05x)';
+      } else {
+        ttsSpeedRate = 0.9;
+        e.currentTarget.innerHTML = '🐢 Tốc độ: Chậm Rõ (0.9x)';
+      }
+      if (lastSpokenText && window.speechSynthesis && window.speechSynthesis.speaking) {
+        speakVietnamese(lastSpokenText);
+      }
+    });
+    document.getElementById('btnTtsPauseResume')?.addEventListener('click', (e) => {
+      if (!window.speechSynthesis) return;
+      if (window.speechSynthesis.paused) {
+        window.speechSynthesis.resume();
+        e.currentTarget.innerHTML = '⏸️ Tạm Dừng';
+      } else if (window.speechSynthesis.speaking) {
+        window.speechSynthesis.pause();
+        e.currentTarget.innerHTML = '▶️ Đọc Tiếp';
+      }
+    });
+    document.getElementById('btnTtsStop')?.addEventListener('click', () => {
+      if (window.speechSynthesis) window.speechSynthesis.cancel();
+      document.getElementById('ttsFloatingBar')?.classList.remove('active');
+    });
+
     // 1. Gán sự kiện chuyển Tab
     document.querySelectorAll('.tab-btn, .dock-item').forEach(btn => {
       btn.addEventListener('click', () => {
@@ -1187,6 +1601,13 @@
     // 2. Nút Âm thanh Thiền Đông Sơn
     const btnAudio = document.getElementById('btnAmbientAudio');
     if (btnAudio) btnAudio.addEventListener('click', toggleAmbientSound);
+
+    // 3. Gắn danh sách Chọn nhanh Tuổi Con Giáp (Can Chi) vào tất cả các ô nhập Năm sinh
+    attachZodiacSelectToYearInput('inputFatherYear', 1935, 2015, runLuanTuoiAnalysis);
+    attachZodiacSelectToYearInput('inputMotherYear', 1935, 2015, runLuanTuoiAnalysis);
+    attachZodiacSelectToYearInput('inputTrachCatOwnerYear', 1935, 2015, runTrachCatAnalysis);
+    attachZodiacSelectToYearInput('inputTuViYear', 1935, 2030, runTuViGeneration);
+    attachZodiacSelectToYearInput('inputPhongThuyYear', 1935, 2015, runPhongThuyAnalysis);
 
     // 4. Khởi tạo Tab 1: Luận Tuổi Lạc Việt
     renderChildrenInputs();
@@ -1262,6 +1683,33 @@
     if (dateInput) dateInput.value = `${yyyy}-${mm}-${dd}`;
     runTrachCatAnalysis();
 
+    const shiftTrachCatDate = (deltaDays) => {
+      if (!dateInput) return;
+      const parts = (dateInput.value || `${yyyy}-${mm}-${dd}`).split('-').map(Number);
+      const dt = new Date(parts[0], parts[1] - 1, parts[2]);
+      dt.setDate(dt.getDate() + deltaDays);
+      const ny = dt.getFullYear();
+      const nm = String(dt.getMonth() + 1).padStart(2, '0');
+      const nd = String(dt.getDate()).padStart(2, '0');
+      dateInput.value = `${ny}-${nm}-${nd}`;
+      runTrachCatAnalysis();
+    };
+    document.getElementById('btnTrachCatPrevDay')?.addEventListener('click', () => shiftTrachCatDate(-1));
+    document.getElementById('btnTrachCatNextDay')?.addEventListener('click', () => shiftTrachCatDate(1));
+    document.getElementById('btnTrachCatToday')?.addEventListener('click', () => {
+      if (dateInput) dateInput.value = `${yyyy}-${mm}-${dd}`;
+      runTrachCatAnalysis();
+    });
+
+    document.querySelectorAll('#trachCatPurposeBar .purpose-pill').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        selectedTrachCatPurpose = e.currentTarget.getAttribute('data-purpose') || 'all';
+        document.querySelectorAll('#trachCatPurposeBar .purpose-pill').forEach(b => b.classList.remove('active'));
+        e.currentTarget.classList.add('active');
+        runTrachCatAnalysis();
+      });
+    });
+
     document.getElementById('btnRunTrachCat')?.addEventListener('click', () => {
       playBronzeBell(528, 0.7);
       runTrachCatAnalysis();
@@ -1286,6 +1734,8 @@
       playBronzeBell(528, 0.7);
       runPhongThuyAnalysis();
     });
+    document.getElementById('inputPhongThuyYear')?.addEventListener('change', runPhongThuyAnalysis);
+    document.getElementById('inputPhongThuyGender')?.addEventListener('change', runPhongThuyAnalysis);
 
     // 8. Khởi tạo Tab 5: Lạc Việt Độn Toán
     runDonToanCast('time');
@@ -1302,15 +1752,21 @@
       const author = document.getElementById('selectAuthorFilter')?.value || 'all';
       renderTangKinhCac(author, e.target.value);
     });
+    document.getElementById('btnModalFontSize')?.addEventListener('click', () => {
+      modalDocFontStep = (modalDocFontStep + 1) % 3;
+      applyModalDocFontSize();
+    });
 
     // Đóng Modal đọc tài liệu
     document.getElementById('btnCloseDocModal')?.addEventListener('click', () => {
       window.speechSynthesis && window.speechSynthesis.cancel();
+      document.getElementById('ttsFloatingBar')?.classList.remove('active');
       document.getElementById('docReaderModal')?.classList.remove('open');
     });
     document.getElementById('docReaderModal')?.addEventListener('click', (e) => {
       if (e.target.id === 'docReaderModal') {
         window.speechSynthesis && window.speechSynthesis.cancel();
+        document.getElementById('ttsFloatingBar')?.classList.remove('active');
         e.target.classList.remove('open');
       }
     });
