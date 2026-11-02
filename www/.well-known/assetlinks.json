@@ -1,0 +1,8 @@
+[{
+  "relation": ["delegate_permission/common.handle_all_urls"],
+  "target": {
+    "namespace": "android_app",
+    "package_name": "vn.lacvietdaoquan.ptlv",
+    "sha256_cert_fingerprints": ["F8:B3:49:F5:94:5D:3F:E1:37:B1:58:C7:26:8F:4D:C7:47:25:BB:B1:66:70:33:C4:51:6B:54:0D:66:08:06:2C"]
+  }
+}]

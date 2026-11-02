@@ -1,0 +1,26 @@
+{
+  "id": "./index.html",
+  "name": "PTLV — Lạc Việt Đạo Quán: Tử Vi · Chọn Ngày Tốt · Luận Tuổi",
+  "short_name": "PTLV Lạc Việt",
+  "description": "Ứng dụng Tử Vi, Chọn Ngày Giờ Tốt, Phong Thủy Bát Trạch & Luận Tuổi Gia Đạo Lạc Việt theo Lý Học Đông Phương.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#0b0f17",
+  "theme_color": "#e5b85c",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

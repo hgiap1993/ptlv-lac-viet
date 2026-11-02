@@ -1,0 +1,71 @@
+name: Build Offline Android APK & Publish Release (PTLV Lạc Việt)
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+
+jobs:
+  build-android:
+    name: Build Standalone Offline Capacitor Android APK
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Setup Java JDK 21 (Required for Capacitor 6 / Android SDK 34)
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+
+      - name: Install Dependencies & Initialize Capacitor Android
+        run: |
+          rm -f www/*.apk
+          npm install
+          if [ ! -d "android" ]; then
+            npx cap add android
+          fi
+          npx cap sync android
+          # Copy custom PTLV icon into Android mipmap folders
+          for dir in android/app/src/main/res/mipmap-mdpi android/app/src/main/res/mipmap-hdpi android/app/src/main/res/mipmap-xhdpi android/app/src/main/res/mipmap-xxhdpi android/app/src/main/res/mipmap-xxxhdpi; do
+            if [ -d "$dir" ]; then
+              cp www/icon-512.png "$dir/ic_launcher.png"
+              cp www/icon-512.png "$dir/ic_launcher_round.png"
+              cp www/icon-512.png "$dir/ic_launcher_foreground.png"
+            fi
+          done
+
+      - name: Build Direct-Install Standalone Offline APK
+        working-directory: ./android
+        run: |
+          chmod +x gradlew
+          ./gradlew assembleDebug
+          cp app/build/outputs/apk/debug/app-debug.apk ../PTLV-LyHocLacViet.apk
+
+      - name: Upload Android APK Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: PTLV-LyHocLacViet-APK
+          path: PTLV-LyHocLacViet.apk
+
+      - name: Publish APK to GitHub Release v1.0.0
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v1.0.0
+          name: "PTLV Lạc Việt Đạo Quán - Android APK (Offline 100%)"
+          body: "Bản cài đặt Android độc lập (chạy Offline 100%, không cần Tunnel hay máy chủ)."
+          files: PTLV-LyHocLacViet.apk
+          overwrite: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

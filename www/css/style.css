@@ -1,0 +1,871 @@
+/* ============================================================================
+   LẠC VIỆT ĐẠO QUÁN - ROYAL ORIENTAL & BRONZE DRUM THEME (MOBILE-FIRST & DESKTOP)
+   ============================================================================ */
+
+:root {
+  --bg-deep: #0b0f17;
+  --bg-card: #131b29;
+  --bg-card-alt: #182235;
+  --bg-glass: rgba(19, 27, 41, 0.92);
+  --gold-primary: #e5b85c;
+  --gold-light: #f9df9b;
+  --gold-dark: #a67c27;
+  --jade-primary: #10b981;
+  --jade-light: #6ee7b7;
+  --crimson-warn: #f43f5e;
+  --amber-warn: #f59e0b;
+  --text-main: #f3f4f6;
+  --text-muted: #9ca3af;
+  --border-gold: rgba(229, 184, 92, 0.28);
+  --border-subtle: rgba(255, 255, 255, 0.08);
+  --shadow-royal: 0 12px 32px rgba(0, 0, 0, 0.55);
+  --radius-lg: 16px;
+  --radius-md: 12px;
+  --radius-sm: 8px;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html, body {
+  background: radial-gradient(circle at 50% 0%, #1a2438 0%, #0b0f17 65%, #070a10 100%);
+  color: var(--text-main);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  line-height: 1.6;
+  min-height: 100vh;
+  overflow-x: hidden;
+  padding-bottom: max(84px, env(safe-area-inset-bottom, 84px));
+}
+
+/* Họa tiết trống đồng Đông Sơn chìm phía sau */
+body::before {
+  content: "";
+  position: fixed;
+  top: -120px;
+  right: -120px;
+  width: 480px;
+  height: 480px;
+  background: radial-gradient(circle, rgba(229,184,92,0.07) 0%, rgba(229,184,92,0.02) 45%, transparent 70%);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 0;
+}
+
+a {
+  color: var(--gold-primary);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* HEADER TÔN VINH SƯ PHỤ & CÁC SƯ HUYNH */
+.app-header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: rgba(11, 15, 23, 0.94);
+  backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--border-gold);
+  padding: 12px 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.45);
+}
+
+.header-inner {
+  max-width: 1280px;
+  margin: 0 auto;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.brand-box {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.brand-emblem {
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #f9df9b 0%, #c89632 50%, #7d5610 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  color: #0b0f17;
+  font-weight: 900;
+  box-shadow: 0 0 18px rgba(229, 184, 92, 0.45);
+  flex-shrink: 0;
+}
+
+.brand-title {
+  font-size: 1.15rem;
+  font-weight: 800;
+  letter-spacing: 0.4px;
+  background: linear-gradient(90deg, #fff6d6, #e5b85c, #f9df9b);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.brand-subtitle {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.btn-pill {
+  background: rgba(229, 184, 92, 0.12);
+  border: 1px solid var(--border-gold);
+  color: var(--gold-light);
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s ease;
+}
+
+.btn-pill:hover, .btn-pill.active {
+  background: var(--gold-primary);
+  color: #0b0f17;
+  box-shadow: 0 0 12px rgba(229, 184, 92, 0.4);
+}
+
+/* LINEAGE BANNER (TỔ SƯ & SƯ HUYNH) */
+.lineage-banner {
+  max-width: 1280px;
+  margin: 16px auto 8px;
+  padding: 0 16px;
+}
+
+.lineage-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.lineage-card {
+  background: linear-gradient(145deg, rgba(24, 34, 53, 0.92), rgba(15, 22, 35, 0.96));
+  border: 1px solid var(--border-gold);
+  border-radius: var(--radius-md);
+  padding: 12px 14px;
+  display: flex;
+  align-items: flex-start;
+  gap: 11px;
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.lineage-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--gold-light);
+}
+
+.lineage-card.grandmaster {
+  background: linear-gradient(145deg, rgba(46, 35, 16, 0.92), rgba(20, 26, 40, 0.96));
+  border-color: rgba(249, 223, 155, 0.55);
+}
+
+.lineage-avatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: rgba(229, 184, 92, 0.18);
+  border: 1px solid var(--gold-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  flex-shrink: 0;
+}
+
+.lineage-role {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.7px;
+  color: var(--gold-primary);
+  font-weight: 700;
+}
+
+.lineage-name {
+  font-size: 0.94rem;
+  font-weight: 700;
+  color: #fff;
+  margin: 2px 0;
+}
+
+.lineage-desc {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  line-height: 1.4;
+}
+
+/* DESKTOP NAV TABS */
+.desktop-tabs {
+  max-width: 1280px;
+  margin: 12px auto;
+  padding: 0 16px;
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.desktop-tabs::-webkit-scrollbar {
+  display: none;
+}
+
+.tab-btn {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-muted);
+  padding: 10px 16px;
+  border-radius: var(--radius-md);
+  font-size: 0.86rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.2s ease;
+}
+
+.tab-btn:hover {
+  color: var(--text-main);
+  border-color: var(--border-gold);
+}
+
+.tab-btn.active {
+  background: linear-gradient(135deg, #e5b85c 0%, #b88628 100%);
+  color: #0b0f17;
+  border-color: var(--gold-light);
+  font-weight: 700;
+  box-shadow: 0 4px 16px rgba(229, 184, 92, 0.35);
+}
+
+/* MAIN CONTAINER & SECTIONS */
+.main-container {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 8px 16px 32px;
+  position: relative;
+  z-index: 1;
+}
+
+.tab-panel {
+  display: none;
+  animation: fadeIn 0.25s ease;
+}
+
+.tab-panel.active {
+  display: block;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* CARDS, GRIDS & FORMS */
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-gold);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  margin-bottom: 18px;
+  box-shadow: var(--shadow-royal);
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.card-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--gold-light);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.card-subtitle {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+}
+
+.grid-2 {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+
+.grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+.grid-4 {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.form-label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--gold-light);
+}
+
+.form-input, .form-select {
+  background: #0d131f;
+  border: 1px solid rgba(229, 184, 92, 0.35);
+  color: var(--text-main);
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+  font-size: 0.92rem;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.form-input:focus, .form-select:focus {
+  border-color: var(--gold-primary);
+  box-shadow: 0 0 0 2px rgba(229, 184, 92, 0.2);
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #f3c86b 0%, #c48f27 100%);
+  color: #0b0f17;
+  border: none;
+  padding: 11px 20px;
+  border-radius: var(--radius-sm);
+  font-size: 0.92rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: transform 0.15s ease, box-shadow 0.2s ease;
+}
+
+.btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(229, 184, 92, 0.4);
+}
+
+.btn-secondary {
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--text-main);
+  border: 1px solid var(--border-gold);
+  padding: 9px 14px;
+  border-radius: var(--radius-sm);
+  font-size: 0.84rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.btn-secondary:hover {
+  background: rgba(229, 184, 92, 0.16);
+}
+
+/* BADGES & PILLS */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.badge-good {
+  background: rgba(16, 185, 129, 0.18);
+  color: #34d399;
+  border: 1px solid rgba(16, 185, 129, 0.4);
+}
+
+.badge-neutral {
+  background: rgba(229, 184, 92, 0.16);
+  color: var(--gold-light);
+  border: 1px solid rgba(229, 184, 92, 0.4);
+}
+
+.badge-warn {
+  background: rgba(244, 63, 94, 0.18);
+  color: #fb7185;
+  border: 1px solid rgba(244, 63, 94, 0.4);
+}
+
+/* NGŨ HÀNH COLORS */
+.hanh-Kim  { color: #f3f4f6; background: rgba(243, 244, 246, 0.12); border: 1px solid rgba(243, 244, 246, 0.35); }
+.hanh-Mộc  { color: #4ade80; background: rgba(74, 222, 128, 0.12);  border: 1px solid rgba(74, 222, 128, 0.35); }
+.hanh-Thủy { color: #38bdf8; background: rgba(56, 189, 248, 0.12);  border: 1px solid rgba(56, 189, 248, 0.35); }
+.hanh-Hỏa  { color: #fb7185; background: rgba(251, 113, 133, 0.14); border: 1px solid rgba(251, 113, 133, 0.4); }
+.hanh-Thổ  { color: #fbbf24; background: rgba(251, 191, 36, 0.14);  border: 1px solid rgba(251, 191, 36, 0.4); }
+
+/* DÒNG TRUYỀN DẪN KHÍ GIA ĐẠO (LUẬN TUỔI LẠC VIỆT) */
+.flow-chain {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  padding: 16px;
+  background: rgba(11, 15, 23, 0.65);
+  border: 1px dashed var(--border-gold);
+  border-radius: var(--radius-md);
+  margin: 14px 0;
+}
+
+.flow-node {
+  background: var(--bg-card-alt);
+  border: 1px solid var(--border-gold);
+  border-radius: var(--radius-sm);
+  padding: 10px 14px;
+  min-width: 150px;
+}
+
+.flow-node.youngest-node {
+  background: linear-gradient(145deg, rgba(16, 185, 129, 0.18), rgba(24, 34, 53, 0.95));
+  border: 2px solid var(--jade-primary);
+  box-shadow: 0 0 18px rgba(16, 185, 129, 0.25);
+}
+
+.flow-arrow {
+  font-size: 1.2rem;
+  color: var(--gold-primary);
+  font-weight: 900;
+}
+
+/* BÀN CỜ LÁ SỐ TỬ VI 12 CUNG (GRID 4x4 CHUẨN ĐÔNG PHƯƠNG) */
+.tuvi-board {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-template-rows: repeat(4, minmax(175px, auto));
+  gap: 6px;
+  background: rgba(229, 184, 92, 0.22);
+  padding: 6px;
+  border-radius: var(--radius-md);
+  border: 2px solid var(--gold-primary);
+}
+
+.tuvi-cell {
+  background: #0e1522;
+  border: 1px solid rgba(229, 184, 92, 0.28);
+  border-radius: 6px;
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  cursor: pointer;
+  transition: all 0.18s ease;
+  position: relative;
+}
+
+.tuvi-cell:hover, .tuvi-cell.selected {
+  border-color: var(--gold-light);
+  background: #162136;
+  box-shadow: inset 0 0 12px rgba(229, 184, 92, 0.22);
+}
+
+.tuvi-cell.is-menh {
+  border: 1.5px solid var(--gold-primary);
+  background: linear-gradient(180deg, rgba(229, 184, 92, 0.11) 0%, #0e1522 100%);
+}
+
+.tuvi-center {
+  grid-column: 2 / 4;
+  grid-row: 2 / 4;
+  background: radial-gradient(circle at center, #182338 0%, #0c121e 100%);
+  border: 1.5px solid var(--gold-primary);
+  border-radius: 8px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.cell-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px dashed rgba(255, 255, 255, 0.1);
+  padding-bottom: 4px;
+  margin-bottom: 6px;
+  font-size: 0.72rem;
+}
+
+.cell-cung-name {
+  font-weight: 800;
+  color: var(--gold-light);
+  font-size: 0.78rem;
+  letter-spacing: 0.3px;
+}
+
+.cell-chinh-tinh {
+  text-align: center;
+  margin: 4px 0 6px;
+  min-height: 36px;
+}
+
+.star-chinh {
+  display: block;
+  font-weight: 800;
+  font-size: 0.88rem;
+  color: #fde047;
+}
+
+.cell-substars {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px;
+  font-size: 0.7rem;
+  flex: 1;
+}
+
+.star-cat {
+  color: #6ee7b7;
+  display: block;
+}
+
+.star-sat {
+  color: #fda4af;
+  display: block;
+}
+
+.cell-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px dashed rgba(255, 255, 255, 0.1);
+  padding-top: 4px;
+  margin-top: 6px;
+  font-size: 0.68rem;
+  color: var(--text-muted);
+}
+
+/* QUẺ DỊCH 6 HÀO RENDER */
+.hexagram-box {
+  display: flex;
+  flex-direction: column-reverse;
+  gap: 7px;
+  width: 120px;
+  margin: 10px auto;
+}
+
+.hex-line {
+  height: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.hex-yang {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, #e5b85c, #f9df9b, #e5b85c);
+  border-radius: 3px;
+}
+
+.hex-yin-part {
+  width: 44%;
+  height: 100%;
+  background: linear-gradient(90deg, #38bdf8, #93c5fd);
+  border-radius: 3px;
+}
+
+.hex-line.moving .hex-yang,
+.hex-line.moving .hex-yin-part {
+  background: linear-gradient(90deg, #f43f5e, #fb7185);
+  box-shadow: 0 0 8px rgba(244, 63, 94, 0.6);
+}
+
+/* TABLES */
+.table-wrap {
+  overflow-x: auto;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-subtle);
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+}
+
+.data-table th, .data-table td {
+  padding: 10px 12px;
+  text-align: left;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.data-table th {
+  background: rgba(229, 184, 92, 0.12);
+  color: var(--gold-light);
+  font-weight: 700;
+}
+
+.data-table tr:hover {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+/* MODAL ĐỌC TÀI LIỆU TÀNG KINH CÁC */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(5, 8, 14, 0.85);
+  backdrop-filter: blur(8px);
+  z-index: 100;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+
+.modal-backdrop.open {
+  display: flex;
+}
+
+.modal-content {
+  background: var(--bg-card);
+  border: 1.5px solid var(--gold-primary);
+  border-radius: var(--radius-lg);
+  max-width: 900px;
+  width: 100%;
+  max-height: 88vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.8);
+}
+
+.modal-header {
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border-gold);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.modal-body {
+  padding: 20px;
+  overflow-y: auto;
+  font-size: 0.95rem;
+  line-height: 1.75;
+  white-space: pre-wrap;
+}
+
+/* MOBILE BOTTOM NAVIGATION DOCK */
+.mobile-dock {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(11, 15, 23, 0.96);
+  backdrop-filter: blur(16px);
+  border-top: 1px solid var(--border-gold);
+  display: none;
+  grid-template-columns: repeat(6, 1fr);
+  padding: 6px 4px max(8px, env(safe-area-inset-bottom, 8px));
+  z-index: 60;
+}
+
+.dock-item {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  font-size: 0.66rem;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 4px 2px;
+}
+
+.dock-item .dock-icon {
+  font-size: 1.15rem;
+}
+
+.dock-item.active {
+  color: var(--gold-primary);
+}
+
+/* ============================================================================
+   CUSTOMER-FRIENDLY UX COMPONENTS (MODE SELECTOR, SUMMARY CARDS, LIFE READING)
+   ============================================================================ */
+.mode-selector-bar {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.mode-pill {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1.5px solid var(--border-subtle);
+  color: var(--text-main);
+  padding: 11px 14px;
+  border-radius: 10px;
+  font-size: 0.86rem;
+  font-weight: 700;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.2s ease;
+}
+
+.mode-pill:hover {
+  border-color: var(--gold-primary);
+  background: rgba(229, 184, 92, 0.1);
+}
+
+.mode-pill.active {
+  background: linear-gradient(135deg, rgba(229, 184, 92, 0.22), rgba(16, 185, 129, 0.16));
+  border-color: var(--gold-primary);
+  color: var(--gold-light);
+  box-shadow: 0 4px 14px rgba(229, 184, 92, 0.22);
+}
+
+.helper-details {
+  background: rgba(229, 184, 92, 0.07);
+  border: 1px dashed var(--border-gold);
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-size: 0.85rem;
+}
+
+.helper-details summary {
+  cursor: pointer;
+  color: var(--gold-light);
+  list-style: none;
+}
+
+.helper-details-body {
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  color: var(--text-main);
+  line-height: 1.65;
+}
+
+.collapsible-card .collapsible-summary {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  color: var(--gold-light);
+  font-size: 0.96rem;
+  list-style: none;
+}
+
+.summary-3-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  margin-top: 14px;
+}
+
+.summary-box {
+  background: rgba(255, 255, 255, 0.035);
+  border: 1px solid var(--border-subtle);
+  border-radius: 12px;
+  padding: 14px;
+  font-size: 0.9rem;
+  line-height: 1.65;
+}
+
+.summary-box-title {
+  font-weight: 800;
+  font-size: 0.94rem;
+  color: var(--gold-light);
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.palace-quick-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 12px 0;
+}
+
+.palace-pill-btn {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-main);
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.palace-pill-btn:hover, .palace-pill-btn.active {
+  background: var(--gold-primary);
+  color: #0b0f17;
+  border-color: var(--gold-light);
+  font-weight: 800;
+}
+
+@media (max-width: 960px) {
+  .lineage-grid, .mode-selector-bar, .summary-3-grid {
+    grid-template-columns: 1fr;
+  }
+  .grid-2, .grid-3, .grid-4 {
+    grid-template-columns: 1fr;
+  }
+  .tuvi-board {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto;
+  }
+  .tuvi-center {
+    grid-column: 1 / -1;
+    grid-row: 1;
+  }
+  .mobile-dock {
+    display: grid;
+  }
+}
