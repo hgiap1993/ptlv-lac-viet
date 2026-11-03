@@ -176,8 +176,8 @@
     const childrenAnalyses = childrenYears.map((cy, idx) => {
       const isYoungest = idx === childrenYears.length - 1;
       const orderTitle = childrenYears.length === 1
-        ? 'Con Đầu Lòng (Đồng thời là Con Út hiện tại)'
-        : (isYoungest ? `Con Thứ ${idx + 1} (🌟 CON ÚT – Quyết định vận khí gia đình)` : `Con Thứ ${idx + 1}`);
+        ? 'Con Thứ 1 (🌟 Con Út)'
+        : (isYoungest ? `Con Thứ ${idx + 1} (🌟 Con Út)` : `Con Thứ ${idx + 1}`);
       const person = analyzeSinglePerson(cy, orderTitle);
       const withFather = compareTwoPeople(fatherYear, cy, 'Cha', 'Con');
       const withMother = compareTwoPeople(motherYear, cy, 'Mẹ', 'Con');
@@ -272,7 +272,7 @@
       const matched = g.filter(chi => allChis.includes(chi));
       if (matched.length >= 2) {
         mythBusters.push({
-          title: `Đừng lo lắng về lời đồn "Tứ Hành Xung" (${matched.join(' – ')})!`,
+          title: `Giải oan "Tứ Hành Xung" (${matched.join(' – ')})`,
           content: `Rất nhiều người sợ câu "${g.join(' – ')} tứ hành xung". Thực tế con giáp (Địa Chi) chỉ chiếm 1/3 yếu tố. Khi xét đầy đủ cả Thiên Can và Gốc Mạng Lạc Việt (đặc biệt khi có Con Út hợp tuổi), hàng ngàn gia đình nằm trong nhóm Tứ Hành Xung vẫn giàu có, hạnh phúc viên mãn đến đầu bạc răng long!`
         });
       }
@@ -283,7 +283,7 @@
       const matched = th.group.filter(chi => allChis.includes(chi));
       if (matched.length >= 2) {
         mythBusters.push({
-          title: `Giải oan lời đồn "Tam Hợp Hóa Tam Tai" (${matched.join(' – ')})!`,
+          title: `Giải oan "Tam Hợp Hóa Tam Tai" (${matched.join(' – ')})`,
           content: `Dân gian hay truyền miệng vợ chồng con cái cùng nhóm Tam Hợp (${th.group.join(' – ')}) sẽ bị "Tam Tai". Đây là quan niệm sai lầm: Tam Hợp giúp các thành viên trong nhà cực kỳ đồng lòng và hiểu ý nhau; còn tốt hay xấu về kinh tế là do Gốc Mạng và Thiên Can quyết định.`
         });
       }
@@ -293,7 +293,7 @@
     childrenAnalyses.forEach(c => {
       if (c.person.info.chi === father.info.chi || c.person.info.chi === mother.info.chi) {
         mythBusters.push({
-          title: `Giải oan câu "Con Ẩn Tuổi Cha / Mẹ" (Trùng tuổi ${c.person.info.chi})`,
+          title: `Giải oan "Con Ẩn Tuổi Cha Mẹ" (Tuổi ${c.person.info.chi})`,
           content: `Con cái trùng con giáp (${c.person.info.chi}) với Cha hoặc Mẹ thường bị dân gian gọi là "ẩn tuổi". Thực tế con sinh cách bố mẹ 24 hoặc 36 năm sẽ có Thiên Can và Gốc Mạng hoàn toàn khác bố mẹ, nên hoàn toàn không có chuyện "con trai ẩn tuổi mẹ thì khổ" như lời đồn!`
         });
       }
@@ -303,7 +303,7 @@
     const swappedMembers = [father, mother, ...childrenAnalyses.map(c => c.person)].filter(p => p.info.swapped);
     if (swappedMembers.length > 0) {
       mythBusters.push({
-        title: `💡 Vì sao Mệnh của thành viên trong nhà khác với sách Tử Vi thông thường?`,
+        title: `💡 Sự khác biệt Mệnh Thủy – Hỏa Lạc Việt`,
         content: `Trong gia đình bạn có ${swappedMembers.map(m => `<b>${m.roleLabel} sinh năm ${m.info.year} (${m.info.canChi})</b>: Sách Hán thông thường ghi là mệnh <b>${m.info.hanHanh}</b> (${m.info.hanName}), nhưng theo <b>Lạc Thư Hoa Giáp</b> chuẩn Lạc Việt thì mệnh thực sự là <b>${m.info.lacVietHanh}</b>`).join('; ')}. Đây chính là bí quyết cốt lõi của Lý học Lạc Việt: Các sách Hán cổ khi sao chép đã bị đảo ngược vị trí 2 hành Thủy và Hỏa (còn Kim, Mộc, Thổ vẫn giữ nguyên). Khi trả lại đúng mệnh Thủy – Hỏa gốc Lạc Việt, bạn sẽ thấy kết quả luận giải trùng khớp hoàn toàn với thực tế cuộc sống gia đình mình!`
       });
     }

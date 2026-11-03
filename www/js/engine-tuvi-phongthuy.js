@@ -577,42 +577,42 @@
     return [
       {
         icon: '👤',
-        title: `1. Tính Cách, Bản Mệnh & Hậu Vận (${meta.yInfo.canChi} – Mạng Lạc Việt: ${meta.yInfo.lacVietHanh})`,
+        title: `1. Tính Cách & Bản Mệnh`,
         stars: `Thân cư ${meta.thanCuName}`,
         content: `${pMenh.customerReading.mainReading} <br><br>• <b>Hướng phát triển sau 30 tuổi (${meta.thanCuName}):</b> ${thanGuides[meta.thanCuName] || ''}<br>• <b>Tương quan Mệnh & Cục:</b> Bản mệnh Lạc Việt hành <b>${meta.yInfo.lacVietHanh}</b> gặp <b>${meta.cucLacViet.name}</b> (${meta.menhVsCuc.rel}) — ${meta.menhVsCuc.score >= 0 ? 'Hoàn cảnh xã hội nâng đỡ tốt cho bản mệnh của bạn.' : 'Bạn là người tự lực cánh sinh, vượt qua thử thách bằng chính bản lĩnh của mình.'}`,
         goodPoint: pMenh.customerReading.goodNotes[0]
       },
       {
         icon: '💼',
-        title: `2. Công Danh, Sự Nghiệp & Nghề Nghiệp Phù Hợp (Cung Quan Lộc tại ${pQuan.chi})`,
+        title: `2. Công Danh & Sự Nghiệp`,
         stars: pQuan.customerReading.starHeader,
         content: `${pQuan.customerReading.mainReading}`,
         goodPoint: pQuan.customerReading.goodNotes[0]
       },
       {
         icon: '💰',
-        title: `3. Tiền Bạc, Tài Chính & Lộc Nhà Đất (Cung Tài Bạch & Điền Trạch)`,
+        title: `3. Tài Lộc & Nhà Đất`,
         stars: `Tài: ${pTai.customerReading.starHeader}`,
         content: `• <b>Về Tiền Bạc (Cung Tài Bạch):</b> ${pTai.customerReading.mainReading}<br><br>• <b>Về Nhà Đất & Bất Động Sản (Cung Điền Trạch):</b> ${pDien.customerReading.mainReading}`,
         goodPoint: pDien.customerReading.goodNotes[0]
       },
       {
         icon: '❤️',
-        title: `4. Hôn Nhân Vợ Chồng & Đường Con Cái (Cung Phu Thê & Tử Tức)`,
+        title: `4. Hôn Nhân & Con Cái`,
         stars: `Phu Thê tại ${pPhuThe.chi}`,
         content: `• <b>Đời sống Vợ Chồng (Cung Phu Thê):</b> ${pPhuThe.customerReading.mainReading}<br><br>• <b>Đường Con Cái (Cung Tử Tức):</b> ${pTuTuc.customerReading.mainReading}`,
         goodPoint: 'Kết hợp chọn năm sinh Con Út tại mục 1. Luận Tuổi để khóa chặt vận khí tốt nhất cho cả gia đình.'
       },
       {
         icon: '🌿',
-        title: `5. Sức Khỏe, Phúc Đức & Quý Nhân Xã Hội (Tật Ách, Phúc Đức, Thiên Di)`,
+        title: `5. Sức Khỏe & Phúc Đức`,
         stars: `Phúc: ${pPhuc.vongTrangSinh}`,
         content: `• <b>Sức khỏe cần lưu ý (Cung Tật Ách):</b> ${pTat.customerReading.mainReading}<br>• <b>Ra ngoài xã hội (Cung Thiên Di):</b> ${pThienDi.customerReading.mainReading}<br>• <b>Nền tảng Phúc Đức dòng họ:</b> Đóng tại cung ${pPhuc.chi} (${pPhuc.vongTrangSinh}).`,
         goodPoint: pThienDi.customerReading.goodNotes[0]
       },
       {
         icon: '📅',
-        title: `6. Luận Giải Vận Hạn Năm ${meta.viewYear} (${meta.viewYInfo.canChi} – ${meta.currentLunarAge} Tuổi Âm)`,
+        title: `6. Vận Hạn Năm ${meta.viewYear}`,
         stars: `Đại vận ${dv.daiVan}–${dv.daiVan + 9} tuổi`,
         content: `• <b>Đại vận 10 năm hiện tại (${dv.daiVan}–${dv.daiVan + 9} tuổi):</b> Đang đi qua cung <b>${dv.cungName} (${dv.canChi})</b>. Trọng tâm 10 năm này xoay quanh vấn đề <b>${dv.cungName}</b>. ${dv.customerReading.mainReading}<br><br>• <b>Vận hạn năm ${meta.viewYear} (${meta.viewYInfo.canChi}):</b> Lưu niên đi vào cung <b>${ln.cungName} (${ln.chi})</b>. Năm nay bạn nên tập trung chăm chút cho phương diện <b>${ln.cungName}</b>.`,
         goodPoint: 'Khi khởi sự việc lớn năm nay, hãy tra ngày tốt và Giờ Quý Nhân Đăng Thiên Môn tại mục 2. Chọn Ngày Tốt để kích hoạt cát khí tối đa!'

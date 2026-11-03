@@ -41,9 +41,7 @@
   function getYearOptionLabel(year) {
     const info = AL.getYearInfo(year);
     const z = ZODIAC_ANIMALS[info.chi] || { icon: '🌟', animal: '' };
-    const age = 2026 - year + 1;
-    const ageStr = age > 0 ? `${age} tuổi` : 'Dự kiến sinh';
-    return `${z.icon} Năm ${year} — Tuổi ${info.canChi} (${z.animal} · ${ageStr} · Mạng ${info.lacVietHanh})`;
+    return `${z.icon} ${year} — ${info.canChi} (${z.animal} · Mạng ${info.lacVietHanh})`;
   }
 
   function buildYearSelectHtml(selectedYear, minYear = 1935, maxYear = 2036, extraClass = '', dataIdx = '') {
@@ -181,7 +179,7 @@
       if (isAmbientPlaying) {
         if (ambientOsc) { ambientOsc.stop(); ambientOsc.disconnect(); ambientOsc = null; }
         isAmbientPlaying = false;
-        if (btn) { btn.classList.remove('active'); btn.innerHTML = '🔔 Nhạc Thiền Đông Sơn'; }
+        if (btn) { btn.classList.remove('active'); btn.innerHTML = '🔔 Nhạc Thiền'; }
       } else {
         if (audioCtx.state === 'suspended') audioCtx.resume();
         ambientOsc = audioCtx.createOscillator();
@@ -193,7 +191,7 @@
         gain.connect(audioCtx.destination);
         ambientOsc.start();
         isAmbientPlaying = true;
-        if (btn) { btn.classList.add('active'); btn.innerHTML = '🔊 Đang phát Tần số 432Hz'; }
+        if (btn) { btn.classList.add('active'); btn.innerHTML = '🔊 Nhạc 432Hz'; }
       }
     } catch (e) {}
   }
@@ -260,27 +258,25 @@
     const container = document.getElementById('childrenListContainer');
     if (!container) return;
     if (currentLuanTuoiMode === 'findBaby') {
-      container.innerHTML = `<div style="color:var(--jade-light);font-size:0.88rem;padding:10px 12px;background:rgba(16,185,129,0.12);border-left:4px solid var(--jade-primary);border-radius:8px;">🌟 Đang ở chế độ <b>"3. Tìm Năm Đẹp Sinh Con (2025 – 2036)"</b>: Bảng xếp hạng các năm sinh con hợp tuổi Bố Mẹ nhất đã được hiển thị ngay đầu phần kết quả bên dưới! Bạn có thể bấm nút <b>"+ Thử làm Con Út"</b> ở bất kỳ năm nào để xem chi tiết vận khí gia đình.</div>`;
+      container.innerHTML = `<div style="color:var(--jade-light);font-size:0.88rem;padding:10px 12px;background:rgba(16,185,129,0.12);border-left:4px solid var(--jade-primary);border-radius:8px;">🌟 Đang chọn <b>Tìm Năm Đẹp Sinh Con</b>: Bảng xếp hạng năm tốt nhất hiển thị ngay bên dưới.</div>`;
       return;
     }
     if (currentChildrenYears.length === 0) {
-      container.innerHTML = `<div style="color:var(--jade-light);font-size:0.86rem;padding:8px 4px;">✨ Đang ở chế độ <b>"1. Chỉ Xem 2 Vợ Chồng / Người Yêu (Chưa Có Con)"</b>. Nếu bạn đã có con, hãy bấm nút <b>"+ Thêm Năm Sinh Con"</b> ở trên để xem vận khí gia đình hội tụ tại Con Út.</div>`;
+      container.innerHTML = `<div style="color:var(--jade-light);font-size:0.86rem;padding:8px 4px;">✨ Đang xem chế độ <b>2 Vợ Chồng</b>. Bấm <b>"+ Thêm Con"</b> nếu đã có con.</div>`;
       return;
     }
     container.innerHTML = currentChildrenYears.map((yr, idx) => {
       const isLast = idx === currentChildrenYears.length - 1;
       const yInfo = AL.getYearInfo(yr);
-      const label = currentChildrenYears.length === 1
-        ? 'Con thứ 1 (Con Đầu kiêm Con Út)'
-        : (isLast ? `Con thứ ${idx + 1} (🌟 CON ÚT - Quyết định vận khí)` : `Con thứ ${idx + 1}`);
+      const label = isLast ? `Con thứ ${idx + 1} (🌟 Con Út)` : `Con thứ ${idx + 1}`;
       return `
         <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;flex-wrap:wrap;padding:8px;background:rgba(255,255,255,0.03);border-radius:8px;">
-          <span class="badge ${isLast ? 'badge-good' : 'badge-neutral'}" style="min-width:225px;">${label}</span>
+          <span class="badge ${isLast ? 'badge-good' : 'badge-neutral'}" style="min-width:160px;">${label}</span>
           <input type="number" class="form-input child-year-input" data-idx="${idx}" value="${yr}" min="1940" max="2045" style="width:105px;" />
           <div style="flex:1;min-width:240px;">
             ${buildYearSelectHtml(yr, 1960, 2038, 'child-zodiac-select', idx)}
           </div>
-          <span class="badge hanh-${yInfo.lacVietHanh}">${yInfo.canChi} · Mạng Lạc Việt: ${yInfo.lacVietHanh}</span>
+          <span class="badge hanh-${yInfo.lacVietHanh}">${yInfo.canChi} · Mạng ${yInfo.lacVietHanh}</span>
           <button type="button" class="btn-secondary btn-remove-child" data-idx="${idx}" style="padding:6px 10px;font-size:0.75rem;">✕ Xóa</button>
         </div>
       `;
@@ -371,29 +367,29 @@
       : `
         <div class="card" style="background:var(--bg-card-alt);">
           <div class="card-header">
-            <div class="card-title">👶 Chi Tiết Mức Độ Hợp Tuổi Của Các Con Với Cha & Mẹ</div>
+            <div class="card-title">👶 Độ Hợp Của Các Con Với Cha Mẹ</div>
           </div>
           ${res.childrenAnalyses.map(c => `
             <div style="padding:14px;border:1px solid ${c.isYoungest ? 'var(--jade-primary)' : 'var(--border-subtle)'};border-radius:10px;margin-bottom:12px;background:rgba(11,15,23,0.5);">
               <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:8px;">
                 <div style="font-weight:800;font-size:0.98rem;color:${c.isYoungest ? 'var(--jade-light)' : 'var(--gold-light)'};">
-                  ${c.orderTitle}: Sinh năm ${c.person.info.year} (${c.person.info.canChi}) — Mạng Lạc Việt: ${c.person.info.lacVietHanh}
+                  ${c.orderTitle}: ${c.person.info.year} (${c.person.info.canChi}) — Mạng ${c.person.info.lacVietHanh}
                 </div>
                 <span class="badge ${c.combinedScore >= 70 ? 'badge-good' : (c.combinedScore >= 55 ? 'badge-neutral' : 'badge-warn')}">
-                  Độ hợp chung với Bố Mẹ: ${c.combinedScore}/100
+                  Độ hợp: ${c.combinedScore}/100
                 </span>
               </div>
               ${c.bridgeExplanation ? `<div style="margin-bottom:10px;padding:10px 12px;background:rgba(16,185,129,0.12);border-left:3px solid var(--jade-primary);font-size:0.88rem;">${c.bridgeExplanation}</div>` : ''}
               <div class="grid-2" style="gap:10px;font-size:0.85rem;">
                 <div style="padding:10px;background:rgba(255,255,255,0.03);border-radius:8px;">
-                  <b style="color:var(--gold-light);">🔹 Với Cha (${res.father.info.year} ${res.father.info.canChi} – Mạng ${res.father.info.lacVietHanh}): ${c.withFather.totalScore}/100 điểm</b>
+                  <b style="color:var(--gold-light);">🔹 Với Cha (${res.father.info.year} ${res.father.info.canChi}): ${c.withFather.totalScore}/100</b>
                   <div style="margin-top:6px;color:var(--text-main);">${c.withFather.mang.human}</div>
-                  <div style="margin-top:4px;font-size:0.78rem;color:var(--text-muted);">• Chi tiết: ${c.withFather.can.detail} | ${c.withFather.chi.detail}</div>
+                  <div style="margin-top:4px;font-size:0.78rem;color:var(--text-muted);">• ${c.withFather.can.detail} | ${c.withFather.chi.detail}</div>
                 </div>
                 <div style="padding:10px;background:rgba(255,255,255,0.03);border-radius:8px;">
-                  <b style="color:var(--gold-light);">🔸 Với Mẹ (${res.mother.info.year} ${res.mother.info.canChi} – Mạng ${res.mother.info.lacVietHanh}): ${c.withMother.totalScore}/100 điểm</b>
+                  <b style="color:var(--gold-light);">🔸 Với Mẹ (${res.mother.info.year} ${res.mother.info.canChi}): ${c.withMother.totalScore}/100</b>
                   <div style="margin-top:6px;color:var(--text-main);">${c.withMother.mang.human}</div>
-                  <div style="margin-top:4px;font-size:0.78rem;color:var(--text-muted);">• Chi tiết: ${c.withMother.can.detail} | ${c.withMother.chi.detail}</div>
+                  <div style="margin-top:4px;font-size:0.78rem;color:var(--text-muted);">• ${c.withMother.can.detail} | ${c.withMother.chi.detail}</div>
                 </div>
               </div>
             </div>
@@ -407,7 +403,7 @@
       : `
         <div class="card" style="border-color:var(--jade-primary);">
           <div class="card-header">
-            <div class="card-title" style="color:var(--jade-light);">🛡️ Giải Tỏa Nỗi Lo Dân Gian Cho Gia Đình Bạn</div>
+            <div class="card-title" style="color:var(--jade-light);">🛡️ Hóa Giải Ngộ Nhận Dân Gian</div>
           </div>
           ${res.mythBusters.map(m => `
             <div style="margin-bottom:10px;padding:12px 14px;background:rgba(16,185,129,0.08);border-left:3px solid var(--jade-primary);border-radius:8px;">
@@ -423,30 +419,30 @@
       <div class="card" id="babyYearsTableCard" style="${currentLuanTuoiMode === 'findBaby' ? 'border:2px solid var(--gold-primary);box-shadow:0 0 24px rgba(229,184,92,0.22);' : ''}">
         <div class="card-header">
           <div>
-            <div class="card-title">🌟 Bảng Xếp Hạng Năm Đẹp Nhất Để Sinh Con / Sinh Thêm Con Út (2025 – 2036)</div>
-            <div class="card-subtitle">Đã sắp xếp từ năm Tốt Nhất xuống thấp dần cho Chồng <b>${res.father.info.year} (${res.father.info.canChi})</b> và Vợ <b>${res.mother.info.year} (${res.mother.info.canChi})</b> · Bấm <b>"+ Thử làm Con Út"</b> để xem thử kết quả ngay!</div>
+            <div class="card-title">🌟 Bảng Xếp Hạng Năm Sinh Con (2025 – 2036)</div>
+            <div class="card-subtitle">Chồng <b>${res.father.info.year} (${res.father.info.canChi})</b> & Vợ <b>${res.mother.info.year} (${res.mother.info.canChi})</b></div>
           </div>
-          <span class="badge badge-good">Gợi ý Năm Vàng 2025 – 2036</span>
+          <span class="badge badge-good">2025 – 2036</span>
         </div>
         <div class="table-wrap">
           <table class="data-table">
             <thead>
               <tr>
                 <th>Hạng</th>
-                <th>Năm Sinh Bé</th>
-                <th>Mạng Lạc Việt</th>
-                <th>Độ Hợp Cha</th>
-                <th>Độ Hợp Mẹ</th>
-                <th>Giải Thích Vì Sao Năm Này Tốt Cho Gia Đình</th>
-                <th>Điểm Tổng</th>
-                <th>Xem Thử</th>
+                <th>Năm Sinh</th>
+                <th>Mạng</th>
+                <th>Hợp Cha</th>
+                <th>Hợp Mẹ</th>
+                <th>Đánh Giá</th>
+                <th>Điểm</th>
+                <th>Chọn</th>
               </tr>
             </thead>
             <tbody>
               ${recYears.map((item, idx) => `
                 <tr>
                   <td><b>#${idx + 1}</b></td>
-                  <td><b>Năm ${item.year} (${item.cInfo.canChi})</b></td>
+                  <td><b>${item.year} (${item.cInfo.canChi})</b></td>
                   <td><span class="badge hanh-${item.cInfo.lacVietHanh}">${item.cInfo.lacVietHanh}</span></td>
                   <td>${item.withF.totalScore}/100</td>
                   <td>${item.withM.totalScore}/100</td>
@@ -457,7 +453,7 @@
                   <td><span class="badge ${item.score >= 78 ? 'badge-good' : (item.score >= 62 ? 'badge-neutral' : 'badge-warn')}">${item.score}/100</span></td>
                   <td>
                     <button type="button" class="btn-secondary btn-try-child-year" data-year="${item.year}" style="padding:5px 10px;font-size:0.76rem;white-space:nowrap;">
-                      + Thử làm Con Út
+                      + Chọn năm này
                     </button>
                   </td>
                 </tr>
@@ -470,91 +466,91 @@
 
     outBox.innerHTML = `
       ${currentLuanTuoiMode === 'findBaby' ? babyYearsCardHtml : ''}
-      <!-- TỔNG KẾT CỤC DIỆN GIA ĐẠO DỄ ĐỌC CHO KHÁCH HÀNG -->
+      <!-- TỔNG KẾT CỤC DIỆN GIA ĐẠO -->
       <div class="card" style="background:linear-gradient(145deg, #172236, #0e1524);border-width:1.5px;">
         <div class="card-header">
           <div>
-            <div class="card-title">🏛️ Kết Quả Tổng Quan Cho Gia Đình Bạn (Đọc Hiểu Ngay Trong 10 Giây)</div>
-            <div class="card-subtitle">Chồng sinh năm <b>${res.father.info.year} (${res.father.info.canChi})</b> & Vợ sinh năm <b>${res.mother.info.year} (${res.mother.info.canChi})</b></div>
+            <div class="card-title">🏛️ Tổng Quan Vận Khí Gia Đình</div>
+            <div class="card-subtitle">Chồng <b>${res.father.info.year} (${res.father.info.canChi})</b> & Vợ <b>${res.mother.info.year} (${res.mother.info.canChi})</b></div>
           </div>
           <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
             <span class="badge ${res.overallScore >= 72 ? 'badge-good' : (res.overallScore >= 55 ? 'badge-neutral' : 'badge-warn')}" style="font-size:0.96rem;padding:7px 14px;">
-              Điểm Vận Khí Gia Đạo: ${res.overallScore}/100
+              Vận Khí: ${res.overallScore}/100
             </span>
-            <button type="button" class="btn-pill" id="btnSpeakLuanTuoi">🔊 Nghe Đọc Tư Vấn</button>
-            <button type="button" class="btn-pill" id="btnShareLuanTuoiZalo" style="border-color:var(--jade-primary);color:var(--jade-light);font-weight:700;">📤 Gửi Qua Zalo Cho Con Cháu</button>
+            <button type="button" class="btn-pill" id="btnSpeakLuanTuoi">🔊 Nghe Đọc</button>
+            <button type="button" class="btn-pill" id="btnShareLuanTuoiZalo" style="border-color:var(--jade-primary);color:var(--jade-light);font-weight:700;">📤 Gửi Zalo</button>
           </div>
         </div>
 
         ${chainHtml}
 
-        <!-- 3 HỘP TÓM TẮT NGÔN NGỮ ĐỜI THƯỜNG -->
+        <!-- 3 HỘP TÓM TẮT -->
         <div class="summary-3-grid">
           <div class="summary-box">
-            <div class="summary-box-title">💑 1. Hòa Khí & Tình Cảm Vợ Chồng</div>
+            <div class="summary-box-title">💑 1. Tình Cảm Vợ Chồng</div>
             <div>${res.customerSummary.hoaKhi}</div>
           </div>
           <div class="summary-box">
-            <div class="summary-box-title">💰 2. Kinh Tế & Tài Lộc Gia Đình</div>
+            <div class="summary-box-title">💰 2. Kinh Tế & Tài Lộc</div>
             <div>${res.customerSummary.taiLoc}</div>
           </div>
           <div class="summary-box">
-            <div class="summary-box-title">💡 3. Lời Khuyên Thiết Thực Nhất</div>
+            <div class="summary-box-title">💡 3. Lời Khuyên Gia Đạo</div>
             <div style="white-space:pre-line;">${res.customerSummary.loiKhuyen}</div>
           </div>
         </div>
 
         <div style="padding:14px;background:rgba(229,184,92,0.1);border-left:4px solid var(--gold-primary);border-radius:8px;margin:14px 0 10px;">
-          <div style="font-weight:700;color:var(--gold-light);margin-bottom:4px;">📌 Đánh Giá Chuyên Sâu Cục Diện Gia Đạo:</div>
+          <div style="font-weight:700;color:var(--gold-light);margin-bottom:4px;">📌 Đánh Giá Cục Diện:</div>
           <div style="font-size:0.92rem;line-height:1.65;">${res.familyVerdict}</div>
         </div>
 
         <div style="padding:14px;background:rgba(16,185,129,0.1);border-left:4px solid var(--jade-primary);border-radius:8px;">
-          <div style="font-weight:700;color:var(--jade-light);margin-bottom:4px;">🧭 Giải Pháp Cải Thiện & Giữ Vững Thịnh Vượng:</div>
+          <div style="font-weight:700;color:var(--jade-light);margin-bottom:4px;">🧭 Giải Pháp Gia Đạo:</div>
           <div style="font-size:0.9rem;white-space:pre-line;line-height:1.65;">${res.familySolution}</div>
         </div>
       </div>
 
-      <!-- SO SÁNH 3 TRỤ ĐẦU VÀO VỢ CHỒNG & BẢN MỆNH NỘI TẠI -->
+      <!-- SO SÁNH 3 TRỤ VỢ CHỒNG & BẢN MỆNH -->
       <div class="grid-2">
         <div class="card">
           <div class="card-header">
-            <div class="card-title">💑 Phân Tích Chi Tiết Hai Vợ Chồng: ${res.couple.totalScore}/100</div>
+            <div class="card-title">💑 Luận Tuổi Hai Vợ Chồng (${res.couple.totalScore}/100)</div>
             <span class="badge ${res.couple.badgeClass}">${res.couple.rank}</span>
           </div>
           <div style="font-size:0.88rem;display:flex;flex-direction:column;gap:10px;">
             <div style="padding:12px;background:rgba(255,255,255,0.03);border-radius:8px;">
-              <b style="color:var(--gold-light);">1. Về Suy Nghĩ & Lời Ăn Tiếng Nói (Thiên Can):</b>
+              <b style="color:var(--gold-light);">1. Thiên Can (Tính Cách & Lời Nói):</b>
               <div style="margin-top:4px;color:var(--text-main);">${res.couple.can.human}</div>
-              <div style="margin-top:4px;font-size:0.78rem;color:var(--text-muted);">• Gốc học thuật: ${res.couple.can.detail}</div>
+              <div style="margin-top:4px;font-size:0.78rem;color:var(--text-muted);">• ${res.couple.can.detail}</div>
             </div>
             <div style="padding:12px;background:rgba(255,255,255,0.03);border-radius:8px;">
-              <b style="color:var(--gold-light);">2. Về Lối Sống & Thói Quen Sinh Hoạt (Địa Chi):</b>
+              <b style="color:var(--gold-light);">2. Địa Chi (Lối Sống & Sinh Hoạt):</b>
               <div style="margin-top:4px;color:var(--text-main);">${res.couple.chi.human}</div>
-              <div style="margin-top:4px;font-size:0.78rem;color:var(--text-muted);">• Gốc học thuật: ${res.couple.chi.detail}</div>
+              <div style="margin-top:4px;font-size:0.78rem;color:var(--text-muted);">• ${res.couple.chi.detail}</div>
             </div>
             <div style="padding:12px;background:rgba(229,184,92,0.08);border:1px solid var(--border-gold);border-radius:8px;">
-              <b style="color:var(--gold-light);">3. Về Sức Khỏe & Hậu Thuẫn Tài Lộc (Thân Mạng Lạc Việt):</b>
+              <b style="color:var(--gold-light);">3. Thân Mạng Lạc Việt (Tài Lộc & Sức Khỏe):</b>
               <div style="margin-top:4px;color:var(--text-main);">${res.couple.mang.human}</div>
-              <div style="margin-top:4px;font-size:0.78rem;color:var(--text-muted);">• Gốc học thuật: ${res.couple.mang.detail}</div>
+              <div style="margin-top:4px;font-size:0.78rem;color:var(--text-muted);">• ${res.couple.mang.detail}</div>
             </div>
           </div>
         </div>
 
         <div class="card">
           <div class="card-header">
-            <div class="card-title">🧬 Tính Cách & Vận Số Riêng Của Từng Người</div>
+            <div class="card-title">🧬 Bản Mệnh Từng Người</div>
           </div>
           <div style="font-size:0.88rem;display:flex;flex-direction:column;gap:12px;">
             <div style="padding:12px;background:rgba(255,255,255,0.03);border-radius:8px;">
-              <div style="font-weight:800;color:var(--gold-light);font-size:0.95rem;">👨 Chồng: Sinh năm ${res.father.info.year} (${res.father.info.canChi} – Mạng ${res.father.info.lacVietHanh})</div>
-              <div style="margin-top:4px;color:var(--jade-light);font-weight:600;">• Đặc trưng số mệnh: ${res.father.internalType}</div>
+              <div style="font-weight:800;color:var(--gold-light);font-size:0.95rem;">👨 Chồng: ${res.father.info.year} (${res.father.info.canChi} – Mạng ${res.father.info.lacVietHanh})</div>
+              <div style="margin-top:4px;color:var(--jade-light);font-weight:600;">• ${res.father.internalType}</div>
               <div style="margin-top:4px;color:var(--text-main);">${res.father.internalAdv}</div>
               ${res.father.specialNote ? `<div style="margin-top:5px;color:var(--text-muted);font-size:0.83rem;">• ${res.father.specialNote}</div>` : ''}
             </div>
             <div style="padding:12px;background:rgba(255,255,255,0.03);border-radius:8px;">
-              <div style="font-weight:800;color:var(--gold-light);font-size:0.95rem;">👩 Vợ: Sinh năm ${res.mother.info.year} (${res.mother.info.canChi} – Mạng ${res.mother.info.lacVietHanh})</div>
-              <div style="margin-top:4px;color:var(--jade-light);font-weight:600;">• Đặc trưng số mệnh: ${res.mother.internalType}</div>
+              <div style="font-weight:800;color:var(--gold-light);font-size:0.95rem;">👩 Vợ: ${res.mother.info.year} (${res.mother.info.canChi} – Mạng ${res.mother.info.lacVietHanh})</div>
+              <div style="margin-top:4px;color:var(--jade-light);font-weight:600;">• ${res.mother.internalType}</div>
               <div style="margin-top:4px;color:var(--text-main);">${res.mother.internalAdv}</div>
               ${res.mother.specialNote ? `<div style="margin-top:5px;color:var(--text-muted);font-size:0.83rem;">• ${res.mother.specialNote}</div>` : ''}
             </div>
@@ -684,50 +680,50 @@
     const hdListStr = evalRes.hours12.filter(h => h.hoangDao).map(h => `${h.chi} (${h.timeRange})`).join(' · ');
 
     out.innerHTML = `
-      <!-- TỜ LỊCH BLOC TRUYỀN THỐNG CHỮ ĐẠI DỄ ĐỌC CHO NGƯỜI LỚN TUỔI -->
+      <!-- TỜ LỊCH BLOC TRUYỀN THỐNG -->
       <div class="card" style="background:linear-gradient(145deg, #172236, #0e1524);">
         <div class="card-header">
           <div>
             <div class="card-title">
-              📅 Tờ Lịch Vạn Niên Lạc Việt — ${dowStr}, Ngày ${String(dd).padStart(2,'0')}/${String(mm).padStart(2,'0')}/${yy}
+              📅 Lịch Vạn Niên — ${dowStr}, ${String(dd).padStart(2,'0')}/${String(mm).padStart(2,'0')}/${yy}
             </div>
             <div class="card-subtitle">
-              Đối chiếu với Gia Chủ sinh năm <b>${ownerYear} (${buildCheck.bInfo.canChi} – Mạng ${buildCheck.bInfo.lacVietHanh})</b> · Mục đích đang xem: <b style="color:var(--gold-light);">${purposeCfg.label}</b>
+              Gia Chủ: <b>${ownerYear} (${buildCheck.bInfo.canChi} – Mạng ${buildCheck.bInfo.lacVietHanh})</b> · Việc: <b style="color:var(--gold-light);">${purposeCfg.label}</b>
             </div>
           </div>
           <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
             <span class="badge ${evalRes.ratingClass}" style="font-size:0.95rem;padding:6px 14px;">
-              ${evalRes.ratingLabel} (${evalRes.score}/100 điểm)
+              ${evalRes.ratingLabel} (${evalRes.score}/100)
             </span>
-            <button type="button" class="btn-pill" id="btnSpeakTrachCat">🔊 Nghe Đọc Ngày Này</button>
-            <button type="button" class="btn-pill" id="btnShareTrachCatZalo" style="border-color:var(--jade-primary);color:var(--jade-light);font-weight:700;">📤 Gửi Qua Zalo</button>
+            <button type="button" class="btn-pill" id="btnSpeakTrachCat">🔊 Nghe Đọc</button>
+            <button type="button" class="btn-pill" id="btnShareTrachCatZalo" style="border-color:var(--jade-primary);color:var(--jade-light);font-weight:700;">📤 Gửi Zalo</button>
           </div>
         </div>
 
         <div class="lich-bloc-card">
           <div class="lich-bloc-side">
-            <div class="lich-bloc-label">☀️ DƯƠNG LỊCH (LỊCH TÂY)</div>
+            <div class="lich-bloc-label">☀️ DƯƠNG LỊCH</div>
             <div class="lich-bloc-big-num">${String(dd).padStart(2, '0')}</div>
             <div class="lich-bloc-sub">${dowStr} · Tháng ${mm} Năm ${yy}</div>
             <div style="font-size:0.84rem;color:var(--text-muted);margin-top:4px;">Tiết khí: <b>${f.solarTerm.name}</b></div>
           </div>
           <div class="lich-bloc-side">
-            <div class="lich-bloc-label">🌙 ÂM LỊCH LẠC VIỆT (LỊCH TA)</div>
+            <div class="lich-bloc-label">🌙 ÂM LỊCH</div>
             <div class="lich-bloc-big-num" style="color:var(--jade-light);">${String(f.lunar.lunarDay).padStart(2, '0')}</div>
             <div class="lich-bloc-sub">Tháng ${f.lunar.lunarMonth}${f.lunar.lunarLeap ? ' (Nhuận)' : ''} · Năm ${f.yearInfo.canChi}</div>
-            <div style="font-size:0.84rem;color:var(--gold-light);margin-top:4px;">Ngày <b>${f.day.canChi}</b> (Mạng Lạc Việt: <b>${f.day.lacVietHanh}</b>) · Tháng <b>${f.month.canChi}</b></div>
+            <div style="font-size:0.84rem;color:var(--gold-light);margin-top:4px;">Ngày <b>${f.day.canChi}</b> (Mạng <b>${f.day.lacVietHanh}</b>) · Tháng <b>${f.month.canChi}</b></div>
           </div>
         </div>
 
         <div style="padding:12px 16px;border-radius:10px;margin-bottom:14px;background:${fitsSelectedPurpose ? 'rgba(16,185,129,0.14)' : 'rgba(245,158,11,0.14)'};border-left:4px solid ${fitsSelectedPurpose ? 'var(--jade-primary)' : 'var(--amber-warn)'};font-size:0.95rem;">
           ${fitsSelectedPurpose
-            ? `✅ <b>KẾT LUẬN CHO VIỆC "${purposeCfg.label.toUpperCase()}":</b> Ngày ${dd}/${mm}/${yy} (${f.lunar.lunarDay}/${f.lunar.lunarMonth} ÂL) là ngày <b>RẤT TỐT (${evalRes.score}/100 điểm)</b>, không phạm ngày kỵ và hợp với việc <b>${purposeCfg.label}</b> của gia chủ tuổi ${buildCheck.bInfo.canChi}!`
-            : `⚠️ <b>LƯU Ý CHO VIỆC "${purposeCfg.label.toUpperCase()}":</b> Ngày ${dd}/${mm}/${yy} chưa phải ngày tối ưu nhất cho việc <b>${purposeCfg.label}</b>. Bác/Anh/Chị hãy chọn một trong <b>các Ngày Đẹp Nhất trong tháng ${mm}/${yy}</b> ở bảng bên dưới nhé!`}
+            ? `✅ <b>THUẬN LỢI (${purposeCfg.label}):</b> Ngày ${dd}/${mm}/${yy} (${f.lunar.lunarDay}/${f.lunar.lunarMonth} ÂL) rất tốt (${evalRes.score}/100 điểm), hợp với tuổi ${buildCheck.bInfo.canChi}.`
+            : `⚠️ <b>LƯU Ý (${purposeCfg.label}):</b> Ngày ${dd}/${mm}/${yy} chưa tối ưu. Hãy chọn trong <b>Bảng Ngày Tốt Tháng ${mm}/${yy}</b> bên dưới.`}
         </div>
 
         <div class="grid-3" style="margin-bottom:14px;">
           <div style="padding:12px;background:rgba(255,255,255,0.03);border:1px solid var(--border-subtle);border-radius:10px;">
-            <div style="font-size:0.75rem;color:var(--gold-primary);font-weight:700;">HOÀNG ĐẠO & THẬP NHỊ TRỰC</div>
+            <div style="font-size:0.75rem;color:var(--gold-primary);font-weight:700;">HOÀNG ĐẠO & TRỰC NGÀY</div>
             <div style="font-weight:800;font-size:0.95rem;margin:4px 0;">
               ${evalRes.hoangDaoInfo.name} (${evalRes.hoangDaoInfo.hoangDao ? '🌟 Hoàng Đạo' : '⚫ Hắc Đạo'}) · Trực ${evalRes.trucInfo.name}
             </div>
@@ -735,36 +731,36 @@
           </div>
 
           <div style="padding:12px;background:rgba(255,255,255,0.03);border:1px solid var(--border-subtle);border-radius:10px;">
-            <div style="font-size:0.75rem;color:var(--gold-primary);font-weight:700;">NHỊ THẬP BÁT TÚ (CHUYÊN ĐỀ 6 PHẦN A)</div>
+            <div style="font-size:0.75rem;color:var(--gold-primary);font-weight:700;">NHỊ THẬP BÁT TÚ</div>
             <div style="font-weight:800;font-size:0.95rem;margin:4px 0;">
               Sao #${evalRes.saoInfo.id}: ${evalRes.saoInfo.name} (${evalRes.saoInfo.rank})
             </div>
             <div style="font-size:0.78rem;color:var(--jade-light);"><b>Nên làm:</b> ${evalRes.saoInfo.nenLam}</div>
             <div style="font-size:0.78rem;color:#fda4af;margin-top:2px;"><b>Kiêng cữ:</b> ${evalRes.saoInfo.kiengCu}</div>
-            ${evalRes.saoInfo.ngoaiLe ? `<div style="font-size:0.76rem;color:var(--gold-light);margin-top:4px;padding-top:4px;border-top:1px dashed rgba(255,255,255,0.1);"><b>⚡ Ngoại lệ bí truyền:</b> ${evalRes.saoInfo.ngoaiLe}</div>` : ''}
+            ${evalRes.saoInfo.ngoaiLe ? `<div style="font-size:0.76rem;color:var(--gold-light);margin-top:4px;padding-top:4px;border-top:1px dashed rgba(255,255,255,0.1);"><b>⚡ Ngoại lệ:</b> ${evalRes.saoInfo.ngoaiLe}</div>` : ''}
           </div>
 
           <div style="padding:12px;background:rgba(255,255,255,0.03);border:1px solid var(--border-subtle);border-radius:10px;">
-            <div style="font-size:0.75rem;color:var(--gold-primary);font-weight:700;">PHƯƠNG VỊ XUẤT HÀNH (BÀI 21 PHẦN A)</div>
+            <div style="font-size:0.75rem;color:var(--gold-primary);font-weight:700;">HƯỚNG XUẤT HÀNH</div>
             <div style="font-size:0.84rem;margin-top:4px;">
-              <div>🎉 <b>Hỷ Thần (Hướng Tốt):</b> <span style="color:var(--jade-light);font-weight:700;">${evalRes.huong.hyThan}</span></div>
-              <div>💰 <b>Tài Thần (Hướng Tốt):</b> <span style="color:var(--gold-light);font-weight:700;">${evalRes.huong.taiThan}</span></div>
-              <div>🦩 <b>Hạc Thần (Hướng Xấu):</b> <span style="color:#fda4af;font-weight:700;">${evalRes.huong.hacThan}</span></div>
+              <div>🎉 <b>Hỷ Thần:</b> <span style="color:var(--jade-light);font-weight:700;">${evalRes.huong.hyThan}</span></div>
+              <div>💰 <b>Tài Thần:</b> <span style="color:var(--gold-light);font-weight:700;">${evalRes.huong.taiThan}</span></div>
+              <div>🦩 <b>Hạc Thần (Xấu):</b> <span style="color:#fda4af;font-weight:700;">${evalRes.huong.hacThan}</span></div>
               <div style="margin-top:6px;font-size:0.78rem;color:${evalRes.huong.conflict ? '#fb7185' : 'var(--text-muted)'};">${evalRes.huong.conflictNote}</div>
             </div>
           </div>
         </div>
 
-        <!-- GIỜ TỐI THIỆN: QUÝ NHÂN ĐĂNG THIÊN MÔN (LỤC NHÂM ĐẠI ĐỘN) -->
+        <!-- GIỜ QUÝ NHÂN ĐĂNG THIÊN MÔN -->
         <div style="padding:14px;background:linear-gradient(90deg, rgba(229,184,92,0.16), rgba(16,185,129,0.12));border:1px solid var(--gold-primary);border-radius:10px;margin-bottom:14px;">
           <div style="font-weight:800;color:var(--gold-light);font-size:0.95rem;">
-            👑 GIỜ TỐI THIỆN "QUÝ NHÂN ĐĂNG THIÊN MÔN" (Lục Nhâm Đại Độn)
+            👑 Giờ Quý Nhân Đăng Thiên Môn
           </div>
           <div style="font-size:0.82rem;color:var(--text-muted);margin-bottom:8px;">
-            Nguyệt Tướng hiện hành: <b>${evalRes.quyNhanHours.nguyetTuong}</b> · Dương Quý tại <b>${evalRes.quyNhanHours.duongQuyCung}</b> · Âm Quý tại <b>${evalRes.quyNhanHours.amQuyCung}</b> · Giờ Thọ Tử cần tránh: <b style="color:#fda4af;">${evalRes.gioThoTu}</b> · Giờ Sát Chủ tháng: <b style="color:#fda4af;">${evalRes.gioSatChu}</b>
+            Nguyệt Tướng: <b>${evalRes.quyNhanHours.nguyetTuong}</b> · Dương Quý: <b>${evalRes.quyNhanHours.duongQuyCung}</b> · Âm Quý: <b>${evalRes.quyNhanHours.amQuyCung}</b> · Kỵ giờ Thọ Tử: <b style="color:#fda4af;">${evalRes.gioThoTu}</b> · Sát Chủ: <b style="color:#fda4af;">${evalRes.gioSatChu}</b>
           </div>
           ${evalRes.quyNhanHours.hours.length === 0
-            ? `<div style="font-size:0.85rem;">Hôm nay Quý Nhân đăng Thiên Môn rơi vào giờ nghịch ngày/đêm nên dùng 6 Giờ Hoàng Đạo bên dưới để khởi sự.</div>`
+            ? `<div style="font-size:0.85rem;">Hôm nay dùng 6 Giờ Hoàng Đạo bên dưới để khởi sự.</div>`
             : evalRes.quyNhanHours.hours.map(h => `
                 <div style="font-size:0.86rem;margin-top:4px;color:#fff;">
                   🌟 <b>${h.type}: Giờ ${h.chi} (${h.timeRange})</b> — ${h.detail}
@@ -772,25 +768,25 @@
               `).join('')}
         </div>
 
-        <!-- BỘ LỌC CÁT THẦN & HUNG SÁT TRONG NGÀY -->
+        <!-- CÁT THẦN & HUNG SÁT -->
         <div class="grid-2" style="margin-bottom:14px;">
           <div style="padding:12px;background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.3);border-radius:8px;">
-            <div style="font-weight:700;color:var(--jade-light);margin-bottom:6px;">✅ Yếu Tố Cát Lành & Tương Hợp Gia Chủ (${ownerYear}):</div>
-            ${evalRes.blessings.length === 0 ? `<div style="font-size:0.82rem;color:var(--text-muted);">Không có đại cát tinh nổi trội.</div>` : evalRes.blessings.map(b => `<div style="font-size:0.83rem;margin-bottom:4px;">• <b>${b.name}:</b> ${b.desc}</div>`).join('')}
-            ${evalRes.ownerComparison ? `<div style="margin-top:6px;padding-top:6px;border-top:1px dashed rgba(255,255,255,0.1);font-size:0.83rem;">👤 <b>Đối chiếu Gia Chủ ${evalRes.ownerComparison.ownerInfo.canChi}:</b> ${evalRes.ownerComparison.ownerNote}</div>` : ''}
+            <div style="font-weight:700;color:var(--jade-light);margin-bottom:6px;">✅ Cát Tinh & Độ Hợp Gia Chủ (${ownerYear}):</div>
+            ${evalRes.blessings.length === 0 ? `<div style="font-size:0.82rem;color:var(--text-muted);">Bình hòa.</div>` : evalRes.blessings.map(b => `<div style="font-size:0.83rem;margin-bottom:4px;">• <b>${b.name}:</b> ${b.desc}</div>`).join('')}
+            ${evalRes.ownerComparison ? `<div style="margin-top:6px;padding-top:6px;border-top:1px dashed rgba(255,255,255,0.1);font-size:0.83rem;">👤 <b>Gia Chủ ${evalRes.ownerComparison.ownerInfo.canChi}:</b> ${evalRes.ownerComparison.ownerNote}</div>` : ''}
           </div>
 
           <div style="padding:12px;background:rgba(244,63,94,0.08);border:1px solid rgba(244,63,94,0.3);border-radius:8px;">
-            <div style="font-weight:700;color:#fda4af;margin-bottom:6px;">⚠️ Bộ Lọc Loại Trừ Ngày Kỵ Cổ Truyền:</div>
+            <div style="font-weight:700;color:#fda4af;margin-bottom:6px;">⚠️ Ngày Kỵ Cần Tránh:</div>
             ${evalRes.taboos.length === 0
-              ? `<div style="font-size:0.84rem;color:var(--jade-light);">🎉 Ngày hoàn toàn SẠCH: Không phạm Dương Công Kỵ Nhật, Tam Nương, Nguyệt Kỵ, Sát Chủ, Thọ Tử, Vãng Vong hay Thập Ác Đại Bại!</div>`
+              ? `<div style="font-size:0.84rem;color:var(--jade-light);">🎉 Ngày SẠCH: Không phạm Dương Công, Tam Nương, Nguyệt Kỵ, Sát Chủ, Thọ Tử, Vãng Vong, Thập Ác Đại Bại.</div>`
               : evalRes.taboos.map(t => `<div style="font-size:0.83rem;margin-bottom:4px;">• <b style="color:#fb7185;">${t.name}:</b> ${t.desc}</div>`).join('')}
           </div>
         </div>
 
-        <!-- 12 GIỜ HOÀNG ĐẠO / HẮC ĐẠO TRONG NGÀY -->
+        <!-- 12 GIỜ TRONG NGÀY -->
         <div>
-          <div style="font-weight:700;color:var(--gold-light);font-size:0.88rem;margin-bottom:8px;">🕐 Chi Tiết 12 Giờ Trong Ngày (Ưu tiên 6 Giờ Hoàng Đạo):</div>
+          <div style="font-weight:700;color:var(--gold-light);font-size:0.88rem;margin-bottom:8px;">🕐 12 Giờ Trong Ngày:</div>
           <div class="grid-4">
             ${evalRes.hours12.map(h => `
               <div style="padding:8px 10px;border-radius:6px;background:${h.hoangDao ? 'rgba(16,185,129,0.12)' : 'rgba(255,255,255,0.03)'};border:1px solid ${h.hoangDao ? 'rgba(16,185,129,0.4)' : 'var(--border-subtle)'};font-size:0.78rem;">
@@ -804,12 +800,12 @@
         </div>
       </div>
 
-      <!-- KIỂM TRA TUỔI XÂY NHÀ (KIM LÂU KHỞI CẤN 10 TUỔI, HOANG ỐC, TAM TAI) & THÁNG XUẤT GIÁ -->
+      <!-- KIỂM TRA TUỔI XÂY NHÀ & THÁNG CƯỚI HỎI -->
       <div class="card">
         <div class="card-header">
           <div>
-            <div class="card-title">🏗️ Kiểm Tra Tuổi Động Thổ Xây Nhà (Kim Lâu Khởi Cung Cấn – Hoang Ốc – Tam Tai) & Tháng Cưới Hỏi</div>
-            <div class="card-subtitle">Tính Kim Lâu khởi 10 tuổi tại Cung Cấn (Quái Địa Cầu), Lục Cung Hoang Ốc, Tam Tai & Tháng Xuất Giá</div>
+            <div class="card-title">🏗️ Kiểm Tra Tuổi Xây Nhà & Cưới Hỏi</div>
+            <div class="card-subtitle">Kim Lâu · Hoang Ốc · Tam Tai · Tháng Xuất Giá</div>
           </div>
         </div>
         <div style="padding:12px;background:${buildCheck.canBuild ? 'rgba(16,185,129,0.12)' : 'rgba(245,158,11,0.12)'};border-left:4px solid ${buildCheck.canBuild ? 'var(--jade-primary)' : 'var(--amber-warn)'};border-radius:8px;margin-bottom:14px;font-size:0.9rem;">
@@ -817,22 +813,22 @@
         </div>
         <div class="grid-4">
           <div style="padding:10px;background:rgba(255,255,255,0.03);border-radius:8px;font-size:0.83rem;">
-            <b style="color:var(--gold-light);">1. Hạn Kim Lâu (Khởi Cấn 10 tuổi):</b>
+            <b style="color:var(--gold-light);">1. Kim Lâu:</b>
             <div style="margin-top:4px;color:${buildCheck.kimLau.pham ? '#fb7185' : '#34d399'};font-weight:700;">${buildCheck.kimLau.type}</div>
             <div style="margin-top:2px;color:var(--text-muted);">${buildCheck.kimLau.desc}</div>
           </div>
           <div style="padding:10px;background:rgba(255,255,255,0.03);border-radius:8px;font-size:0.83rem;">
-            <b style="color:var(--gold-light);">2. Hạn Hoang Ốc (Lục Cung):</b>
+            <b style="color:var(--gold-light);">2. Hoang Ốc:</b>
             <div style="margin-top:4px;color:${buildCheck.hoangOc.good ? '#34d399' : '#fb7185'};font-weight:700;">${buildCheck.hoangOc.name}</div>
             <div style="margin-top:2px;color:var(--text-muted);">${buildCheck.hoangOc.desc}</div>
           </div>
           <div style="padding:10px;background:rgba(255,255,255,0.03);border-radius:8px;font-size:0.83rem;">
-            <b style="color:var(--gold-light);">3. Hạn Tam Tai:</b>
+            <b style="color:var(--gold-light);">3. Tam Tai:</b>
             <div style="margin-top:4px;color:${buildCheck.tamTai.pham ? '#fb7185' : '#34d399'};font-weight:700;">${buildCheck.tamTai.pham ? 'Phạm Tam Tai' : 'Không phạm Tam Tai'}</div>
             <div style="margin-top:2px;color:var(--text-muted);">${buildCheck.tamTai.desc}</div>
           </div>
           <div style="padding:10px;background:rgba(255,255,255,0.03);border-radius:8px;font-size:0.83rem;">
-            <b style="color:var(--gold-light);">4. Tháng Xuất Giá (Nữ tuổi ${buildCheck.bInfo.chi}):</b>
+            <b style="color:var(--gold-light);">4. Tháng Cưới Hỏi (Tuổi ${buildCheck.bInfo.chi}):</b>
             <div style="margin-top:4px;color:#34d399;"><b>Đại lợi:</b> ${buildCheck.xuatGia.daiLoi}</div>
             <div style="color:var(--gold-light);"><b>Tiểu lợi:</b> ${buildCheck.xuatGia.tieuLoi}</div>
             <div style="color:var(--text-muted);font-size:0.75rem;">Kỵ Công cô: ${buildCheck.xuatGia.congCo} | Phu chủ: ${buildCheck.xuatGia.phuChu}</div>
@@ -840,27 +836,27 @@
         </div>
       </div>
 
-      <!-- DANH SÁCH TOP NGÀY TỐT TRONG THÁNG ${mm}/${yy} -->
+      <!-- DANH SÁCH NGÀY TỐT TRONG THÁNG -->
       <div class="card">
         <div class="card-header">
           <div>
-            <div class="card-title">🌟 Các Ngày Tốt Nhất Tháng ${mm}/${yy} Cho Việc "${purposeCfg.label}" — Gia Chủ Tuổi ${ownerYear} (${buildCheck.bInfo.canChi})</div>
-            <div class="card-subtitle">Đã tự động loại trừ Dương Công Kỵ Nhật, Tam Nương, Nguyệt Kỵ, Sát Chủ, Thọ Tử, Vãng Vong, Ngày Xung Tuổi · Bấm <b>"Xem ngày này"</b> để mở tờ lịch chi tiết</div>
+            <div class="card-title">🌟 Ngày Tốt Tháng ${mm}/${yy} (${purposeCfg.label})</div>
+            <div class="card-subtitle">Gia Chủ ${ownerYear} (${buildCheck.bInfo.canChi}) · Đã lọc sạch các ngày kỵ</div>
           </div>
-          <span class="badge badge-good">Tìm thấy ${displayDays.length} ngày đẹp</span>
+          <span class="badge badge-good">${displayDays.length} ngày tốt</span>
         </div>
         <div class="table-wrap">
           <table class="data-table">
             <thead>
               <tr>
-                <th>Ngày Dương</th>
-                <th>Ngày Âm</th>
-                <th>Can Chi Ngày & Mạng Lạc Việt</th>
+                <th>Dương Lịch</th>
+                <th>Âm Lịch</th>
+                <th>Can Chi & Mạng</th>
                 <th>Hoàng Đạo / Trực / Sao</th>
-                <th>Giờ Quý Nhân Đăng Thiên Môn / Hoàng Đạo</th>
-                <th>Hướng Tốt (Hỷ / Tài)</th>
-                <th>Điểm Cát</th>
-                <th>Chi Tiết</th>
+                <th>Giờ Tốt</th>
+                <th>Hướng Tốt</th>
+                <th>Điểm</th>
+                <th>Xem</th>
               </tr>
             </thead>
             <tbody>
@@ -880,7 +876,7 @@
                     <td><span class="badge badge-good">${d.score}/100</span></td>
                     <td>
                       <button type="button" class="btn-secondary btn-pick-date" data-date="${s.year}-${String(s.month).padStart(2,'0')}-${String(s.day).padStart(2,'0')}" style="padding:5px 10px;font-size:0.78rem;">
-                        Xem ngày này
+                        Xem
                       </button>
                     </td>
                   </tr>
@@ -982,28 +978,28 @@
       <div class="card" style="border-color:var(--gold-light);background:linear-gradient(145deg, #162238, #101726);">
         <div class="card-header">
           <div>
-            <div class="card-title">🔍 Dịch Nghĩa Chi Tiết Cung ${p.cungName} ${p.isThan ? '(Thân Cư ' + p.cungName + ')' : ''} — Cung ${p.canChi} (${p.chiHanh})</div>
-            <div class="card-subtitle">Đại vận 10 năm tại cung này: Từ ${p.daiVan} đến ${p.daiVan + 9} tuổi Âm lịch · Vòng Tràng Sinh: <b>${p.vongTrangSinh}</b></div>
+            <div class="card-title">🔍 Luận Giải Cung ${p.cungName} (${p.canChi})</div>
+            <div class="card-subtitle">Đại vận: ${p.daiVan}–${p.daiVan + 9} tuổi · Vòng Tràng Sinh: <b>${p.vongTrangSinh}</b></div>
           </div>
-          <span class="badge badge-good">Chính tinh: ${cr.starHeader || chinhNames}</span>
+          <span class="badge badge-good">${cr.starHeader || chinhNames}</span>
         </div>
 
         <div style="font-size:0.9rem;display:flex;flex-direction:column;gap:10px;">
           <div style="padding:12px 14px;background:rgba(229,184,92,0.1);border-left:4px solid var(--gold-primary);border-radius:8px;line-height:1.6;">
-            <div style="font-weight:800;color:var(--gold-light);margin-bottom:4px;">📖 Giải nghĩa dễ hiểu cho khách hàng (${p.cungName}):</div>
+            <div style="font-weight:800;color:var(--gold-light);margin-bottom:4px;">📖 Ý Nghĩa Cung ${p.cungName}:</div>
             <div style="color:var(--text-muted);font-size:0.83rem;margin-bottom:6px;"><i>${cungGuides[p.cungName] || ''}</i></div>
             <div>${cr.mainReading || ''}</div>
           </div>
 
           <div class="grid-2" style="gap:10px;">
             <div style="padding:10px 12px;background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.28);border-radius:8px;">
-              <div style="font-weight:700;color:#6ee7b7;margin-bottom:4px;">✨ Điểm sáng & Sao Tốt trợ lực (${p.catTinh.join(', ') || 'Bình hòa'}, ${p.vongLocTon}):</div>
+              <div style="font-weight:700;color:#6ee7b7;margin-bottom:4px;">✨ Cát Tinh Hội Họp:</div>
               <ul style="margin:0;padding-left:18px;font-size:0.83rem;line-height:1.55;">
                 ${(cr.goodNotes || []).map(n => `<li>${n}</li>`).join('')}
               </ul>
             </div>
             <div style="padding:10px 12px;background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.28);border-radius:8px;">
-              <div style="font-weight:700;color:#fcd34d;margin-bottom:4px;">⚠️ Lưu ý & Cách hóa giải (${p.satTinh.join(', ') || 'Không có đại sát tinh'}):</div>
+              <div style="font-weight:700;color:#fcd34d;margin-bottom:4px;">⚠️ Lưu Ý & Hóa Giải:</div>
               <ul style="margin:0;padding-left:18px;font-size:0.83rem;line-height:1.55;">
                 ${(cr.cautionNotes || []).map(n => `<li>${n}</li>`).join('')}
               </ul>
@@ -1011,9 +1007,9 @@
           </div>
 
           <div style="margin-top:2px;padding:10px 14px;background:rgba(16,185,129,0.1);border-left:3px solid var(--jade-primary);border-radius:6px;">
-            <b style="color:var(--jade-light);">🧭 Bí Quyết Cải Tạo Vận Mệnh Theo Lý Học Lạc Việt:</b>
+            <b style="color:var(--jade-light);">🧭 Lời Khuyên Cải Mệnh:</b>
             <div style="margin-top:4px;font-size:0.84rem;line-height:1.55;">
-              Lá số Tử Vi chỉ ra <b>Định Tính</b> (xu hướng sự việc tại cung ${p.cungName}), còn <b>Định Lượng</b> (thành tựu lớn hay nhỏ, hóa giải hạn nặng thành nhẹ) do <b>Phong Thủy Nhà Ở</b> và <b>Tuổi Con Út</b> quyết định. Khi bước vào Đại vận ${p.daiVan}–${p.daiVan + 9} tuổi tại cung ${p.chi} (${p.chiHanh}), bạn nên ưu tiên hướng nhà/bàn làm việc tương sinh với hành <b>${chart.meta.yInfo.lacVietHanh}</b> và chọn ngày giờ tốt khi khởi sự lớn.
+              Lá số Tử Vi chỉ ra <b>Định Tính</b> (xu hướng sự việc tại cung ${p.cungName}), còn <b>Định Lượng</b> (thành tựu lớn hay nhỏ, hóa giải hạn nặng thành nhẹ) do <b>Phong Thủy Nhà Ở</b> và <b>Tuổi Con Út</b> quyết định. Khi bước vào Đại vận ${p.daiVan}–${p.daiVan + 9} tuổi tại cung ${p.chi} (${p.chiHanh}), nên ưu tiên hướng nhà/bàn làm việc tương sinh với hành <b>${chart.meta.yInfo.lacVietHanh}</b>.
             </div>
           </div>
         </div>
@@ -1069,24 +1065,24 @@
         : `Đang nhập <b>Dương lịch ${m.solarDateStr}</b> ➔ Tương ứng <b>Âm lịch: ${m.lunarDateStr}</b> · Năm <b>${m.tuTru.nam}</b>, Tháng <b>${m.tuTru.thang}</b>, Ngày <b>${m.tuTru.ngay}</b>, Giờ <b>${m.tuTru.gio}</b>`;
     }
 
-    // Bản luận giải tổng hợp 6 mặt cuộc đời dễ hiểu cho khách hàng
+    // Bản luận giải tổng hợp 6 mặt cuộc đời
     const lifeSummaryHtml = `
       <div class="card" style="border-color:var(--gold-light);background:linear-gradient(145deg, #17233a, #0e1525);">
         <div class="card-header">
           <div>
             <div class="card-title" style="font-size:1.15rem;">
-              📜 Bản Luận Giải Cuộc Đời & Vận Hạn Năm ${m.viewYear} Dễ Hiểu Cho ${m.name} (${m.amDuongNamNu} – ${m.tuTru.nam})
+              📜 Luận Giải Tử Vi — ${m.name} (${m.amDuongNamNu} · ${m.tuTru.nam})
             </div>
             <div class="card-subtitle">
-              Hệ thống đã tự động dịch toàn bộ các sao Tử Vi của bạn thành ngôn ngữ đời thường dễ đọc nhất · Bản mệnh Lạc Thư: <b>${m.yInfo.lacVietName} (${m.yInfo.lacVietHanh})</b> · Cục: <b>${m.cucLacViet.name}</b>
+              Bản mệnh Lạc Thư: <b>${m.yInfo.lacVietName} (${m.yInfo.lacVietHanh})</b> · Cục: <b>${m.cucLacViet.name}</b>
             </div>
           </div>
           <div style="display:flex;gap:8px;flex-wrap:wrap;">
             <button type="button" class="btn-secondary" id="btnSpeakTuViSummary" style="padding:7px 12px;font-size:0.8rem;">
-              🔊 Nghe Đọc Luận Giải Tử Vi
+              🔊 Nghe Đọc
             </button>
             <button type="button" class="btn-secondary" id="btnShareTuViZalo" style="padding:7px 12px;font-size:0.8rem;border-color:var(--jade-primary);color:var(--jade-light);font-weight:700;">
-              📤 Gửi Qua Zalo Cho Con Cháu
+              📤 Gửi Zalo
             </button>
           </div>
         </div>
@@ -1110,15 +1106,15 @@
       </div>
     `;
 
-    // Thanh chọn nhanh 12 cung cho điện thoại & máy tính + nút Bàn Cờ Chữ To
+    // Thanh chọn nhanh 12 cung
     const quickNavHtml = `
       <div class="card" style="padding:14px 18px;margin-bottom:14px;">
         <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:6px;">
           <div style="font-size:0.86rem;font-weight:700;color:var(--gold-light);">
-            👆 Bấm chọn nhanh từng cung để xem giải nghĩa chi tiết (hoặc bấm trực tiếp vào từng ô trên lá số):
+            👆 Chọn cung để xem chi tiết:
           </div>
           <button type="button" class="btn-pill" id="btnToggleSimpleTuViBoard" style="font-weight:700;">
-            ${isSimpleSeniorTuViBoard ? '🔍 Đang bật: Bàn Cờ Chữ To (Bấm để hiện đủ sao phụ)' : '👓 Chế Độ Bàn Cờ Chữ To (Ẩn sao phụ nhỏ cho dễ nhìn)'}
+            ${isSimpleSeniorTuViBoard ? '🔍 Đang Bật: Bàn Cờ Chữ To' : '👓 Bàn Cờ Chữ To'}
           </button>
         </div>
         <div class="palace-quick-nav">
@@ -1146,7 +1142,7 @@
         ${renderTuViCell(p[4])}
         <div class="tuvi-center">
           <div style="text-align:center;border-bottom:1px solid var(--border-gold);padding-bottom:8px;margin-bottom:10px;">
-            <div style="font-size:0.74rem;color:var(--gold-primary);font-weight:700;letter-spacing:1px;">THIÊN BÀN TỬ VI LẠC VIỆT CHÂN TRUYỀN</div>
+            <div style="font-size:0.74rem;color:var(--gold-primary);font-weight:700;letter-spacing:1px;">LÁ SỐ TỬ VI LẠC VIỆT</div>
             <div style="font-size:1.15rem;font-weight:900;color:#fff;margin-top:2px;">${m.name} (${m.amDuongNamNu})</div>
           </div>
           <div class="grid-2" style="font-size:0.8rem;gap:8px;">
@@ -1154,14 +1150,14 @@
               <div>• <b>Dương lịch:</b> ${m.solarDateStr}</div>
               <div>• <b>Âm lịch:</b> ${m.lunarDateStr}</div>
               <div>• <b>Tứ Trụ:</b> Năm ${m.tuTru.nam} · Tháng ${m.tuTru.thang} · Ngày ${m.tuTru.ngay} · Giờ ${m.tuTru.gio}</div>
-              <div>• <b>Mệnh đóng tại:</b> Cung ${m.menhCungChi} · <b>Thân cư:</b> ${m.thanCuName} (${m.thanCungChi})</div>
+              <div>• <b>Mệnh tại:</b> ${m.menhCungChi} · <b>Thân cư:</b> ${m.thanCuName} (${m.thanCungChi})</div>
             </div>
             <div>
-              <div>• <b>Bản Mệnh Lạc Thư:</b> <span class="badge hanh-${m.yInfo.lacVietHanh}">${m.yInfo.lacVietHanh}</span> (${m.yInfo.swapped ? 'Hoán vị Thủy–Hỏa' : 'Chính vị'})</div>
+              <div>• <b>Mệnh Lạc Thư:</b> <span class="badge hanh-${m.yInfo.lacVietHanh}">${m.yInfo.lacVietHanh}</span> (${m.yInfo.swapped ? 'Hoán vị Thủy–Hỏa' : 'Chính vị'})</div>
               <div style="color:var(--text-muted);font-size:0.74rem;">(Sách Hán: ${m.yInfo.hanName} – ${m.yInfo.hanHanh})</div>
-              <div>• <b>Cục Lạc Việt:</b> <b style="color:var(--gold-light);">${m.cucLacViet.name}</b> (Sách Hán: ${m.cucTruyenThong.name})</div>
-              <div>• <b>Tương quan Mệnh – Cục:</b> ${m.menhVsCuc.rel}</div>
-              <div>• <b>Xem hạn năm ${m.viewYear} (${m.viewYInfo.canChi}):</b> ${m.currentLunarAge} tuổi mụ (ĐV cung ${m.activeDaiVanPalace.cungName})</div>
+              <div>• <b>Cục Lạc Việt:</b> <b style="color:var(--gold-light);">${m.cucLacViet.name}</b></div>
+              <div>• <b>Mệnh – Cục:</b> ${m.menhVsCuc.rel}</div>
+              <div>• <b>Năm ${m.viewYear} (${m.viewYInfo.canChi}):</b> ${m.currentLunarAge} tuổi (ĐV: ${m.activeDaiVanPalace.cungName})</div>
             </div>
           </div>
         </div>
@@ -1181,8 +1177,8 @@
       <div class="card" style="margin-top:18px;">
         <div class="card-header">
           <div>
-            <div class="card-title">👶 Kiểm Tra 5 Giờ Sinh Trẻ Nhỏ (Kim Xà Thiết Tỏa, Quan Sát, Diêm Vương, Dạ Đề, Tướng Quân)</div>
-            <div class="card-subtitle">Kiểm định giờ sinh trẻ sơ sinh và phương pháp hóa giải dân gian cổ truyền</div>
+            <div class="card-title">👶 Kiểm Tra Giờ Sinh Trẻ Nhỏ</div>
+            <div class="card-subtitle">Kim Xà Thiết Tỏa · Quan Sát · Diêm Vương · Dạ Đề · Tướng Quân</div>
           </div>
         </div>
         ${chart.gioPhamList.length === 0
@@ -1237,8 +1233,8 @@
           const boardEl = document.getElementById('tuViMainGridBoard');
           if (boardEl) boardEl.classList.toggle('senior-simple-board', isSimpleSeniorTuViBoard);
           toggleBoardBtn.innerHTML = isSimpleSeniorTuViBoard
-            ? '🔍 Đang bật: Bàn Cờ Chữ To (Bấm để hiện đủ sao phụ)'
-            : '👓 Chế Độ Bàn Cờ Chữ To (Ẩn sao phụ nhỏ cho dễ nhìn)';
+            ? '🔍 Đang Bật: Bàn Cờ Chữ To'
+            : '👓 Bàn Cờ Chữ To';
         });
       }
 
@@ -1287,37 +1283,37 @@
         <div class="card-header">
           <div>
             <div class="card-title">
-              🧭 Kết Quả Mệnh Trạch Chủ & Huyền Không Lưu Niên: Gia Chủ ${res.birthYear} (${res.yInfo.canChi} – ${res.gender})
+              🧭 Phong Thủy Gia Chủ ${res.birthYear} (${res.yInfo.canChi} – ${res.gender})
             </div>
             <div class="card-subtitle">
-              Hệ thống Mệnh Trạch Huyền Không Lưu Niên trên nền tảng Hà Đồ phối Hậu Thiên Lạc Việt
+              Hà Đồ phối Hậu Thiên Lạc Việt & Huyền Không Lưu Niên
             </div>
           </div>
           <span class="badge badge-good" style="font-size:0.92rem;padding:6px 14px;">
-            Số Phi Tinh Lưu Niên: Số ${res.starNum} — Quái ${res.quaiData.quai}
+            Phi Tinh Số ${res.starNum} — Quái ${res.quaiData.quai}
           </span>
         </div>
 
         <div class="grid-3" style="margin-bottom:16px;">
           <div style="padding:12px;background:rgba(229,184,92,0.1);border:1px solid var(--border-gold);border-radius:10px;">
-            <div style="font-size:0.75rem;color:var(--gold-primary);font-weight:700;">MỆNH TRẠCH CHỦ (PHI CUNG HUYỀN KHÔNG)</div>
+            <div style="font-size:0.75rem;color:var(--gold-primary);font-weight:700;">MỆNH TRẠCH CHỦ</div>
             <div style="font-size:1.05rem;font-weight:800;margin:4px 0;">Quái ${res.quaiData.quai}</div>
-            <div style="font-size:0.82rem;color:var(--text-muted);">Hành Hà Đồ Lạc Việt: <b>${res.quaiData.hanh}</b></div>
+            <div style="font-size:0.82rem;color:var(--text-muted);">Hành Hà Đồ: <b>${res.quaiData.hanh}</b></div>
             <div style="font-size:0.82rem;color:var(--jade-light);margin-top:2px;">Cửu Tinh: <b>${res.quaiData.cuuTinh}</b></div>
           </div>
 
           <div style="padding:12px;background:rgba(255,255,255,0.03);border:1px solid var(--border-subtle);border-radius:10px;">
-            <div style="font-size:0.75rem;color:var(--gold-primary);font-weight:700;">ĐỐI CHIẾU HOÁN VỊ LẠC VIỆT VS VĂN VƯƠNG</div>
+            <div style="font-size:0.75rem;color:var(--gold-primary);font-weight:700;">ĐỐI CHIẾU LẠC VIỆT</div>
             <div style="font-size:0.83rem;margin-top:4px;">
-              • <b>Hà Đồ phối Hậu Thiên Lạc Việt:</b> Hoán vị cung <b>Tốn (Tây Nam – Âm Kim 4)</b> và cung <b>Khôn (Đông Nam – Âm Hỏa đới Thổ 2)</b>; Độ số <b>Ly = 7</b> và <b>Đoài = 9</b>.<br>
-              ${(res.starNum === 7 || res.starNum === 9) ? `<span style="color:var(--jade-light);font-weight:700;">⚡ Chú ý: Năm ${res.birthYear} có số phi tinh ${res.starNum}, theo Lạc Việt thuộc ${res.quaiData.quai} (khác với sách Hán là ${res.quaiData.hanQuai})!</span>` : ''}
+              • Hoán vị cung <b>Tốn (Tây Nam)</b> và <b>Khôn (Đông Nam)</b>; Độ số <b>Ly = 7</b> và <b>Đoài = 9</b>.<br>
+              ${(res.starNum === 7 || res.starNum === 9) ? `<span style="color:var(--jade-light);font-weight:700;">⚡ Số phi tinh ${res.starNum} thuộc ${res.quaiData.quai} (Sách Hán: ${res.quaiData.hanQuai}).</span>` : ''}
             </div>
           </div>
 
           <div style="padding:12px;background:rgba(255,255,255,0.03);border:1px solid var(--border-subtle);border-radius:10px;">
-            <div style="font-size:0.75rem;color:var(--gold-primary);font-weight:700;">CHỌN TẦNG CHUNG CƯ (PHI TINH LẦU)</div>
+            <div style="font-size:0.75rem;color:var(--gold-primary);font-weight:700;">CHỌN TẦNG CHUNG CƯ</div>
             <div style="font-size:0.82rem;margin-top:4px;">
-              Gia chủ mạng Lạc Thư <b>${res.yInfo.lacVietHanh}</b> hợp nhất các tầng có số Hà Đồ tương sinh:
+              Gia chủ mạng <b>${res.yInfo.lacVietHanh}</b> hợp các tầng:
               <div style="margin-top:6px;display:flex;flex-wrap:wrap;gap:4px;">
                 ${res.goodFloors.slice(0, 10).map(f => `<span class="badge badge-good">Tầng ${f.floor} (${f.hanh})</span>`).join('')}
               </div>
@@ -1330,11 +1326,11 @@
           <table class="data-table">
             <thead>
               <tr>
-                <th>Phương Hướng</th>
-                <th>Quái Vị (Lạc Việt / Văn Vương)</th>
-                <th>Du Niên Bát Trạch</th>
+                <th>Hướng</th>
+                <th>Quái Vị</th>
+                <th>Du Niên</th>
                 <th>Tính Chất</th>
-                <th>Ứng Dụng Thực Chiến (Cửa Chính, Bếp, Phòng Ngủ, Bàn Thờ)</th>
+                <th>Ứng Dụng</th>
               </tr>
             </thead>
             <tbody>
@@ -1343,7 +1339,7 @@
                   <td><b>${d.dir}</b></td>
                   <td>${d.cungLV}</td>
                   <td><b style="color:${d.good ? '#34d399' : '#fb7185'};">${d.star}</b></td>
-                  <td><span class="badge ${d.good ? 'badge-good' : 'badge-warn'}">${d.good ? 'Hướng Cát' : 'Hướng Hung (Chế Sát)'}</span></td>
+                  <td><span class="badge ${d.good ? 'badge-good' : 'badge-warn'}">${d.good ? 'Hướng Cát' : 'Hướng Hung'}</span></td>
                   <td style="font-size:0.82rem;">${d.desc}</td>
                 </tr>
               `).join('')}
@@ -1389,42 +1385,42 @@
       <div class="card" style="background:linear-gradient(145deg, #172236, #0e1524);">
         <div class="card-header">
           <div>
-            <div class="card-title">☯️ Kết Quả Lạc Việt Độn Toán: "${res.question}"</div>
-            <div class="card-subtitle">Thời khắc khởi quẻ: ${res.timestampStr} · Động hào thứ <b>${res.haoDong}</b></div>
+            <div class="card-title">☯️ Kết Quả Gieo Quẻ Dịch</div>
+            <div class="card-subtitle">${res.question} · ${res.timestampStr} · Động hào <b>${res.haoDong}</b></div>
           </div>
           <span class="badge badge-good">Thể: ${res.theQuai.name} (${res.theHanh}) ↔ Dụng: ${res.dungQuai.name} (${res.dungHanh})</span>
         </div>
 
         <div class="grid-3" style="text-align:center;margin-bottom:16px;">
           <div style="padding:14px;background:rgba(255,255,255,0.03);border:1px solid var(--border-gold);border-radius:12px;">
-            <div style="font-size:0.75rem;color:var(--gold-primary);font-weight:700;">1. QUẺ CHỦ (KHỞI ĐẦU)</div>
+            <div style="font-size:0.75rem;color:var(--gold-primary);font-weight:700;">1. QUẺ CHỦ</div>
             <div style="font-weight:800;font-size:0.96rem;margin:6px 0;color:#fff;">${res.queChuName}</div>
             ${renderHexagramLines(res.lines6, res.haoDong)}
             <div style="font-size:0.78rem;color:var(--text-muted);">Thượng: ${res.quaiThuong.symbol} ${res.quaiThuong.name} | Hạ: ${res.quaiHa.symbol} ${res.quaiHa.name}</div>
           </div>
 
           <div style="padding:14px;background:rgba(255,255,255,0.03);border:1px solid var(--border-subtle);border-radius:12px;">
-            <div style="font-size:0.75rem;color:var(--gold-primary);font-weight:700;">2. QUẺ HỖ (DIỄN BIẾN TRUNG GIAN)</div>
+            <div style="font-size:0.75rem;color:var(--gold-primary);font-weight:700;">2. QUẺ HỖ</div>
             <div style="font-weight:800;font-size:0.96rem;margin:6px 0;color:#fff;">${res.queHoName}</div>
             <div style="padding:22px 10px;font-size:0.82rem;color:var(--text-muted);">
-              Phản ánh nội tình bên trong sự việc và các yếu tố trung gian tác động trong quá trình vận hành.
+              Diễn biến trung gian của sự việc.
             </div>
           </div>
 
           <div style="padding:14px;background:rgba(255,255,255,0.03);border:1px solid var(--jade-primary);border-radius:12px;">
-            <div style="font-size:0.75rem;color:var(--jade-light);font-weight:700;">3. QUẺ BIẾN (KẾT CỤC CUỐI CÙNG)</div>
+            <div style="font-size:0.75rem;color:var(--jade-light);font-weight:700;">3. QUẺ BIẾN</div>
             <div style="font-weight:800;font-size:0.96rem;margin:6px 0;color:#fff;">${res.queBienName}</div>
             ${renderHexagramLines(res.linesBien, null)}
-            <div style="font-size:0.78rem;color:var(--text-muted);">Biến quái tại hào ${res.haoDong} ➔ Hành ${res.bienHanh}</div>
+            <div style="font-size:0.78rem;color:var(--text-muted);">Động hào ${res.haoDong} ➔ Hành ${res.bienHanh}</div>
           </div>
         </div>
 
         <div style="padding:14px;background:rgba(16,185,129,0.12);border-left:4px solid var(--jade-primary);border-radius:8px;font-size:0.92rem;">
-          <div style="font-weight:700;color:var(--jade-light);margin-bottom:4px;">📜 Luận Đoán Thể – Dụng Theo Chuẩn Lạc Việt Độn Toán:</div>
+          <div style="font-weight:700;color:var(--jade-light);margin-bottom:4px;">📜 Luận Đoán Quẻ:</div>
           <div>${res.conclusion}</div>
           <div style="margin-top:6px;font-size:0.82rem;color:var(--text-muted);">
-            • <b>Quẻ Thể (Chủ thể):</b> ${res.theQuai.name} (${res.theQuai.nature}) — Hành ${res.theHanh}<br>
-            • <b>Quẻ Dụng (Sự việc):</b> ${res.dungQuai.name} (${res.dungQuai.nature}) — Hành ${res.dungHanh} (${res.theVsDung.desc})
+            • <b>Quẻ Thể:</b> ${res.theQuai.name} (${res.theQuai.nature}) — Hành ${res.theHanh}<br>
+            • <b>Quẻ Dụng:</b> ${res.dungQuai.name} (${res.dungQuai.nature}) — Hành ${res.dungHanh} (${res.theVsDung.desc})
           </div>
         </div>
       </div>
@@ -1480,15 +1476,15 @@
     if (modalDocFontStep === 0) {
       bodyEl.style.fontSize = '0.96rem';
       bodyEl.style.lineHeight = '1.75';
-      if (btnEl) btnEl.textContent = '🔍 Cỡ chữ đọc sách: Thường';
+      if (btnEl) btnEl.textContent = '🔍 Cỡ chữ: Thường';
     } else if (modalDocFontStep === 1) {
       bodyEl.style.fontSize = '1.15rem';
       bodyEl.style.lineHeight = '1.9';
-      if (btnEl) btnEl.textContent = '🔍 Cỡ chữ đọc sách: Lớn (A+)';
+      if (btnEl) btnEl.textContent = '🔍 Cỡ chữ: Lớn';
     } else {
       bodyEl.style.fontSize = '1.36rem';
       bodyEl.style.lineHeight = '2.0';
-      if (btnEl) btnEl.textContent = '🔍 Cỡ chữ đọc sách: Rất Lớn (A++)';
+      if (btnEl) btnEl.textContent = '🔍 Cỡ chữ: Rất Lớn';
     }
   }
 
@@ -1523,12 +1519,12 @@
       document.documentElement.classList.remove('font-lg', 'font-xl');
       if (fontStep === 1) {
         document.documentElement.classList.add('font-lg');
-        if (btnFont) btnFont.innerHTML = '🔍 Cỡ chữ: Lớn (A+)';
+        if (btnFont) btnFont.innerHTML = '🔍 Cỡ chữ: Lớn';
       } else if (fontStep === 2) {
         document.documentElement.classList.add('font-xl');
-        if (btnFont) btnFont.innerHTML = '🔍 Cỡ chữ: Rất Lớn (A++)';
+        if (btnFont) btnFont.innerHTML = '🔍 Cỡ chữ: Rất Lớn';
       } else {
-        if (btnFont) btnFont.innerHTML = '🔍 Cỡ chữ: Thường (A+)';
+        if (btnFont) btnFont.innerHTML = '🔍 Cỡ chữ: Thường';
       }
       try { localStorage.setItem('ptlv_font_step', String(fontStep)); } catch (e) {}
     };
@@ -1546,7 +1542,7 @@
     const applyThemeMode = () => {
       document.body.classList.toggle('theme-light', isLightTheme);
       if (btnTheme) {
-        btnTheme.innerHTML = isLightTheme ? '🌙 Đổi Nền Tối' : '☀️ Nền Sáng (Dịu Mắt)';
+        btnTheme.innerHTML = isLightTheme ? '🌙 Nền Tối' : '☀️ Nền Sáng';
       }
       try { localStorage.setItem('ptlv_theme_light', isLightTheme ? '1' : '0'); } catch (e) {}
     };
