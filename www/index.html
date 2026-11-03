@@ -8,7 +8,7 @@
   <meta name="theme-color" content="#0b0f17" />
   <title>Lạc Việt Đạo Quán — Tử Vi · Chọn Ngày Tốt · Luận Tuổi Lạc Việt (Lý Học Đông Phương)</title>
   <link rel="manifest" href="manifest.json" />
-  <link rel="stylesheet" href="css/style.css?v=3.0" />
+  <link rel="stylesheet" href="css/style.css?v=4.0" />
 </head>
 <body>
 
@@ -25,7 +25,6 @@
       <div class="header-actions">
         <button type="button" class="btn-pill" id="btnCycleFontSize" title="Tăng cỡ chữ to rõ cho người lớn tuổi" style="font-weight:800;border-color:var(--gold-primary);">🔍 Cỡ chữ: Thường (A+)</button>
         <button type="button" class="btn-pill" id="btnToggleLightTheme" title="Chuyển sang nền sáng dịu mắt" style="font-weight:800;">☀️ Nền Sáng (Dịu Mắt)</button>
-        <a href="https://github.com/hgiap1993/ptlv-lac-viet/releases/download/v1.0.0/PTLV-LyHocLacViet.apk" download="PTLV-LyHocLacViet.apk" class="btn-pill" style="text-decoration:none;border-color:var(--jade-primary);color:#6ee7b7;font-weight:700;">📲 Tải App Android (.APK)</a>
         <button type="button" class="btn-pill" id="btnAmbientAudio">🔔 Nhạc Thiền Đông Sơn</button>
         <button type="button" class="btn-pill" onclick="document.querySelector('[data-tab=tangkinhcac]').click()">📜 Tàng Kinh Các</button>
       </div>
@@ -467,16 +466,25 @@
   </nav>
 
   <!-- SCRIPTS HỆ THỐNG -->
-  <script src="js/data-lyhoc.js?v=3.0"></script>
-  <script src="js/engine-amlich.js?v=3.0"></script>
-  <script src="js/engine-luantuoi.js?v=3.0"></script>
-  <script src="js/engine-trachcat.js?v=3.0"></script>
-  <script src="js/engine-tuvi-phongthuy.js?v=3.0"></script>
-  <script src="js/app.js?v=3.0"></script>
+  <script src="js/data-lyhoc.js?v=4.0"></script>
+  <script src="js/engine-amlich.js?v=4.0"></script>
+  <script src="js/engine-luantuoi.js?v=4.0"></script>
+  <script src="js/engine-trachcat.js?v=4.0"></script>
+  <script src="js/engine-tuvi-phongthuy.js?v=4.0"></script>
+  <script src="js/app.js?v=4.0"></script>
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('sw.js').catch(() => {});
+        navigator.serviceWorker.register('sw.js?v=4.0').then((reg) => {
+          reg.update();
+        }).catch(() => {});
+        let refreshing = false;
+        navigator.serviceWorker.addEventListener('controllerchange', () => {
+          if (!refreshing) {
+            refreshing = true;
+            window.location.reload();
+          }
+        });
       });
     }
   </script>

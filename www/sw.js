@@ -1,14 +1,14 @@
-const CACHE_NAME = 'lacviet-daoquan-v3.0';
+const CACHE_NAME = 'lacviet-daoquan-v4.0';
 const ASSETS = [
   './',
   './index.html',
-  './css/style.css?v=3.0',
-  './js/data-lyhoc.js?v=3.0',
-  './js/engine-amlich.js?v=3.0',
-  './js/engine-luantuoi.js?v=3.0',
-  './js/engine-trachcat.js?v=3.0',
-  './js/engine-tuvi-phongthuy.js?v=3.0',
-  './js/app.js?v=3.0',
+  './css/style.css?v=4.0',
+  './js/data-lyhoc.js?v=4.0',
+  './js/engine-amlich.js?v=4.0',
+  './js/engine-luantuoi.js?v=4.0',
+  './js/engine-trachcat.js?v=4.0',
+  './js/engine-tuvi-phongthuy.js?v=4.0',
+  './js/app.js?v=4.0',
   './manifest.json'
 ];
 
