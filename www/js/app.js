@@ -1351,8 +1351,354 @@
   }
 
   // --------------------------------------------------------------------------
-  // TAB 5: LẠC VIỆT ĐỘN TOÁN & GIEO QUẺ CHU DỊCH (64 QUẺ)
+  // TAB 5: LẠC VIỆT ĐỘN TOÁN & SÂN KHẤU MÔ PHỎNG GIEO QUẺ ĐỘNG
+  // (MAI RÙA LỬA THIÊNG · 50 THẺ TRE ĐẠI DIỄN · 3 ĐỒNG XU CỔ · BẤM ĐỘN GIỜ)
   // --------------------------------------------------------------------------
+  let currentDivMethod = 'coins'; // 'coins' | 'tortoise' | 'bamboo' | 'time'
+  let castedHaos = [];            // Mảng tối đa 6 phần tử (từ Hào 1 -> Hào 6)
+  let isAutoCasting = false;
+  let lastArenaState = {
+    coins: [1, 1, 0], // 1: Ngửa (Dương), 0: Sấp (Âm)
+    tortoiseSign: 'Chưa châm lửa — Bấm nút Gieo Hào để hơ lửa Mai Rùa',
+    bambooLeft: 24,
+    bambooRight: 24,
+    bambooResultNum: 7,
+    stepDesc: 'Hãy tĩnh tâm nghĩ về việc cần hỏi, sau đó bấm nút Gieo Từng Hào hoặc Tự Động Gieo Đủ 6 Hào.'
+  };
+
+  function playCoinClinkSound() {
+    [1320, 1680, 1980].forEach((freq, idx) => {
+      setTimeout(() => playBronzeBell(freq, 0.32), idx * 90);
+    });
+  }
+
+  function playTortoiseCrackSound() {
+    playBronzeBell(185, 0.45);
+    setTimeout(() => playBronzeBell(960, 0.22), 210);
+    setTimeout(() => playBronzeBell(620, 0.35), 310);
+  }
+
+  function playBambooShakeSound() {
+    [360, 440, 390, 480].forEach((freq, idx) => {
+      setTimeout(() => playBronzeBell(freq, 0.18), idx * 75);
+    });
+  }
+
+  function generateSingleHaoByMethod(method, haoNumber) {
+    if (method === 'coins') {
+      const c1 = Math.random() < 0.5 ? 1 : 0;
+      const c2 = Math.random() < 0.5 ? 1 : 0;
+      const c3 = Math.random() < 0.5 ? 1 : 0;
+      const sumYang = c1 + c2 + c3;
+      lastArenaState.coins = [c1, c2, c3];
+      // Quy ước Lục Hào Cổ Truyền:
+      // 1 Ngửa (Dương) + 2 Sấp (Âm) -> Thiếu Dương (val=1, tĩnh)
+      // 2 Ngửa (Dương) + 1 Sấp (Âm) -> Thiếu Âm (val=0, tĩnh)
+      // 3 Ngửa -> Lão Dương (val=1, ĐỘNG ○)
+      // 3 Sấp  -> Lão Âm (val=0, ĐỘNG ✕)
+      let val = 1, isMoving = false, name = '';
+      if (sumYang === 1) { val = 1; isMoving = false; name = 'Thiếu Dương (Dương Tĩnh)'; }
+      else if (sumYang === 2) { val = 0; isMoving = false; name = 'Thiếu Âm (Âm Tĩnh)'; }
+      else if (sumYang === 3) { val = 1; isMoving = true; name = 'Lão Dương (Hào Động ○)'; }
+      else { val = 0; isMoving = true; name = 'Lão Âm (Hào Động ✕)'; }
+      const detail = `${sumYang} Ngửa · ${3 - sumYang} Sấp`;
+      lastArenaState.stepDesc = `Hào ${haoNumber}: Gieo được <b>${detail}</b> ➔ <b>${name}</b>`;
+      return { haoIndex: haoNumber, val, isMoving, name, detail };
+    }
+
+    if (method === 'tortoise') {
+      const r = Math.random();
+      let val = 1, isMoving = false, name = '', sign = '';
+      if (r < 0.36) {
+        val = 1; isMoving = false; name = 'Thiếu Dương'; sign = 'Phương Triệu (Vết nứt thẳng vươn lên)';
+      } else if (r < 0.72) {
+        val = 0; isMoving = false; name = 'Thiếu Âm'; sign = 'Nghĩa Triệu (Vết nứt tách đôi cân xứng)';
+      } else if (r < 0.86) {
+        val = 1; isMoving = true; name = 'Lão Dương (Động ○)'; sign = 'Vũ Triệu (Vết nứt rực sáng chuyển biến)';
+      } else {
+        val = 0; isMoving = true; name = 'Lão Âm (Động ✕)'; sign = 'Túc Triệu (Vết nứt giao thoa biến đổi)';
+      }
+      lastArenaState.tortoiseSign = `🔥 Hào ${haoNumber}: ${sign}`;
+      lastArenaState.stepDesc = `Hào ${haoNumber}: Lửa châm Mai Rùa hiện <b>${sign}</b> ➔ <b>${name}</b>`;
+      return { haoIndex: haoNumber, val, isMoving, name, detail: sign.split(' (')[0] };
+    }
+
+    // method === 'bamboo' (Đại Diễn 50 thẻ tre -> dùng 49 thẻ chia Tả - Hữu, đếm 4 ra 6, 7, 8, 9)
+    const left = 14 + Math.floor(Math.random() * 21);
+    const right = 48 - left;
+    const r = Math.random();
+    let stalkNum = 7, val = 1, isMoving = false, name = '';
+    if (r < 0.34) { stalkNum = 7; val = 1; isMoving = false; name = 'Số 7 — Thiếu Dương'; }
+    else if (r < 0.76) { stalkNum = 8; val = 0; isMoving = false; name = 'Số 8 — Thiếu Âm'; }
+    else if (r < 0.90) { stalkNum = 9; val = 1; isMoving = true; name = 'Số 9 — Lão Dương (Động ○)'; }
+    else { stalkNum = 6; val = 0; isMoving = true; name = 'Số 6 — Lão Âm (Động ✕)'; }
+    lastArenaState.bambooLeft = left;
+    lastArenaState.bambooRight = right;
+    lastArenaState.bambooResultNum = stalkNum;
+    lastArenaState.stepDesc = `Hào ${haoNumber}: Chia 49 thẻ (Tả ${left} · Hữu ${right}), đếm Tứ Doanh được <b>${name}</b>`;
+    return { haoIndex: haoNumber, val, isMoving, name, detail: `Tứ doanh: ${stalkNum}` };
+  }
+
+  function renderArenaVisualHtml() {
+    if (currentDivMethod === 'coins') {
+      const coinsHtml = lastArenaState.coins.map((c, idx) => `
+        <div class="ancient-coin ${c === 1 ? 'coin-yang' : 'coin-yin'}" id="simCoin_${idx}">
+          <span class="coin-face-label">${c === 1 ? 'THÔNG' : 'ĐÔNG'}</span>
+          <span class="coin-bottom-label">${c === 1 ? 'NGỬA' : 'SẤP'}</span>
+        </div>
+      `).join('');
+      return `
+        <div style="text-align:center;">
+          <div style="font-size:0.82rem;font-weight:800;color:var(--gold-light);letter-spacing:0.5px;">🪙 ĐĨA ĐỒNG LỤC HÀO — 3 ĐỒNG XU CỔ</div>
+          <div style="font-size:0.75rem;color:var(--text-muted);margin-top:2px;">Mặt Vàng: Ngửa (Dương) · Mặt Xám: Sấp (Âm)</div>
+        </div>
+        <div class="coins-plate" id="coinsPlateArena">
+          ${coinsHtml}
+        </div>
+      `;
+    }
+
+    if (currentDivMethod === 'tortoise') {
+      const count = castedHaos.length;
+      const cracks = [
+        { d: 'M 95 140 L 95 112 L 72 102', idx: 1 },
+        { d: 'M 95 118 L 122 105 L 138 96', idx: 2 },
+        { d: 'M 95 100 L 66 84 L 50 74', idx: 3 },
+        { d: 'M 95 88 L 126 74 L 142 62', idx: 4 },
+        { d: 'M 95 68 L 70 50 L 54 38', idx: 5 },
+        { d: 'M 95 52 L 120 36 L 136 26', idx: 6 }
+      ];
+      return `
+        <div style="text-align:center;">
+          <div style="font-size:0.82rem;font-weight:800;color:var(--gold-light);">🐢 YẾM RÙA CỬU CUNG LẠC THƯ & LỬA THIÊNG</div>
+          <div style="font-size:0.76rem;color:#fbbf24;margin-top:2px;">${lastArenaState.tortoiseSign}</div>
+        </div>
+        <div class="tortoise-wrap">
+          <svg class="tortoise-svg" id="tortoiseSvgArena" viewBox="0 0 190 175">
+            <defs>
+              <radialGradient id="shellGrad" cx="50%" cy="45%" r="55%">
+                <stop offset="0%" stop-color="#b45309" />
+                <stop offset="65%" stop-color="#78350f" />
+                <stop offset="100%" stop-color="#451a03" />
+              </radialGradient>
+            </defs>
+            <!-- Yếm rùa cổ -->
+            <path d="M 95 10 C 142 10, 168 42, 164 88 C 160 136, 134 164, 95 165 C 56 164, 30 136, 26 88 C 22 42, 48 10, 95 10 Z"
+                  fill="url(#shellGrad)" stroke="#f59e0b" stroke-width="3" />
+            <!-- Đường rãnh Cửu Cung trên yếm rùa -->
+            <path d="M 95 14 L 95 160 M 34 62 L 156 62 M 30 112 L 160 112 M 62 22 L 54 152 M 128 22 L 136 152"
+                  stroke="rgba(253, 224, 71, 0.28)" stroke-width="1.5" fill="none" />
+            <!-- Đốm lửa hồng tâm dưới mai rùa -->
+            <circle cx="95" cy="90" r="${count > 0 ? 18 : 10}" fill="rgba(239, 68, 68, 0.38)" />
+            <!-- 6 Vết nứt Bốc Phệ tương ứng 6 Hào -->
+            ${cracks.map(c => `
+              <path d="${c.d}" class="crack-path ${count >= c.idx ? 'revealed' : ''}" />
+            `).join('')}
+          </svg>
+        </div>
+      `;
+    }
+
+    if (currentDivMethod === 'bamboo') {
+      const leftStalks = Array.from({ length: 12 }).map((_, i) => `<div class="bamboo-stalk" style="height:${78 + (i % 4) * 5}px;"></div>`).join('');
+      const rightStalks = Array.from({ length: 12 }).map((_, i) => `<div class="bamboo-stalk" style="height:${78 + ((i + 2) % 4) * 5}px;"></div>`).join('');
+      return `
+        <div style="text-align:center;">
+          <div style="font-size:0.82rem;font-weight:800;color:var(--gold-light);">🎋 ĐẠI DIỄN 50 THẺ TRE (DÙNG 49 · TRỪ 1 THÁI CỰC)</div>
+          <div style="font-size:0.75rem;color:var(--jade-light);margin-top:2px;">1 Thẻ Thái Cực đặt riêng · Chia 49 thẻ làm 2 bó Tả – Hữu</div>
+        </div>
+        <div class="bamboo-stage">
+          <div class="bamboo-bundles-row" id="bambooRowArena">
+            <div style="text-align:center;">
+              <div class="bamboo-group">${leftStalks}</div>
+              <div style="font-size:0.75rem;font-weight:700;color:var(--gold-light);margin-top:4px;">Bó Tả (Trời): ${lastArenaState.bambooLeft} thẻ</div>
+            </div>
+            <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding-bottom:18px;">
+              <span class="badge badge-good" style="font-size:0.9rem;padding:6px 12px;">Số ${lastArenaState.bambooResultNum}</span>
+              <span style="font-size:0.7rem;color:var(--text-muted);margin-top:4px;">Tứ Doanh</span>
+            </div>
+            <div style="text-align:center;">
+              <div class="bamboo-group">${rightStalks}</div>
+              <div style="font-size:0.75rem;font-weight:700;color:var(--jade-light);margin-top:4px;">Bó Hữu (Đất): ${lastArenaState.bambooRight} thẻ</div>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    // method === 'time'
+    const now = new Date();
+    const full = AL.getFullDateCanChi(now.getDate(), now.getMonth() + 1, now.getFullYear(), Math.floor(((now.getHours() + 1) % 24) / 2));
+    return `
+      <div style="text-align:center;">
+        <div style="font-size:0.84rem;font-weight:800;color:var(--gold-light);">⏱️ BẤM ĐỘN THỜI KHẮC ĐỘNG TÂM</div>
+        <div style="font-size:0.78rem;color:var(--text-muted);margin-top:2px;">Lấy Năm – Tháng – Ngày – Giờ Âm Lịch hiện tại</div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px;width:100%;max-width:340px;margin:12px 0;">
+        <div style="padding:10px;background:rgba(229,184,92,0.1);border:1px solid var(--border-gold);border-radius:8px;text-align:center;">
+          <div style="font-size:0.72rem;color:var(--text-muted);">NĂM & THÁNG ÂM</div>
+          <div style="font-weight:800;color:var(--gold-light);">${full.yearInfo.canChi} · Tháng ${full.lunar.lunarMonth}</div>
+        </div>
+        <div style="padding:10px;background:rgba(16,185,129,0.1);border:1px solid var(--jade-primary);border-radius:8px;text-align:center;">
+          <div style="font-size:0.72rem;color:var(--text-muted);">NGÀY & GIỜ ÂM</div>
+          <div style="font-weight:800;color:var(--jade-light);">Ngày ${full.lunar.lunarDay} · Giờ ${full.hour.chi}</div>
+        </div>
+      </div>
+    `;
+  }
+
+  function renderDivinationStage() {
+    const stageBox = document.getElementById('divinationStageBox');
+    if (!stageBox) return;
+
+    document.querySelectorAll('#divinationMethodGrid .div-method-btn').forEach(btn => {
+      btn.classList.toggle('active', btn.getAttribute('data-div-method') === currentDivMethod);
+    });
+
+    if (currentDivMethod === 'time') {
+      stageBox.innerHTML = `
+        <div class="divination-arena" style="min-height:210px;">
+          ${renderArenaVisualHtml()}
+          <button type="button" class="btn-primary" id="btnInstantTimeCast" style="min-width:240px;">
+            ⚡ Bấm Độn Lập Quẻ Ngay Theo Giờ Này
+          </button>
+        </div>
+      `;
+      document.getElementById('btnInstantTimeCast')?.addEventListener('click', () => {
+        runDonToanCast('time');
+      });
+      return;
+    }
+
+    const nextHaoNum = castedHaos.length + 1;
+    const isComplete = castedHaos.length >= 6;
+
+    // Hiển thị 6 tầng Hào từ Hào 6 (trên cùng) xuống Hào 1 (dưới cùng)
+    const haoSlotsHtml = [6, 5, 4, 3, 2, 1].map(hIdx => {
+      const hObj = castedHaos.find(item => item.haoIndex === hIdx);
+      const haoTitle = hIdx === 1 ? 'Hào 1 (Sơ)' : (hIdx === 6 ? 'Hào 6 (Thượng)' : `Hào ${hIdx}`);
+      if (!hObj) {
+        return `
+          <div class="hao-slot">
+            <span style="font-weight:700;color:var(--text-muted);min-width:95px;">${haoTitle}</span>
+            <span style="font-size:0.76rem;color:var(--text-muted);font-style:italic;">Chưa gieo...</span>
+          </div>
+        `;
+      }
+      return `
+        <div class="hao-slot filled ${hObj.isMoving ? 'moving-slot' : ''}">
+          <span style="font-weight:800;color:${hObj.isMoving ? '#fda4af' : 'var(--gold-light)'};min-width:95px;">
+            ${haoTitle} ${hObj.isMoving ? '⚡' : ''}
+          </span>
+          <div class="hao-bar-preview">
+            ${hObj.val === 1
+              ? `<div class="hao-bar-yang"></div>`
+              : `<div class="hao-bar-yin"></div><div class="hao-bar-yin"></div>`}
+          </div>
+          <span style="font-size:0.75rem;font-weight:700;color:${hObj.isMoving ? '#fda4af' : 'var(--text-main)'};">
+            ${hObj.isMoving ? (hObj.val === 1 ? 'Lão Dương ○' : 'Lão Âm ✕') : (hObj.val === 1 ? 'Dương —' : 'Âm --')}
+          </span>
+        </div>
+      `;
+    }).join('');
+
+    stageBox.innerHTML = `
+      <div class="divination-stage-grid">
+        <div class="divination-arena">
+          ${renderArenaVisualHtml()}
+          <div style="text-align:center;width:100%;">
+            <div style="font-size:0.86rem;color:var(--text-main);margin-bottom:12px;min-height:24px;">
+              ${lastArenaState.stepDesc}
+            </div>
+            <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;">
+              <button type="button" class="btn-primary" id="btnStepCastHao" ${isAutoCasting ? 'disabled' : ''}>
+                ${isComplete
+                  ? '🔄 Gieo Lại Quẻ Mới (Từ Hào 1)'
+                  : `🎲 Tự Tay Gieo Hào ${nextHaoNum}/6`}
+              </button>
+              <button type="button" class="btn-secondary" id="btnAutoCastAll6" ${isAutoCasting ? 'disabled' : ''} style="border-color:var(--jade-primary);color:var(--jade-light);font-weight:800;">
+                ⚡ Tự Động Gieo Đủ 6 Hào
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="hao-builder-panel">
+          <div>
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+              <span style="font-weight:800;font-size:0.9rem;color:var(--gold-light);">☯️ Tháp Lập 6 Hào (Từ Dưới Lên)</span>
+              <span class="badge ${isComplete ? 'badge-good' : 'badge-neutral'}">Đã gieo: ${castedHaos.length}/6 Hào</span>
+            </div>
+            ${haoSlotsHtml}
+          </div>
+          <div style="font-size:0.76rem;color:var(--text-muted);margin-top:6px;text-align:center;">
+            💡 Hào có dấu <b>○ / ✕ (⚡)</b> là <b>Hào Động</b> biến sang Quẻ Biến.
+          </div>
+        </div>
+      </div>
+    `;
+
+    document.getElementById('btnStepCastHao')?.addEventListener('click', () => {
+      if (isAutoCasting) return;
+      if (castedHaos.length >= 6) {
+        castedHaos = [];
+      }
+      performAnimatedSingleStep();
+    });
+
+    document.getElementById('btnAutoCastAll6')?.addEventListener('click', () => {
+      if (isAutoCasting) return;
+      castedHaos = [];
+      isAutoCasting = true;
+      const runNext = (step) => {
+        if (step > 6) {
+          isAutoCasting = false;
+          renderDivinationStage();
+          return;
+        }
+        performAnimatedSingleStep(() => {
+          setTimeout(() => runNext(step + 1), 360);
+        });
+      };
+      runNext(1);
+    });
+  }
+
+  function performAnimatedSingleStep(onDoneCallback = null) {
+    const nextIdx = castedHaos.length + 1;
+    if (nextIdx > 6) return;
+
+    // Phát âm thanh & kích hoạt CSS animation trên sân khấu
+    if (currentDivMethod === 'coins') {
+      playCoinClinkSound();
+      document.querySelectorAll('.ancient-coin').forEach(c => c.classList.add('tossing'));
+    } else if (currentDivMethod === 'tortoise') {
+      playTortoiseCrackSound();
+      document.getElementById('tortoiseSvgArena')?.classList.add('heating');
+    } else if (currentDivMethod === 'bamboo') {
+      playBambooShakeSound();
+      document.getElementById('bambooRowArena')?.classList.add('shuffling');
+    }
+
+    setTimeout(() => {
+      const hRes = generateSingleHaoByMethod(currentDivMethod, nextIdx);
+      castedHaos.push(hRes);
+      renderDivinationStage();
+
+      if (castedHaos.length === 6) {
+        // Khi đủ 6 hào -> Lập quẻ Chủ - Hỗ - Biến từ đúng 6 hào vừa gieo
+        const customLines6 = castedHaos.map(h => h.val);
+        const movingList = castedHaos.filter(h => h.isMoving);
+        const customHaoDong = movingList.length > 0
+          ? movingList[movingList.length - 1].haoIndex
+          : null;
+        runDonToanCast(currentDivMethod, customLines6, customHaoDong);
+      }
+
+      if (onDoneCallback) onDoneCallback();
+    }, 450);
+  }
+
   function renderHexagramLines(lines6, movingLine = null) {
     return `
       <div class="hexagram-box">
@@ -1370,22 +1716,30 @@
     `;
   }
 
-  function runDonToanCast(method = 'time') {
+  function runDonToanCast(method = 'time', customLines6 = null, customHaoDong = null) {
     playBronzeBell(639, 0.9);
     const question = document.getElementById('inputDonToanQuestion').value || 'Hỏi việc khởi sự, cầu tài lộc và gia đạo';
-    const customSeeds = method === 'coins'
-      ? [Math.floor(Math.random() * 8) + 1, Math.floor(Math.random() * 8) + 1, Math.floor(Math.random() * 6) + 1]
-      : null;
+    const methodLabels = {
+      coins: 'Gieo 3 Đồng Xu Cổ (Lục Hào)',
+      tortoise: 'Bốc Phệ Mai Rùa Lửa Thiêng',
+      bamboo: 'Rút 50 Thẻ Tre Đại Diễn',
+      time: 'Bấm Độn Theo Thời Khắc'
+    };
 
-    const res = TV.castLacVietDonToan({ question, method, customSeeds });
+    const res = TV.castLacVietDonToan({
+      question,
+      method,
+      customLines6,
+      customHaoDong
+    });
     const out = document.getElementById('donToanResultBox');
     if (!out) return;
 
     out.innerHTML = `
-      <div class="card" style="background:linear-gradient(145deg, #172236, #0e1524);">
+      <div class="card" style="background:linear-gradient(145deg, #172236, #0e1524);border-color:var(--gold-primary);">
         <div class="card-header">
           <div>
-            <div class="card-title">☯️ Kết Quả Gieo Quẻ Dịch</div>
+            <div class="card-title">☯️ Kết Quả Quẻ Dịch (${methodLabels[method] || 'Lạc Việt Độn Toán'})</div>
             <div class="card-subtitle">${res.question} · ${res.timestampStr} · Động hào <b>${res.haoDong}</b></div>
           </div>
           <span class="badge badge-good">Thể: ${res.theQuai.name} (${res.theHanh}) ↔ Dụng: ${res.dungQuai.name} (${res.dungHanh})</span>
@@ -1733,10 +2087,31 @@
     document.getElementById('inputPhongThuyYear')?.addEventListener('change', runPhongThuyAnalysis);
     document.getElementById('inputPhongThuyGender')?.addEventListener('change', runPhongThuyAnalysis);
 
-    // 8. Khởi tạo Tab 5: Lạc Việt Độn Toán
-    runDonToanCast('time');
-    document.getElementById('btnCastTime')?.addEventListener('click', () => runDonToanCast('time'));
-    document.getElementById('btnCastCoins')?.addEventListener('click', () => runDonToanCast('coins'));
+    // 8. Khởi tạo Tab 5: Gieo Quẻ Dịch & Lạc Việt Độn Toán (Mô phỏng Mai Rùa, Thẻ Tre, 3 Đồng Xu)
+    renderDivinationStage();
+    runDonToanCast('coins');
+    document.querySelectorAll('#divinationMethodGrid .div-method-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const m = e.currentTarget.getAttribute('data-div-method') || 'coins';
+        currentDivMethod = m;
+        castedHaos = [];
+        isAutoCasting = false;
+        if (m === 'coins') {
+          playCoinClinkSound();
+          lastArenaState.stepDesc = 'Đã chọn <b>Gieo 3 Đồng Xu Cổ</b>: Bấm nút bên dưới để tung đồng xu lập từng hào.';
+        } else if (m === 'tortoise') {
+          playTortoiseCrackSound();
+          lastArenaState.stepDesc = 'Đã chọn <b>Bốc Phệ Mai Rùa</b>: Bấm nút bên dưới để châm lửa xem vết nứt từng hào.';
+        } else if (m === 'bamboo') {
+          playBambooShakeSound();
+          lastArenaState.stepDesc = 'Đã chọn <b>Rút 50 Thẻ Tre Đại Diễn</b>: Bấm nút bên dưới để chia thẻ lập từng hào.';
+        } else {
+          playBronzeBell(528, 0.5);
+          runDonToanCast('time');
+        }
+        renderDivinationStage();
+      });
+    });
 
     // 9. Khởi tạo Tab 6: Tàng Kinh Các
     renderTangKinhCac('all', '');

@@ -8,7 +8,7 @@
   <meta name="theme-color" content="#0b0f17" />
   <title>Lạc Việt Đạo Quán — Lý Học Đông Phương</title>
   <link rel="manifest" href="manifest.json" />
-  <link rel="stylesheet" href="css/style.css?v=5.0" />
+  <link rel="stylesheet" href="css/style.css?v=6.0" />
 </head>
 <body>
 
@@ -351,22 +351,42 @@
       <div class="card">
         <div class="card-header">
           <div>
-            <div class="card-title">☯️ Lạc Việt Độn Toán — 64 Quẻ Dịch</div>
+            <div class="card-title">☯️ Gieo Quẻ Dịch & Lạc Việt Độn Toán</div>
             <div class="card-subtitle">
-              Luận đoán Quẻ Chủ · Quẻ Hỗ · Quẻ Biến
+              Mô phỏng trực quan Mai Rùa · Thẻ Tre · 3 Đồng Xu Cổ · Bấm Độn Thời Khắc
             </div>
           </div>
         </div>
-        <div class="grid-3" style="align-items:end;">
-          <div class="form-group" style="grid-column: span 2;">
-            <label class="form-label">🙏 Việc Cần Hỏi:</label>
-            <input type="text" id="inputDonToanQuestion" class="form-input" value="Hỏi việc hợp tác kinh doanh, cầu tài lộc và gia đạo trong tháng này" />
-          </div>
-          <div style="display:flex;gap:8px;">
-            <button type="button" class="btn-primary" id="btnCastTime">⏱️ Bấm Độn Theo Giờ</button>
-            <button type="button" class="btn-secondary" id="btnCastCoins">🪙 Gieo 3 Đồng Xu</button>
-          </div>
+        <div class="form-group">
+          <label class="form-label">🙏 Nhập Việc Cần Hỏi Trước Khi Khởi Quẻ:</label>
+          <input type="text" id="inputDonToanQuestion" class="form-input" value="Hỏi việc hợp tác kinh doanh, cầu tài lộc và gia đạo trong tháng này" />
         </div>
+
+        <div class="divination-method-grid" id="divinationMethodGrid">
+          <button type="button" class="div-method-btn active" data-div-method="coins">
+            <span style="font-size:1.5rem;">🪙</span>
+            <span>Gieo 3 Đồng Xu</span>
+            <span style="font-size:0.72rem;color:var(--text-muted);font-weight:600;">Lục Hào Kim Tiền</span>
+          </button>
+          <button type="button" class="div-method-btn" data-div-method="tortoise">
+            <span style="font-size:1.5rem;">🐢</span>
+            <span>Bốc Phệ Mai Rùa</span>
+            <span style="font-size:0.72rem;color:var(--text-muted);font-weight:600;">Lửa Thiêng Giáp Cốt</span>
+          </button>
+          <button type="button" class="div-method-btn" data-div-method="bamboo">
+            <span style="font-size:1.5rem;">🎋</span>
+            <span>Rút 50 Thẻ Tre</span>
+            <span style="font-size:0.72rem;color:var(--text-muted);font-weight:600;">Phép Phệ Đại Diễn</span>
+          </button>
+          <button type="button" class="div-method-btn" data-div-method="time">
+            <span style="font-size:1.5rem;">⏱️</span>
+            <span>Bấm Độn Theo Giờ</span>
+            <span style="font-size:0.72rem;color:var(--text-muted);font-weight:600;">Động Tâm Khởi Quẻ</span>
+          </button>
+        </div>
+
+        <!-- SÂN KHẤU MÔ PHỎNG TƯƠNG TÁC -->
+        <div id="divinationStageBox" style="margin-top:16px;"></div>
       </div>
 
       <div id="donToanResultBox"></div>
@@ -466,16 +486,16 @@
   </nav>
 
   <!-- SCRIPTS HỆ THỐNG -->
-  <script src="js/data-lyhoc.js?v=5.0"></script>
-  <script src="js/engine-amlich.js?v=5.0"></script>
-  <script src="js/engine-luantuoi.js?v=5.0"></script>
-  <script src="js/engine-trachcat.js?v=5.0"></script>
-  <script src="js/engine-tuvi-phongthuy.js?v=5.0"></script>
-  <script src="js/app.js?v=5.0"></script>
+  <script src="js/data-lyhoc.js?v=6.0"></script>
+  <script src="js/engine-amlich.js?v=6.0"></script>
+  <script src="js/engine-luantuoi.js?v=6.0"></script>
+  <script src="js/engine-trachcat.js?v=6.0"></script>
+  <script src="js/engine-tuvi-phongthuy.js?v=6.0"></script>
+  <script src="js/app.js?v=6.0"></script>
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('sw.js?v=5.0').then((reg) => {
+        navigator.serviceWorker.register('sw.js?v=6.0').then((reg) => {
           reg.update();
         }).catch(() => {});
         let refreshing = false;

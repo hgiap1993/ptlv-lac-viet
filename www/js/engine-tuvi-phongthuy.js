@@ -853,7 +853,7 @@
     '3-6': 'Hỏa Thủy Vị Tế (Chưa Hoàn Tất – Chuẩn Bị Cho Chu Kỳ Mới)'
   };
 
-  function castLacVietDonToan({ question = 'Hỏi việc khởi sự, cầu tài, gia đạo', method = 'time', customSeeds = null }) {
+  function castLacVietDonToan({ question = 'Hỏi việc khởi sự, cầu tài, gia đạo', method = 'time', customSeeds = null, customLines6 = null, customHaoDong = null }) {
     const now = new Date();
     const full = AL.getFullDateCanChi(now.getDate(), now.getMonth() + 1, now.getFullYear(), Math.floor(((now.getHours() + 1) % 24) / 2));
     const yNum = full.yearInfo.chiIdx + 1;
@@ -861,30 +861,37 @@
     const dNum = full.lunar.lunarDay;
     const hNum = full.hour.chiIdx + 1;
 
-    let thuongIdx, haIdx, haoDong;
-    if (method === 'coins' && Array.isArray(customSeeds) && customSeeds.length === 3) {
+    function findQuaiByLines(l3) {
+      return BAT_QUAI_8.find(q => q.lines[0] === l3[0] && q.lines[1] === l3[1] && q.lines[2] === l3[2]) || BAT_QUAI_8[0];
+    }
+
+    let thuongIdx, haIdx, haoDong, quaiThuong, quaiHa, lines6;
+    if (Array.isArray(customLines6) && customLines6.length === 6) {
+      lines6 = customLines6.map(v => (v ? 1 : 0));
+      quaiHa = findQuaiByLines([lines6[0], lines6[1], lines6[2]]);
+      quaiThuong = findQuaiByLines([lines6[3], lines6[4], lines6[5]]);
+      haIdx = quaiHa.idx;
+      thuongIdx = quaiThuong.idx;
+      haoDong = (customHaoDong >= 1 && customHaoDong <= 6) ? customHaoDong : ((yNum + mNum + dNum + hNum) % 6 || 6);
+    } else if (method === 'coins' && Array.isArray(customSeeds) && customSeeds.length === 3) {
       thuongIdx = ((customSeeds[0] - 1) % 8 + 8) % 8 + 1;
       haIdx = ((customSeeds[1] - 1) % 8 + 8) % 8 + 1;
       haoDong = ((customSeeds[2] - 1) % 6 + 6) % 6 + 1;
+      quaiThuong = BAT_QUAI_8[thuongIdx - 1];
+      quaiHa = BAT_QUAI_8[haIdx - 1];
+      lines6 = [...quaiHa.lines, ...quaiThuong.lines];
     } else {
       const sumThuong = yNum + mNum + dNum;
       const sumHa = sumThuong + hNum;
       thuongIdx = sumThuong % 8 === 0 ? 8 : sumThuong % 8;
       haIdx = sumHa % 8 === 0 ? 8 : sumHa % 8;
       haoDong = sumHa % 6 === 0 ? 6 : sumHa % 6;
+      quaiThuong = BAT_QUAI_8[thuongIdx - 1];
+      quaiHa = BAT_QUAI_8[haIdx - 1];
+      lines6 = [...quaiHa.lines, ...quaiThuong.lines];
     }
-
-    const quaiThuong = BAT_QUAI_8[thuongIdx - 1];
-    const quaiHa = BAT_QUAI_8[haIdx - 1];
-
-    // Ghép 6 hào từ dưới lên (hào 1..3 là Hạ quái, hào 4..6 là Thượng quái)
-    // Chú ý: lines trong BAT_QUAI_8 được lưu [hào dưới, hào giữa, hào trên]
-    const lines6 = [...quaiHa.lines, ...quaiThuong.lines];
 
     // Quẻ Hỗ (hào 2,3,4 làm Hạ quái Hỗ; hào 3,4,5 làm Thượng quái Hỗ)
-    function findQuaiByLines(l3) {
-      return BAT_QUAI_8.find(q => q.lines[0] === l3[0] && q.lines[1] === l3[1] && q.lines[2] === l3[2]) || BAT_QUAI_8[0];
-    }
     const hoHa = findQuaiByLines([lines6[1], lines6[2], lines6[3]]);
     const hoThuong = findQuaiByLines([lines6[2], lines6[3], lines6[4]]);
 

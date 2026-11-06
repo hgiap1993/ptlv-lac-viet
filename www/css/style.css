@@ -1128,7 +1128,341 @@ body.theme-light .tts-floating-bar {
   display: block;
 }
 
+/* ============================================================================
+   SÂN KHẤU MÔ PHỎNG GIEO QUẺ ĐỘNG (MAI RÙA · THẺ TRE · 3 ĐỒNG XU CỔ)
+   ============================================================================ */
+.divination-method-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.div-method-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 12px 10px;
+  border-radius: 12px;
+  border: 1.5px solid var(--border-gold);
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--text-main);
+  font-weight: 800;
+  font-size: 0.88rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.div-method-btn:hover,
+.div-method-btn.active {
+  background: linear-gradient(135deg, rgba(229, 184, 92, 0.26), rgba(16, 185, 129, 0.18));
+  border-color: var(--gold-primary);
+  color: var(--gold-light);
+  box-shadow: 0 4px 16px rgba(229, 184, 92, 0.25);
+  transform: translateY(-2px);
+}
+
+.divination-stage-grid {
+  display: grid;
+  grid-template-columns: 1.35fr 1fr;
+  gap: 16px;
+  align-items: stretch;
+}
+
+.divination-arena {
+  background: radial-gradient(circle at center, #1b2842 0%, #0b101b 100%);
+  border: 2px solid var(--gold-primary);
+  border-radius: 14px;
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 330px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: inset 0 0 36px rgba(229, 184, 92, 0.14);
+}
+
+body.theme-light .divination-arena {
+  background: radial-gradient(circle at center, #fffdf7 0%, #f5ebd6 100%);
+  border-color: #b45309;
+  box-shadow: inset 0 0 28px rgba(180, 83, 9, 0.12);
+}
+
+/* 1. ĐỒNG XU CỔ LỤC HÀO (3 COINS 3D FLIP) */
+.coins-plate {
+  width: 260px;
+  height: 170px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(229, 184, 92, 0.16) 0%, rgba(15, 23, 42, 0.75) 80%);
+  border: 2px dashed rgba(229, 184, 92, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  padding: 12px;
+  position: relative;
+}
+
+body.theme-light .coins-plate {
+  background: radial-gradient(circle, rgba(217, 119, 6, 0.15) 0%, rgba(254, 243, 199, 0.85) 85%);
+  border-color: #b45309;
+}
+
+.ancient-coin {
+  width: 68px;
+  height: 68px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 30%, #fde68a, #d97706 65%, #78350f 100%);
+  border: 3px solid #fef08a;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.55), inset 0 0 8px rgba(120, 53, 15, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+  transform-style: preserve-3d;
+}
+
+.ancient-coin.coin-yin {
+  background: radial-gradient(circle at 30% 30%, #94a3b8, #475569 65%, #1e293b 100%);
+  border-color: #cbd5e1;
+}
+
+.ancient-coin::after {
+  content: '';
+  width: 18px;
+  height: 18px;
+  background: #0f172a;
+  border: 2px solid #fde047;
+  border-radius: 2px;
+  display: block;
+}
+
+.ancient-coin.coin-yin::after {
+  border-color: #94a3b8;
+}
+
+.coin-face-label {
+  position: absolute;
+  top: 4px;
+  font-size: 0.62rem;
+  font-weight: 900;
+  color: #451a03;
+  letter-spacing: 0.5px;
+}
+
+.ancient-coin.coin-yin .coin-face-label {
+  color: #f8fafc;
+}
+
+.coin-bottom-label {
+  position: absolute;
+  bottom: 4px;
+  font-size: 0.62rem;
+  font-weight: 900;
+  color: #451a03;
+}
+
+.ancient-coin.coin-yin .coin-bottom-label {
+  color: #cbd5e1;
+}
+
+@keyframes coinTossAnim {
+  0% { transform: translateY(0) rotateX(0deg) rotateY(0deg) scale(1); }
+  35% { transform: translateY(-58px) rotateX(540deg) rotateY(360deg) scale(1.18); }
+  70% { transform: translateY(8px) rotateX(900deg) rotateY(720deg) scale(0.96); }
+  100% { transform: translateY(0) rotateX(1080deg) rotateY(1080deg) scale(1); }
+}
+
+.ancient-coin.tossing {
+  animation: coinTossAnim 0.65s ease-out;
+}
+
+/* 2. MAI RÙA LỬA THIÊNG (TORTOISE SHELL & SACRED FIRE CRACKS) */
+.tortoise-wrap {
+  position: relative;
+  width: 220px;
+  height: 190px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tortoise-svg {
+  width: 190px;
+  height: 175px;
+  filter: drop-shadow(0 8px 18px rgba(0, 0, 0, 0.55));
+  transition: transform 0.3s ease;
+}
+
+@keyframes tortoiseHeatShake {
+  0%, 100% { transform: scale(1) rotate(0deg); filter: drop-shadow(0 0 12px rgba(245, 158, 11, 0.4)); }
+  25% { transform: scale(1.04) rotate(-2.5deg); filter: drop-shadow(0 0 28px rgba(239, 68, 68, 0.85)); }
+  50% { transform: scale(1.06) rotate(2.5deg); filter: drop-shadow(0 0 36px rgba(251, 191, 36, 0.95)); }
+  75% { transform: scale(1.03) rotate(-1.5deg); filter: drop-shadow(0 0 24px rgba(245, 158, 11, 0.75)); }
+}
+
+.tortoise-svg.heating {
+  animation: tortoiseHeatShake 0.65s ease-in-out;
+}
+
+.crack-path {
+  stroke: #fde047;
+  stroke-width: 2.8;
+  stroke-linecap: round;
+  fill: none;
+  filter: drop-shadow(0 0 6px #f59e0b);
+  stroke-dasharray: 120;
+  stroke-dashoffset: 120;
+  transition: stroke-dashoffset 0.45s ease-out;
+}
+
+.crack-path.revealed {
+  stroke-dashoffset: 0;
+}
+
+/* 3. ỐNG THẺ TRE / CỎ THI ĐẠI DIỄN (BAMBOO STALKS) */
+.bamboo-stage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 175px;
+}
+
+.bamboo-bundles-row {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 26px;
+  height: 135px;
+  margin-bottom: 8px;
+}
+
+.bamboo-group {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 3px;
+  padding: 8px 12px;
+  background: rgba(16, 185, 129, 0.08);
+  border-bottom: 4px solid #d97706;
+  border-radius: 8px;
+  transition: all 0.35s ease;
+}
+
+.bamboo-stalk {
+  width: 5px;
+  height: 92px;
+  background: linear-gradient(180deg, #fde68a 0%, #10b981 35%, #047857 100%);
+  border-radius: 3px;
+  position: relative;
+  transform-origin: bottom center;
+  transition: transform 0.35s ease;
+}
+
+.bamboo-stalk::after {
+  content: '';
+  position: absolute;
+  top: 26px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: #fde047;
+}
+
+@keyframes bambooShuffleAnim {
+  0%, 100% { transform: translateX(0) rotate(0deg); }
+  25% { transform: translateX(-10px) rotate(-6deg); }
+  50% { transform: translateX(10px) rotate(6deg); }
+  75% { transform: translateX(-6px) rotate(-3deg); }
+}
+
+.bamboo-bundles-row.shuffling .bamboo-group {
+  animation: bambooShuffleAnim 0.6s ease-in-out;
+}
+
+/* BẢNG LẬP 6 HÀO TRỰC TIẾP (6-LINE BUILDER STACK) */
+.hao-builder-panel {
+  background: rgba(15, 23, 42, 0.72);
+  border: 1.5px solid var(--border-gold);
+  border-radius: 14px;
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+body.theme-light .hao-builder-panel {
+  background: #fffdf9;
+  border-color: #d97706;
+}
+
+.hao-slot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 7px 10px;
+  border-radius: 8px;
+  border: 1px dashed rgba(229, 184, 92, 0.28);
+  margin-bottom: 6px;
+  font-size: 0.82rem;
+  transition: all 0.25s ease;
+}
+
+.hao-slot.filled {
+  background: rgba(229, 184, 92, 0.1);
+  border-style: solid;
+  border-color: rgba(229, 184, 92, 0.55);
+}
+
+.hao-slot.moving-slot {
+  background: rgba(244, 63, 94, 0.15);
+  border-color: #fb7185;
+}
+
+.hao-bar-preview {
+  flex: 1;
+  max-width: 130px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 12px;
+}
+
+.hao-bar-yang {
+  width: 100%;
+  height: 10px;
+  background: linear-gradient(90deg, #d97706, #fde047, #d97706);
+  border-radius: 3px;
+}
+
+.hao-bar-yin {
+  width: 44%;
+  height: 10px;
+  background: linear-gradient(90deg, #38bdf8, #818cf8);
+  border-radius: 3px;
+}
+
+.hao-slot.moving-slot .hao-bar-yang,
+.hao-slot.moving-slot .hao-bar-yin {
+  background: linear-gradient(90deg, #f43f5e, #fbbf24);
+  box-shadow: 0 0 8px rgba(244, 63, 94, 0.65);
+}
+
 @media (max-width: 960px) {
+  .divination-method-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .divination-stage-grid {
+    grid-template-columns: 1fr;
+  }
   .lineage-grid, .mode-selector-bar, .summary-3-grid, .lich-bloc-card {
     grid-template-columns: 1fr;
   }
