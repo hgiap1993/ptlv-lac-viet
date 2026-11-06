@@ -370,7 +370,7 @@
             <div class="card-title">👶 Độ Hợp Của Các Con Với Cha Mẹ</div>
           </div>
           ${res.childrenAnalyses.map(c => `
-            <div style="padding:14px;border:1px solid ${c.isYoungest ? 'var(--jade-primary)' : 'var(--border-subtle)'};border-radius:10px;margin-bottom:12px;background:rgba(11,15,23,0.5);">
+            <div style="padding:14px;border:1px solid ${c.isYoungest ? 'var(--jade-primary)' : 'var(--border-subtle)'};border-radius:10px;margin-bottom:12px;background:var(--bg-card);">
               <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:8px;">
                 <div style="font-weight:800;font-size:0.98rem;color:${c.isYoungest ? 'var(--jade-light)' : 'var(--gold-light)'};">
                   ${c.orderTitle}: ${c.person.info.year} (${c.person.info.canChi}) — Mạng ${c.person.info.lacVietHanh}
@@ -467,7 +467,7 @@
     outBox.innerHTML = `
       ${currentLuanTuoiMode === 'findBaby' ? babyYearsCardHtml : ''}
       <!-- TỔNG KẾT CỤC DIỆN GIA ĐẠO -->
-      <div class="card" style="background:linear-gradient(145deg, #172236, #0e1524);border-width:1.5px;">
+      <div class="card card-highlight">
         <div class="card-header">
           <div>
             <div class="card-title">🏛️ Tổng Quan Vận Khí Gia Đình</div>
@@ -618,7 +618,7 @@
           <td>${info.chi} (${info.chiHanh})</td>
           <td><span class="badge hanh-${info.lacVietHanh}">${info.lacVietHanh} (${info.swapped ? '⚡ Hoán vị Thủy–Hỏa' : 'Giữ nguyên'})</span></td>
           <td style="color:var(--text-muted);">${info.hanName} (${info.hanHanh})</td>
-          <td style="font-size:0.78rem;color:#d1d5db;">${info.bulletDesc || ''}</td>
+          <td style="font-size:0.8rem;color:var(--text-main);">${info.bulletDesc || ''}</td>
         </tr>
       `);
     }
@@ -681,7 +681,7 @@
 
     out.innerHTML = `
       <!-- TỜ LỊCH BLOC TRUYỀN THỐNG -->
-      <div class="card" style="background:linear-gradient(145deg, #172236, #0e1524);">
+      <div class="card card-highlight">
         <div class="card-header">
           <div>
             <div class="card-title">
@@ -762,7 +762,7 @@
           ${evalRes.quyNhanHours.hours.length === 0
             ? `<div style="font-size:0.85rem;">Hôm nay dùng 6 Giờ Hoàng Đạo bên dưới để khởi sự.</div>`
             : evalRes.quyNhanHours.hours.map(h => `
-                <div style="font-size:0.86rem;margin-top:4px;color:#fff;">
+                <div style="font-size:0.86rem;margin-top:4px;color:var(--text-main);">
                   🌟 <b>${h.type}: Giờ ${h.chi} (${h.timeRange})</b> — ${h.detail}
                 </div>
               `).join('')}
@@ -975,7 +975,7 @@
     };
 
     box.innerHTML = `
-      <div class="card" style="border-color:var(--gold-light);background:linear-gradient(145deg, #162238, #101726);">
+      <div class="card card-highlight">
         <div class="card-header">
           <div>
             <div class="card-title">🔍 Luận Giải Cung ${p.cungName} (${p.canChi})</div>
@@ -1067,7 +1067,7 @@
 
     // Bản luận giải tổng hợp 6 mặt cuộc đời
     const lifeSummaryHtml = `
-      <div class="card" style="border-color:var(--gold-light);background:linear-gradient(145deg, #17233a, #0e1525);">
+      <div class="card card-highlight">
         <div class="card-header">
           <div>
             <div class="card-title" style="font-size:1.15rem;">
@@ -1143,7 +1143,7 @@
         <div class="tuvi-center">
           <div style="text-align:center;border-bottom:1px solid var(--border-gold);padding-bottom:8px;margin-bottom:10px;">
             <div style="font-size:0.74rem;color:var(--gold-primary);font-weight:700;letter-spacing:1px;">LÁ SỐ TỬ VI LẠC VIỆT</div>
-            <div style="font-size:1.15rem;font-weight:900;color:#fff;margin-top:2px;">${m.name} (${m.amDuongNamNu})</div>
+            <div style="font-size:1.15rem;font-weight:900;color:var(--text-main);margin-top:2px;">${m.name} (${m.amDuongNamNu})</div>
           </div>
           <div class="grid-2" style="font-size:0.8rem;gap:8px;">
             <div>
@@ -1279,7 +1279,7 @@
     if (!out) return;
 
     out.innerHTML = `
-      <div class="card" style="background:linear-gradient(145deg, #172236, #0e1524);">
+      <div class="card card-highlight">
         <div class="card-header">
           <div>
             <div class="card-title">
@@ -1736,7 +1736,7 @@
     if (!out) return;
 
     out.innerHTML = `
-      <div class="card" style="background:linear-gradient(145deg, #172236, #0e1524);border-color:var(--gold-primary);">
+      <div class="card card-highlight">
         <div class="card-header">
           <div>
             <div class="card-title">☯️ Kết Quả Quẻ Dịch (${methodLabels[method] || 'Lạc Việt Độn Toán'})</div>
@@ -1748,14 +1748,14 @@
         <div class="grid-3" style="text-align:center;margin-bottom:16px;">
           <div style="padding:14px;background:rgba(255,255,255,0.03);border:1px solid var(--border-gold);border-radius:12px;">
             <div style="font-size:0.75rem;color:var(--gold-primary);font-weight:700;">1. QUẺ CHỦ</div>
-            <div style="font-weight:800;font-size:0.96rem;margin:6px 0;color:#fff;">${res.queChuName}</div>
+            <div style="font-weight:800;font-size:0.96rem;margin:6px 0;color:var(--text-main);">${res.queChuName}</div>
             ${renderHexagramLines(res.lines6, res.haoDong)}
             <div style="font-size:0.78rem;color:var(--text-muted);">Thượng: ${res.quaiThuong.symbol} ${res.quaiThuong.name} | Hạ: ${res.quaiHa.symbol} ${res.quaiHa.name}</div>
           </div>
 
           <div style="padding:14px;background:rgba(255,255,255,0.03);border:1px solid var(--border-subtle);border-radius:12px;">
             <div style="font-size:0.75rem;color:var(--gold-primary);font-weight:700;">2. QUẺ HỖ</div>
-            <div style="font-weight:800;font-size:0.96rem;margin:6px 0;color:#fff;">${res.queHoName}</div>
+            <div style="font-weight:800;font-size:0.96rem;margin:6px 0;color:var(--text-main);">${res.queHoName}</div>
             <div style="padding:22px 10px;font-size:0.82rem;color:var(--text-muted);">
               Diễn biến trung gian của sự việc.
             </div>
@@ -1763,7 +1763,7 @@
 
           <div style="padding:14px;background:rgba(255,255,255,0.03);border:1px solid var(--jade-primary);border-radius:12px;">
             <div style="font-size:0.75rem;color:var(--jade-light);font-weight:700;">3. QUẺ BIẾN</div>
-            <div style="font-weight:800;font-size:0.96rem;margin:6px 0;color:#fff;">${res.queBienName}</div>
+            <div style="font-weight:800;font-size:0.96rem;margin:6px 0;color:var(--text-main);">${res.queBienName}</div>
             ${renderHexagramLines(res.linesBien, null)}
             <div style="font-size:0.78rem;color:var(--text-muted);">Động hào ${res.haoDong} ➔ Hành ${res.bienHanh}</div>
           </div>
@@ -1803,7 +1803,7 @@
             <span class="badge badge-neutral">${doc.category}</span>
             <span style="font-size:0.74rem;color:var(--gold-primary);font-weight:600;">${doc.author}</span>
           </div>
-          <div style="font-weight:800;font-size:1rem;color:#fff;margin-bottom:8px;">${doc.title}</div>
+          <div style="font-weight:800;font-size:1rem;color:var(--text-main);margin-bottom:8px;">${doc.title}</div>
           <div style="font-size:0.84rem;color:var(--text-muted);margin-bottom:14px;">${doc.summary}</div>
         </div>
         <div style="display:flex;justify-content:space-between;align-items:center;padding-top:10px;border-top:1px solid var(--border-subtle);">

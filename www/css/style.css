@@ -3,22 +3,23 @@
    ============================================================================ */
 
 :root {
-  --bg-deep: #0b0f17;
-  --bg-card: #131b29;
-  --bg-card-alt: #182235;
-  --bg-glass: rgba(19, 27, 41, 0.92);
-  --gold-primary: #e5b85c;
-  --gold-light: #f9df9b;
-  --gold-dark: #a67c27;
+  color-scheme: dark;
+  --bg-deep: #090d16;
+  --bg-card: #111827;
+  --bg-card-alt: #1e293b;
+  --bg-glass: rgba(17, 24, 39, 0.95);
+  --gold-primary: #f59e0b;
+  --gold-light: #fde047;
+  --gold-dark: #b45309;
   --jade-primary: #10b981;
   --jade-light: #6ee7b7;
   --crimson-warn: #f43f5e;
   --amber-warn: #f59e0b;
-  --text-main: #f3f4f6;
-  --text-muted: #9ca3af;
-  --border-gold: rgba(229, 184, 92, 0.28);
-  --border-subtle: rgba(255, 255, 255, 0.08);
-  --shadow-royal: 0 12px 32px rgba(0, 0, 0, 0.55);
+  --text-main: #ffffff;
+  --text-muted: #cbd5e1;
+  --border-gold: rgba(245, 158, 11, 0.42);
+  --border-subtle: rgba(255, 255, 255, 0.14);
+  --shadow-royal: 0 12px 32px rgba(0, 0, 0, 0.6);
   --radius-lg: 16px;
   --radius-md: 12px;
   --radius-sm: 8px;
@@ -297,6 +298,12 @@ a:hover {
   box-shadow: var(--shadow-royal);
 }
 
+.card-highlight {
+  background: linear-gradient(145deg, #172236, #0e1524);
+  border-width: 1.5px;
+  border-color: var(--gold-primary);
+}
+
 .card-header {
   display: flex;
   align-items: center;
@@ -353,19 +360,29 @@ a:hover {
 }
 
 .form-input, .form-select {
-  background: #0d131f;
-  border: 1px solid rgba(229, 184, 92, 0.35);
-  color: var(--text-main);
+  background-color: #0f172a;
+  border: 1.5px solid rgba(245, 158, 11, 0.45);
+  color: #ffffff;
   padding: 10px 12px;
   border-radius: var(--radius-sm);
-  font-size: 0.92rem;
+  font-size: 0.94rem;
+  font-weight: 600;
   outline: none;
   transition: border-color 0.2s;
 }
 
-.form-input:focus, .form-select:focus {
-  border-color: var(--gold-primary);
-  box-shadow: 0 0 0 2px rgba(229, 184, 92, 0.2);
+.form-input:focus, .form-select:focus, .zodiac-helper-select:focus {
+  border-color: var(--gold-light);
+  box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.28);
+}
+
+select option,
+.form-select option,
+.zodiac-helper-select option {
+  background-color: #0f172a;
+  color: #ffffff;
+  font-weight: 600;
+  padding: 8px 12px;
 }
 
 .btn-primary {
@@ -419,29 +436,29 @@ a:hover {
 }
 
 .badge-good {
-  background: rgba(16, 185, 129, 0.18);
-  color: #34d399;
-  border: 1px solid rgba(16, 185, 129, 0.4);
+  background: rgba(16, 185, 129, 0.22);
+  color: #6ee7b7;
+  border: 1px solid rgba(52, 211, 153, 0.55);
 }
 
 .badge-neutral {
-  background: rgba(229, 184, 92, 0.16);
-  color: var(--gold-light);
-  border: 1px solid rgba(229, 184, 92, 0.4);
+  background: rgba(245, 158, 11, 0.22);
+  color: #fde047;
+  border: 1px solid rgba(251, 191, 36, 0.55);
 }
 
 .badge-warn {
-  background: rgba(244, 63, 94, 0.18);
-  color: #fb7185;
-  border: 1px solid rgba(244, 63, 94, 0.4);
+  background: rgba(244, 63, 94, 0.22);
+  color: #fda4af;
+  border: 1px solid rgba(251, 113, 133, 0.55);
 }
 
-/* NGŨ HÀNH COLORS */
-.hanh-Kim  { color: #f3f4f6; background: rgba(243, 244, 246, 0.12); border: 1px solid rgba(243, 244, 246, 0.35); }
-.hanh-Mộc  { color: #4ade80; background: rgba(74, 222, 128, 0.12);  border: 1px solid rgba(74, 222, 128, 0.35); }
-.hanh-Thủy { color: #38bdf8; background: rgba(56, 189, 248, 0.12);  border: 1px solid rgba(56, 189, 248, 0.35); }
-.hanh-Hỏa  { color: #fb7185; background: rgba(251, 113, 133, 0.14); border: 1px solid rgba(251, 113, 133, 0.4); }
-.hanh-Thổ  { color: #fbbf24; background: rgba(251, 191, 36, 0.14);  border: 1px solid rgba(251, 191, 36, 0.4); }
+/* NGŨ HÀNH COLORS (TƯƠNG PHẢN CAO, RÕ NÉT) */
+.hanh-Kim  { color: #ffffff; background: rgba(255, 255, 255, 0.16); border: 1px solid rgba(255, 255, 255, 0.48); }
+.hanh-Mộc  { color: #86efac; background: rgba(34, 197, 94, 0.22);  border: 1px solid rgba(74, 222, 128, 0.55); }
+.hanh-Thủy { color: #7dd3fc; background: rgba(14, 165, 233, 0.24); border: 1px solid rgba(56, 189, 248, 0.55); }
+.hanh-Hỏa  { color: #fda4af; background: rgba(244, 63, 94, 0.24);  border: 1px solid rgba(251, 113, 133, 0.55); }
+.hanh-Thổ  { color: #fde047; background: rgba(234, 179, 8, 0.24);  border: 1px solid rgba(250, 204, 21, 0.55); }
 
 /* DÒNG TRUYỀN DẪN KHÍ GIA ĐẠO (LUẬN TUỔI LẠC VIỆT) */
 .flow-chain {
@@ -876,6 +893,7 @@ html.font-xl .btn-secondary {
 
 /* CHẾ ĐỘ NỀN SÁNG (GIẤY DÓ / LỊCH BLOC TRUYỀN THỐNG DỊU MẮT CHO NGƯỜI LỚN TUỔI) */
 body.theme-light {
+  color-scheme: light;
   --bg-deep: #fcf6e8;
   --bg-card: #ffffff;
   --bg-card-alt: #f7efe0;
@@ -887,13 +905,13 @@ body.theme-light {
   --jade-light: #065f46;
   --crimson-warn: #be123c;
   --amber-warn: #b45309;
-  --text-main: #1c1917;
-  --text-muted: #44403c;
-  --border-gold: rgba(180, 83, 9, 0.35);
-  --border-subtle: rgba(28, 25, 23, 0.15);
+  --text-main: #111827;
+  --text-muted: #374151;
+  --border-gold: rgba(180, 83, 9, 0.42);
+  --border-subtle: rgba(17, 24, 39, 0.16);
   --shadow-royal: 0 6px 22px rgba(120, 80, 20, 0.12);
   background: radial-gradient(circle at 50% 0%, #fffdf9 0%, #fcf6e8 70%, #f5ebd6 100%) !important;
-  color: #1c1917 !important;
+  color: #111827 !important;
 }
 
 body.theme-light .app-header {
@@ -909,23 +927,56 @@ body.theme-light .brand-title {
 }
 
 body.theme-light .card,
+body.theme-light .card-highlight,
 body.theme-light .tuvi-cell,
 body.theme-light .tuvi-center,
 body.theme-light .modal-content,
 body.theme-light #childrenSectionBox {
   background: #ffffff !important;
-  color: #1c1917 !important;
-  border-color: rgba(180, 83, 9, 0.32) !important;
+  color: #111827 !important;
+  border-color: rgba(180, 83, 9, 0.38) !important;
 }
 
 body.theme-light .form-input,
 body.theme-light .form-select,
 body.theme-light .zodiac-helper-select {
-  background: #fffcf5 !important;
-  color: #1c1917 !important;
-  border: 1.5px solid rgba(180, 83, 9, 0.45) !important;
+  background-color: #ffffff !important;
+  color: #111827 !important;
+  border: 1.5px solid #b45309 !important;
+  font-weight: 700;
+}
+
+body.theme-light select option,
+body.theme-light .form-select option,
+body.theme-light .zodiac-helper-select option {
+  background-color: #ffffff !important;
+  color: #111827 !important;
   font-weight: 600;
 }
+
+body.theme-light .badge-good {
+  background: #d1fae5 !important;
+  color: #065f46 !important;
+  border-color: #059669 !important;
+}
+
+body.theme-light .badge-neutral {
+  background: #fef3c7 !important;
+  color: #92400e !important;
+  border-color: #d97706 !important;
+}
+
+body.theme-light .badge-warn {
+  background: #ffe4e6 !important;
+  color: #9f1239 !important;
+  border-color: #e11d48 !important;
+}
+
+body.theme-light .hanh-Kim  { color: #1e293b !important; background: #e2e8f0 !important; border: 1px solid #64748b !important; }
+body.theme-light .hanh-Mộc  { color: #065f46 !important; background: #d1fae5 !important; border: 1px solid #059669 !important; }
+body.theme-light .hanh-Thủy { color: #075985 !important; background: #e0f2fe !important; border: 1px solid #0284c7 !important; }
+body.theme-light .hanh-Hỏa  { color: #9f1239 !important; background: #ffe4e6 !important; border: 1px solid #e11d48 !important; }
+body.theme-light .hanh-Thổ  { color: #92400e !important; background: #fef3c7 !important; border: 1px solid #d97706 !important; }
 
 body.theme-light .btn-secondary,
 body.theme-light .btn-pill,
@@ -933,8 +984,8 @@ body.theme-light .tab-btn,
 body.theme-light .mode-pill,
 body.theme-light .palace-pill-btn {
   background: #f8f0e0 !important;
-  color: #1c1917 !important;
-  border-color: rgba(180, 83, 9, 0.35) !important;
+  color: #111827 !important;
+  border-color: rgba(180, 83, 9, 0.4) !important;
 }
 
 body.theme-light .tab-btn.active,
@@ -954,7 +1005,7 @@ body.theme-light .data-table td,
 body.theme-light .card-title,
 body.theme-light b,
 body.theme-light strong {
-  color: #1c1917;
+  color: #111827;
 }
 
 body.theme-light .star-chinh {
@@ -974,17 +1025,17 @@ body.theme-light .mobile-dock {
   border-top: 2px solid rgba(180, 83, 9, 0.35);
 }
 
-/* CHỌN NHANH TUỔI CON GIÁP (CAN CHI + CON GIÁP) */
+/* CHỌN NHANH TUỔI CON GIÁP (CAN CHI + CON GIÁP) — NỀN ĐẶC TƯƠNG PHẢN CAO */
 .zodiac-helper-select {
   width: 100%;
-  margin-top: 5px;
-  padding: 7px 10px;
+  margin-top: 6px;
+  padding: 9px 12px;
   border-radius: 8px;
-  background: rgba(229, 184, 92, 0.1);
-  border: 1px dashed var(--border-gold);
-  color: var(--gold-light);
-  font-size: 0.84rem;
-  font-weight: 600;
+  background-color: #111827;
+  border: 1.5px solid #d97706;
+  color: #fde047;
+  font-size: 0.88rem;
+  font-weight: 700;
   cursor: pointer;
 }
 
