@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="theme-color" content="#0b0f17" />
+  <title>Lạc Việt Đạo Quán — Lý Học Đông Phương</title>
+  <link rel="manifest" href="manifest.json" />
+  <link rel="stylesheet" href="css/style.css?v=8.1" />
+</head>
+<body>
+
+  <!-- HEADER CHÍNH -->
+  <header class="app-header">
+    <div class="header-inner">
+      <div class="brand-box">
+        <div class="brand-emblem" title="Văn Hiến Lạc Việt 5.000 Năm">☯</div>
+        <div>
+          <div class="brand-title">LẠC VIỆT ĐẠO QUÁN</div>
+          <div class="brand-subtitle">Luận Tuổi · Chọn Ngày Tốt · Tử Vi · Phong Thủy · Độn Toán</div>
+        </div>
+      </div>
+      <div class="header-actions">
+        <button type="button" class="btn-pill" id="btnCycleFontSize" title="Tăng cỡ chữ" style="font-weight:800;border-color:var(--gold-primary);">🔍 Cỡ chữ: Thường</button>
+        <button type="button" class="btn-pill" id="btnToggleLightTheme" title="Đổi nền sáng/tối" style="font-weight:800;">☀️ Nền Sáng</button>
+        <button type="button" class="btn-pill" id="btnAmbientAudio">🔔 Nhạc Thiền</button>
+        <button type="button" class="btn-pill" onclick="document.querySelector('[data-tab=tangkinhcac]').click()">📜 Tàng Kinh Các</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- THANH ĐIỀU HƯỚNG 6 PHÂN HỆ -->
+  <nav class="desktop-tabs">
+    <button type="button" class="tab-btn active" data-tab="luantuoi">👨‍👩‍👧‍👦 1. Luận Tuổi & Sinh Con</button>
+    <button type="button" class="tab-btn" data-tab="trachcat">📅 2. Chọn Ngày Giờ Tốt</button>
+    <button type="button" class="tab-btn" data-tab="tuvi">🌌 3. Lá Số Tử Vi</button>
+    <button type="button" class="tab-btn" data-tab="phongthuy">🧭 4. Phong Thủy Nhà Ở</button>
+    <button type="button" class="tab-btn" data-tab="dontoan">☯️ 5. Gieo Quẻ Dịch</button>
+    <button type="button" class="tab-btn" data-tab="tangkinhcac">📜 6. Tàng Kinh Các</button>
+  </nav>
+
+  <!-- NỘI DUNG CHÍNH -->
+  <main class="main-container">
+
+    <!-- ======================================================================
+         PANEL 1: LUẬN TUỔI LẠC VIỆT (GIA ĐẠO, VỢ CHỒNG, CHỌN NĂM SINH CON ÚT)
+         ====================================================================== -->
+    <section class="tab-panel active" id="panel-luantuoi">
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title">👨‍👩‍👧‍👦 Luận Tuổi Gia Đạo & Chọn Năm Sinh Con</div>
+            <div class="card-subtitle">
+              Phân tích <b>Thiên Can · Địa Chi · Thân Mạng Lạc Việt</b> · Vận khí gia đình hội tụ tại <b>Con Út</b>
+            </div>
+          </div>
+          <div style="display:flex;gap:6px;flex-wrap:wrap;">
+            <button type="button" class="btn-secondary btn-preset-family" data-f="1988" data-m="1990" data-c="" style="font-size:0.75rem;padding:6px 10px;">
+              💑 Mẫu: Vợ Chồng
+            </button>
+            <button type="button" class="btn-secondary btn-preset-family" data-f="1988" data-m="1990" data-c="2018,2026" style="font-size:0.75rem;padding:6px 10px;">
+              👨‍👩‍👧‍👦 Mẫu: Đã Có 2 Con
+            </button>
+          </div>
+        </div>
+
+        <!-- 3 NÚT CHỌN NHANH NHU CẦU CỦA KHÁCH HÀNG -->
+        <div class="mode-selector-bar">
+          <button type="button" class="mode-pill" id="btnModeCoupleOnly">
+            💑 1. Xem 2 Vợ Chồng
+          </button>
+          <button type="button" class="mode-pill active" id="btnModeWithChildren">
+            👨‍👩‍👧‍👦 2. Xem Gia Đình & Con Cái
+          </button>
+          <button type="button" class="mode-pill" id="btnModeFindBabyYear">
+            👶 3. Tìm Năm Đẹp Sinh Con
+          </button>
+        </div>
+
+        <div class="grid-3" style="align-items:end;margin-bottom:14px;">
+          <div class="form-group">
+            <label class="form-label">👨 Năm Sinh Chồng:</label>
+            <input type="number" id="inputFatherYear" class="form-input" value="1988" min="1930" max="2035" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">👩 Năm Sinh Vợ:</label>
+            <input type="number" id="inputMotherYear" class="form-input" value="1990" min="1930" max="2035" />
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;">
+            <button type="button" class="btn-secondary" id="btnAddChild">+ Thêm Con</button>
+            <button type="button" class="btn-primary" id="btnRunLuanTuoi" style="flex:1;">🔮 Xem Kết Quả</button>
+          </div>
+        </div>
+
+        <div id="childrenSectionBox" style="padding:12px 14px;background:rgba(11,15,23,0.6);border:1px solid var(--border-subtle);border-radius:10px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:8px;">
+            <div style="font-size:0.84rem;font-weight:700;color:var(--gold-light);">
+              👶 Năm Sinh Các Con (Từ Lớn Đến Nhỏ):
+            </div>
+            <button type="button" class="btn-secondary" id="btnClearChildren" style="padding:4px 10px;font-size:0.75rem;">🗑️ Xóa hết</button>
+          </div>
+          <div id="childrenListContainer"></div>
+        </div>
+
+        <!-- HỘP GIẢI THÍCH NGẮN GỌN VÌ SAO MỆNH LẠC VIỆT KHÁC SÁCH THƯỜNG -->
+        <details class="helper-details" style="margin-top:12px;">
+          <summary>💡 <b>Lưu ý:</b> Vì sao một số tuổi có Mệnh khác sách Tử Vi thông thường?</summary>
+          <div class="helper-details-body">
+            Trong 60 năm Hoa Giáp, các tuổi mệnh <b>Kim, Mộc, Thổ</b> ở đây giống hệt sách thông thường. Riêng các cặp năm mệnh <b>Thủy</b> và <b>Hỏa</b> (như 1978–1979, 1986–1987, 1994–1995, 1996–1997, 2004–2005, 2026–2027...), cổ thư chữ Hán đã chép <b>đảo ngược vị trí Thủy và Hỏa</b>. Hệ thống <b>Lạc Thư Hoa Giáp</b> của Lý học Lạc Việt đã phục hồi lại đúng gốc Thủy – Hỏa, nhờ đó giải thích chính xác vì sao nhiều cặp vợ chồng sách cũ bảo "tương khắc" nhưng thực tế lại rất giàu có và hạnh phúc!
+          </div>
+        </details>
+      </div>
+
+      <!-- KẾT QUẢ LUẬN TUỔI -->
+      <div id="luanTuoiResultBox"></div>
+
+      <!-- BẢNG ĐỐI CHIẾU 60 NĂM LẠC THƯ HOA GIÁP VS LỤC THẬP HOA GIÁP (THU GỌN CHO ĐỠ RỐI) -->
+      <details class="card collapsible-card">
+        <summary class="collapsible-summary">
+          <span>📜 <b>Bảng Tra Cứu 60 Năm Lạc Thư Hoa Giáp</b></span>
+          <span class="badge badge-neutral">Tra cứu học thuật</span>
+        </summary>
+        <div style="margin-top:16px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:12px;">
+            <div class="card-subtitle">Đối chiếu Lạc Thư Hoa Giáp & Lục Thập Giáp Tý</div>
+            <input type="text" id="inputFilter60HoaGiap" class="form-input" placeholder="🔍 Tìm năm (VD: 1996, Giáp Tuất, Thủy...)" style="min-width:260px;" />
+          </div>
+          <div class="table-wrap" style="max-height:420px;overflow-y:auto;">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Năm</th>
+                  <th>Can Chi</th>
+                  <th>Thiên Can</th>
+                  <th>Địa Chi</th>
+                  <th>Mạng Lạc Việt</th>
+                  <th>Sách Hán Cũ</th>
+                  <th>Tính Chất Cát Hung</th>
+                </tr>
+              </thead>
+              <tbody id="table60HoaGiapBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </details>
+    </section>
+
+    <!-- ======================================================================
+         PANEL 2: CHỌN NGÀY GIỜ TỐT LẠC VIỆT (TRẠCH CÁT & QUÝ NHÂN ĐĂNG THIÊN MÔN)
+         ====================================================================== -->
+    <section class="tab-panel" id="panel-trachcat">
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title">📅 Chọn Ngày Giờ Tốt Lạc Việt</div>
+            <div class="card-subtitle">
+              Trạch Cát · Nhị Thập Bát Tú · Giờ Quý Nhân Đăng Thiên Môn
+            </div>
+          </div>
+        </div>
+        <div id="trachCatFamilyQuickBar" class="family-quick-bar"></div>
+        <div class="grid-4" style="align-items:end;">
+          <div class="form-group">
+            <label class="form-label">📆 Ngày Dương Lịch:</label>
+            <input type="date" id="inputTrachCatDate" class="form-input" value="2026-11-01" />
+            <div style="display:flex;gap:6px;margin-top:6px;">
+              <button type="button" class="btn-secondary" id="btnTrachCatPrevDay" style="flex:1;padding:6px 8px;font-size:0.78rem;">◀ Hôm Trước</button>
+              <button type="button" class="btn-secondary" id="btnTrachCatToday" style="flex:1;padding:6px 8px;font-size:0.78rem;">📅 Hôm Nay</button>
+              <button type="button" class="btn-secondary" id="btnTrachCatNextDay" style="flex:1;padding:6px 8px;font-size:0.78rem;">Hôm Sau ▶</button>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">👤 Năm Sinh Gia Chủ:</label>
+            <input type="number" id="inputTrachCatOwnerYear" class="form-input" value="1990" min="1930" max="2035" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">🏗️ Năm Xây Nhà / Cưới Hỏi:</label>
+            <input type="number" id="inputBuildYear" class="form-input" value="2026" min="2024" max="2040" />
+          </div>
+          <div>
+            <button type="button" class="btn-primary" id="btnRunTrachCat" style="width:100%;">🔍 Xem Ngày Tốt</button>
+          </div>
+        </div>
+
+        <!-- BỘ LỌC VIỆC CẦN LÀM CHO NGƯỜI LỚN TUỔI -->
+        <div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--border-subtle);">
+          <div style="font-size:0.86rem;font-weight:700;color:var(--gold-light);">
+            🎯 Chọn việc cần làm:
+          </div>
+          <div class="purpose-filter-bar" id="trachCatPurposeBar">
+            <button type="button" class="purpose-pill active" data-purpose="all">🌟 Tất Cả</button>
+            <button type="button" class="purpose-pill" data-purpose="dongtho">🏠 Động Thổ / Làm Nhà</button>
+            <button type="button" class="purpose-pill" data-purpose="cuoihoi">💒 Cưới Hỏi</button>
+            <button type="button" class="purpose-pill" data-purpose="khaitruong">🏪 Khai Trương</button>
+            <button type="button" class="purpose-pill" data-purpose="nhaptrach">🚚 Nhập Trạch</button>
+            <button type="button" class="purpose-pill" data-purpose="xuathanh">✈️ Xuất Hành</button>
+            <button type="button" class="purpose-pill" data-purpose="cunggio">🙏 Cúng Giỗ</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="trachCatResultBox"></div>
+    </section>
+
+    <!-- ======================================================================
+         PANEL 3: LÁ SỐ TỬ VI LẠC VIỆT 12 CUNG (ĐỊNH TÍNH & ĐỊNH LƯỢNG)
+         ====================================================================== -->
+    <section class="tab-panel" id="panel-tuvi">
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title">🌌 Lập Lá Số Tử Vi Lạc Việt</div>
+            <div class="card-subtitle">
+              Luận giải 12 cung trọn đời & Vận hạn lưu niên
+            </div>
+          </div>
+        </div>
+        <div id="tuViFamilyQuickBar" class="family-quick-bar"></div>
+        <div class="grid-4" style="align-items:end;">
+          <div class="form-group">
+            <label class="form-label">✍️ Họ Tên:</label>
+            <input type="text" id="inputTuViName" class="form-input" value="Nguyễn Văn An" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">⚧ Giới Tính:</label>
+            <select id="inputTuViGender" class="form-select">
+              <option value="Nam">Nam Mạng</option>
+              <option value="Nữ">Nữ Mạng</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">📅 Loại Lịch:</label>
+            <select id="selectTuViCalType" class="form-select">
+              <option value="solar" selected>☀️ Dương Lịch</option>
+              <option value="lunar">🌙 Âm Lịch</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">🕐 Giờ Sinh:</label>
+            <select id="inputTuViHour" class="form-select">
+              <option value="0">Giờ Tý (23h00 – 01h00)</option>
+              <option value="1">Giờ Sửu (01h00 – 03h00)</option>
+              <option value="2">Giờ Dần (03h00 – 05h00)</option>
+              <option value="3">Giờ Mão (05h00 – 07h00)</option>
+              <option value="4">Giờ Thìn (07h00 – 09h00)</option>
+              <option value="5">Giờ Tỵ (09h00 – 11h00)</option>
+              <option value="6" selected>Giờ Ngọ (11h00 – 13h00)</option>
+              <option value="7">Giờ Mùi (13h00 – 15h00)</option>
+              <option value="8">Giờ Thân (15h00 – 17h00)</option>
+              <option value="9">Giờ Dậu (17h00 – 19h00)</option>
+              <option value="10">Giờ Tuất (19h00 – 21h00)</option>
+              <option value="11">Giờ Hợi (21h00 – 23h00)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="grid-4" style="align-items:end;margin-top:12px;">
+          <div class="form-group">
+            <label class="form-label">🎂 Ngày Sinh:</label>
+            <input type="number" id="inputTuViDay" class="form-input" value="15" min="1" max="31" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">📆 Tháng Sinh:</label>
+            <input type="number" id="inputTuViMonth" class="form-input" value="6" min="1" max="12" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">🌟 Năm Sinh:</label>
+            <input type="number" id="inputTuViYear" class="form-input" value="1990" min="1930" max="2035" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">🔮 Năm Xem Hạn:</label>
+            <input type="number" id="inputTuViViewYear" class="form-input" value="2026" min="2020" max="2050" />
+          </div>
+        </div>
+
+        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-top:14px;padding-top:12px;border-top:1px solid var(--border-subtle);">
+          <div id="tuViDatePreviewText" style="font-size:0.86rem;color:var(--jade-light);font-weight:600;"></div>
+          <button type="button" class="btn-primary" id="btnRunTuVi">🌌 Lập Lá Số Tử Vi</button>
+        </div>
+      </div>
+
+      <div id="tuViBoardContainer"></div>
+    </section>
+
+    <!-- ======================================================================
+         PANEL 4: ĐỊA LÝ PHONG THỦY BÁT TRẠCH – HUYỀN KHÔNG LẠC VIỆT
+         ====================================================================== -->
+    <section class="tab-panel" id="panel-phongthuy">
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title">🧭 Phong Thủy Bát Trạch & Huyền Không</div>
+            <div class="card-subtitle">
+              Hà Đồ phối Hậu Thiên Lạc Việt & Phi Tinh Lầu
+            </div>
+          </div>
+        </div>
+        <div id="phongThuyFamilyQuickBar" class="family-quick-bar"></div>
+        <div class="grid-3" style="align-items:end;">
+          <div class="form-group">
+            <label class="form-label">🏠 Năm Sinh Gia Chủ:</label>
+            <input type="number" id="inputPhongThuyYear" class="form-input" value="1984" min="1930" max="2035" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">⚧ Giới Tính:</label>
+            <select id="inputPhongThuyGender" class="form-select">
+              <option value="Nam">Nam Mạng</option>
+              <option value="Nữ">Nữ Mạng</option>
+            </select>
+          </div>
+          <div>
+            <button type="button" class="btn-primary" id="btnRunPhongThuy" style="width:100%;">🧭 Xem Phong Thủy</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="phongThuyResultBox"></div>
+
+      <!-- CẨM NANG 4 KHU VỰC TRỌNG YẾU TRONG NHÀ -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">🏛️ 4 Khu Vực Trọng Yếu Trong Nhà</div>
+        </div>
+        <div class="grid-2">
+          <div style="padding:12px;background:rgba(255,255,255,0.03);border-radius:10px;font-size:0.85rem;">
+            <b style="color:var(--gold-light);">1. Hình Tướng Nhà:</b>
+            <p style="margin-top:4px;color:var(--text-muted);">"Ngôi nhà là hình ảnh phản chiếu số mệnh của những người sống bên trong". Mái nhà đại diện cho người Cha và nền tảng gia đạo; tránh thiết kế mái lệch dị dạng, cột trụ chênh vênh hoặc góc nhọn xung sát.</p>
+          </div>
+          <div style="padding:12px;background:rgba(255,255,255,0.03);border-radius:10px;font-size:0.85rem;">
+            <b style="color:var(--gold-light);">2. Căn Bếp:</b>
+            <p style="margin-top:4px;color:var(--text-muted);">Bếp liên quan trực tiếp đến sức khỏe người vợ và kho tài lộc. Đại kỵ: Bếp đối diện bồn rửa/tủ lạnh (Thủy Hỏa xung), bếp đặt tại Trung cung, bếp lộ thiên nhìn thẳng từ cổng vào, hoặc dưới xà ngang đè.</p>
+          </div>
+          <div style="padding:12px;background:rgba(255,255,255,0.03);border-radius:10px;font-size:0.85rem;">
+            <b style="color:var(--gold-light);">3. Nhà Vệ Sinh & Hầm Phốt:</b>
+            <p style="margin-top:4px;color:var(--text-muted);">Tuyệt đối tránh đặt Hầm phốt hoặc WC tại Trung cung (giữa nhà) hay cung Càn (Tây Bắc – người Cha) gây suy kiệt tài vận và hiếm muộn. Gương trong WC không được chiếu thẳng ra cửa phòng vệ sinh đẩy uế khí ra nhà.</p>
+          </div>
+          <div style="padding:12px;background:rgba(255,255,255,0.03);border-radius:10px;font-size:0.85rem;">
+            <b style="color:var(--gold-light);">4. Minh Đường & Thủy Pháp:</b>
+            <p style="margin-top:4px;color:var(--text-muted);">Hồ nước trước nhà giúp tụ khí nhưng nước phải luôn luân chuyển sạch sẽ (tránh tử thủy). Kết hợp đo Địa trường khí (chỉ số Bovis dương) và dùng đá tự nhiên/Ngọc Phỉ Thúy thiên nhiên để cân bằng sinh khí.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================================================================
+         PANEL 5: LẠC VIỆT ĐỘN TOÁN & GIEO QUẺ CHU DỊCH (64 QUẺ)
+         ====================================================================== -->
+    <section class="tab-panel" id="panel-dontoan">
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title">☯️ Gieo Quẻ Dịch & Lạc Việt Độn Toán</div>
+            <div class="card-subtitle">
+              Mô phỏng trực quan Mai Rùa · Thẻ Tre · 3 Đồng Xu Cổ · Bấm Độn Thời Khắc
+            </div>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">🙏 Nhập Việc Cần Hỏi Trước Khi Khởi Quẻ:</label>
+          <input type="text" id="inputDonToanQuestion" class="form-input" value="Hỏi việc hợp tác kinh doanh, cầu tài lộc và gia đạo trong tháng này" />
+        </div>
+
+        <div class="divination-method-grid" id="divinationMethodGrid">
+          <button type="button" class="div-method-btn active" data-div-method="coins">
+            <span style="font-size:1.5rem;">🪙</span>
+            <span>Gieo 3 Đồng Xu</span>
+            <span style="font-size:0.72rem;color:var(--text-muted);font-weight:600;">Lục Hào Kim Tiền</span>
+          </button>
+          <button type="button" class="div-method-btn" data-div-method="tortoise">
+            <span style="font-size:1.5rem;">🐢</span>
+            <span>Bốc Phệ Mai Rùa</span>
+            <span style="font-size:0.72rem;color:var(--text-muted);font-weight:600;">Lửa Thiêng Giáp Cốt</span>
+          </button>
+          <button type="button" class="div-method-btn" data-div-method="bamboo">
+            <span style="font-size:1.5rem;">🎋</span>
+            <span>Rút 50 Thẻ Tre</span>
+            <span style="font-size:0.72rem;color:var(--text-muted);font-weight:600;">Phép Phệ Đại Diễn</span>
+          </button>
+          <button type="button" class="div-method-btn" data-div-method="time">
+            <span style="font-size:1.5rem;">⏱️</span>
+            <span>Bấm Độn Theo Giờ</span>
+            <span style="font-size:0.72rem;color:var(--text-muted);font-weight:600;">Động Tâm Khởi Quẻ</span>
+          </button>
+        </div>
+
+        <!-- SÂN KHẤU MÔ PHỎNG TƯƠNG TÁC -->
+        <div id="divinationStageBox" style="margin-top:16px;"></div>
+      </div>
+
+      <div id="donToanResultBox"></div>
+    </section>
+
+    <!-- ======================================================================
+         PANEL 6: TÀNG KINH CÁC (TOÀN VĂN CHUYÊN KHẢO LÝ HỌC LẠC VIỆT)
+         ====================================================================== -->
+    <section class="tab-panel" id="panel-tangkinhcac">
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title">📜 Tàng Kinh Các Lạc Việt</div>
+            <div class="card-subtitle">
+              Kho tư liệu Lý Học Đông Phương
+            </div>
+          </div>
+        </div>
+        <div class="grid-2">
+          <div class="form-group">
+            <label class="form-label">🎓 Chuyên Đề:</label>
+            <select id="selectAuthorFilter" class="form-select">
+              <option value="all">Tất cả Chuyên đề</option>
+              <option value="thiensu">☯️ Kinh Dịch, Hà Đồ – Lạc Thư & Trạch Cát</option>
+              <option value="hoangtrieuhai">🧭 Địa Lý Phong Thủy & Hình Tướng Nhà</option>
+              <option value="thienluan">⚖️ Luận Tuổi Gia Đạo & Định Tính – Định Lượng</option>
+              <option value="diendan">🏛️ Chuyên Đề Cổ Truyền (28 Sao, Quý Nhân, Tử Vi)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">🔍 Tìm Kiếm:</label>
+            <input type="text" id="inputSearchTangKinh" class="form-input" placeholder="Nhập từ khóa: Hà Đồ, Lạc Thư, Con Út, Quý Nhân, Mệnh Trạch..." />
+          </div>
+        </div>
+      </div>
+
+      <div class="grid-2" id="tangKinhCacGrid"></div>
+    </section>
+
+  </main>
+
+  <!-- MODAL ĐỌC TOÀN VĂN CHUYÊN KHẢO TRONG TÀNG KINH CÁC -->
+  <div class="modal-backdrop" id="docReaderModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div>
+          <div id="modalDocTitle" style="font-weight:800;font-size:1.08rem;color:var(--gold-light);"></div>
+          <div id="modalDocMeta" style="font-size:0.78rem;color:var(--text-muted);margin-top:2px;"></div>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+          <button type="button" class="btn-pill" id="btnModalFontSize">🔍 Cỡ chữ: Lớn</button>
+          <button type="button" class="btn-pill" id="btnSpeakModalDoc">🔊 Đọc Bài</button>
+          <button type="button" class="btn-secondary" id="btnCloseDocModal">✕ Đóng</button>
+        </div>
+      </div>
+      <div class="modal-body" id="modalDocBody"></div>
+    </div>
+  </div>
+
+  <!-- THANH ĐIỀU KHIỂN GIỌNG ĐỌC NỔI DÀNH CHO NGƯỜI LỚN TUỔI -->
+  <div class="tts-floating-bar" id="ttsFloatingBar">
+    <span style="font-weight:800;font-size:0.86rem;color:var(--gold-light);" id="ttsStatusLabel">🔊 Đang đọc...</span>
+    <button type="button" class="btn-pill" id="btnTtsSpeed" style="padding:5px 10px;font-size:0.8rem;">🐢 Tốc độ: 0.9x</button>
+    <button type="button" class="btn-pill" id="btnTtsPauseResume" style="padding:5px 10px;font-size:0.8rem;">⏸️ Tạm Dừng</button>
+    <button type="button" class="btn-pill" id="btnTtsStop" style="padding:5px 10px;font-size:0.8rem;border-color:var(--crimson-warn);color:#fda4af;">⏹️ Tắt Đọc</button>
+  </div>
+
+  <!-- THÔNG BÁO NHANH (TOAST) -->
+  <div class="senior-toast" id="seniorToast"></div>
+
+  <!-- THANH DOCK ĐIỀU HƯỚNG DƯỚI ĐÁY CHO MOBILE -->
+  <nav class="mobile-dock">
+    <button type="button" class="dock-item active" data-tab="luantuoi">
+      <span class="dock-icon">👨‍👩‍👧‍👦</span>
+      <span>Luận Tuổi</span>
+    </button>
+    <button type="button" class="dock-item" data-tab="trachcat">
+      <span class="dock-icon">📅</span>
+      <span>Ngày Tốt</span>
+    </button>
+    <button type="button" class="dock-item" data-tab="tuvi">
+      <span class="dock-icon">🌌</span>
+      <span>Tử Vi</span>
+    </button>
+    <button type="button" class="dock-item" data-tab="phongthuy">
+      <span class="dock-icon">🧭</span>
+      <span>Phong Thủy</span>
+    </button>
+    <button type="button" class="dock-item" data-tab="dontoan">
+      <span class="dock-icon">☯️</span>
+      <span>Độn Toán</span>
+    </button>
+    <button type="button" class="dock-item" data-tab="tangkinhcac">
+      <span class="dock-icon">📜</span>
+      <span>Kinh Các</span>
+    </button>
+  </nav>
+
+  <!-- SCRIPTS HỆ THỐNG -->
+  <script src="js/data-lyhoc.js?v=8.1"></script>
+  <script src="js/engine-amlich.js?v=8.1"></script>
+  <script src="js/engine-luantuoi.js?v=8.1"></script>
+  <script src="js/engine-trachcat.js?v=8.1"></script>
+  <script src="js/engine-tuvi-phongthuy.js?v=8.1"></script>
+  <script src="js/app.js?v=8.1"></script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('sw.js?v=8.1').then((reg) => {
+          reg.update();
+        }).catch(() => {});
+        let refreshing = false;
+        navigator.serviceWorker.addEventListener('controllerchange', () => {
+          if (!refreshing) {
+            refreshing = true;
+            window.location.reload();
+          }
+        });
+      });
+    }
+  </script>
+</body>
+</html>

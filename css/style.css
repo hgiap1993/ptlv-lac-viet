@@ -1,0 +1,1762 @@
+/* ============================================================================
+   LẠC VIỆT ĐẠO QUÁN - ROYAL ORIENTAL & BRONZE DRUM THEME (MOBILE-FIRST & DESKTOP)
+   ============================================================================ */
+
+:root {
+  color-scheme: dark;
+  --bg-deep: #090d16;
+  --bg-card: #111827;
+  --bg-card-alt: #1e293b;
+  --bg-glass: rgba(17, 24, 39, 0.95);
+  --gold-primary: #f59e0b;
+  --gold-light: #fde047;
+  --gold-dark: #b45309;
+  --jade-primary: #10b981;
+  --jade-light: #6ee7b7;
+  --crimson-warn: #f43f5e;
+  --amber-warn: #f59e0b;
+  --text-main: #ffffff;
+  --text-muted: #cbd5e1;
+  --border-gold: rgba(245, 158, 11, 0.42);
+  --border-subtle: rgba(255, 255, 255, 0.14);
+  --shadow-royal: 0 12px 32px rgba(0, 0, 0, 0.6);
+  --radius-lg: 16px;
+  --radius-md: 12px;
+  --radius-sm: 8px;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html, body {
+  background: radial-gradient(circle at 50% 0%, #1a2438 0%, #0b0f17 65%, #070a10 100%);
+  color: var(--text-main);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  line-height: 1.6;
+  min-height: 100vh;
+  overflow-x: hidden;
+  padding-bottom: max(84px, env(safe-area-inset-bottom, 84px));
+}
+
+/* Họa tiết trống đồng Đông Sơn chìm phía sau */
+body::before {
+  content: "";
+  position: fixed;
+  top: -120px;
+  right: -120px;
+  width: 480px;
+  height: 480px;
+  background: radial-gradient(circle, rgba(229,184,92,0.07) 0%, rgba(229,184,92,0.02) 45%, transparent 70%);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 0;
+}
+
+a {
+  color: var(--gold-primary);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* HEADER TÔN VINH SƯ PHỤ & CÁC SƯ HUYNH */
+.app-header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: rgba(11, 15, 23, 0.94);
+  backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--border-gold);
+  padding: 12px 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.45);
+}
+
+.header-inner {
+  max-width: 1280px;
+  margin: 0 auto;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.brand-box {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.brand-emblem {
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #f9df9b 0%, #c89632 50%, #7d5610 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  color: #0b0f17;
+  font-weight: 900;
+  box-shadow: 0 0 18px rgba(229, 184, 92, 0.45);
+  flex-shrink: 0;
+}
+
+.brand-title {
+  font-size: 1.15rem;
+  font-weight: 800;
+  letter-spacing: 0.4px;
+  background: linear-gradient(90deg, #fff6d6, #e5b85c, #f9df9b);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.brand-subtitle {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.btn-pill {
+  background: rgba(229, 184, 92, 0.12);
+  border: 1px solid var(--border-gold);
+  color: var(--gold-light);
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s ease;
+}
+
+.btn-pill:hover, .btn-pill.active {
+  background: var(--gold-primary);
+  color: #0b0f17;
+  box-shadow: 0 0 12px rgba(229, 184, 92, 0.4);
+}
+
+/* LINEAGE BANNER (TỔ SƯ & SƯ HUYNH) */
+.lineage-banner {
+  max-width: 1280px;
+  margin: 16px auto 8px;
+  padding: 0 16px;
+}
+
+.lineage-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.lineage-card {
+  background: linear-gradient(145deg, rgba(24, 34, 53, 0.92), rgba(15, 22, 35, 0.96));
+  border: 1px solid var(--border-gold);
+  border-radius: var(--radius-md);
+  padding: 12px 14px;
+  display: flex;
+  align-items: flex-start;
+  gap: 11px;
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.lineage-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--gold-light);
+}
+
+.lineage-card.grandmaster {
+  background: linear-gradient(145deg, rgba(46, 35, 16, 0.92), rgba(20, 26, 40, 0.96));
+  border-color: rgba(249, 223, 155, 0.55);
+}
+
+.lineage-avatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: rgba(229, 184, 92, 0.18);
+  border: 1px solid var(--gold-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  flex-shrink: 0;
+}
+
+.lineage-role {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.7px;
+  color: var(--gold-primary);
+  font-weight: 700;
+}
+
+.lineage-name {
+  font-size: 0.94rem;
+  font-weight: 700;
+  color: #fff;
+  margin: 2px 0;
+}
+
+.lineage-desc {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  line-height: 1.4;
+}
+
+/* DESKTOP NAV TABS */
+.desktop-tabs {
+  max-width: 1280px;
+  margin: 12px auto;
+  padding: 0 16px;
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.desktop-tabs::-webkit-scrollbar {
+  display: none;
+}
+
+.tab-btn {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-muted);
+  padding: 10px 16px;
+  border-radius: var(--radius-md);
+  font-size: 0.86rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.2s ease;
+}
+
+.tab-btn:hover {
+  color: var(--text-main);
+  border-color: var(--border-gold);
+}
+
+.tab-btn.active {
+  background: linear-gradient(135deg, #e5b85c 0%, #b88628 100%);
+  color: #0b0f17;
+  border-color: var(--gold-light);
+  font-weight: 700;
+  box-shadow: 0 4px 16px rgba(229, 184, 92, 0.35);
+}
+
+/* MAIN CONTAINER & SECTIONS */
+.main-container {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 8px 16px 32px;
+  position: relative;
+  z-index: 1;
+}
+
+.tab-panel {
+  display: none;
+  animation: fadeIn 0.25s ease;
+}
+
+.tab-panel.active {
+  display: block;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* CARDS, GRIDS & FORMS */
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-gold);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  margin-bottom: 18px;
+  box-shadow: var(--shadow-royal);
+}
+
+.card-highlight {
+  background: linear-gradient(145deg, #172236, #0e1524);
+  border-width: 1.5px;
+  border-color: var(--gold-primary);
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.card-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--gold-light);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.card-subtitle {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+}
+
+.grid-2 {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+
+.grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+.grid-4 {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.form-label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--gold-light);
+}
+
+.form-input, .form-select {
+  background-color: #0f172a;
+  border: 1.5px solid rgba(245, 158, 11, 0.45);
+  color: #ffffff;
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+  font-size: 0.94rem;
+  font-weight: 600;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.form-input:focus, .form-select:focus, .zodiac-helper-select:focus {
+  border-color: var(--gold-light);
+  box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.28);
+}
+
+select option,
+.form-select option,
+.zodiac-helper-select option {
+  background-color: #0f172a;
+  color: #ffffff;
+  font-weight: 600;
+  padding: 8px 12px;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #f3c86b 0%, #c48f27 100%);
+  color: #0b0f17;
+  border: none;
+  padding: 11px 20px;
+  border-radius: var(--radius-sm);
+  font-size: 0.92rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: transform 0.15s ease, box-shadow 0.2s ease;
+}
+
+.btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(229, 184, 92, 0.4);
+}
+
+.btn-secondary {
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--text-main);
+  border: 1px solid var(--border-gold);
+  padding: 9px 14px;
+  border-radius: var(--radius-sm);
+  font-size: 0.84rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.btn-secondary:hover {
+  background: rgba(229, 184, 92, 0.16);
+}
+
+/* BADGES & PILLS */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.badge-good {
+  background: rgba(16, 185, 129, 0.22);
+  color: #6ee7b7;
+  border: 1px solid rgba(52, 211, 153, 0.55);
+}
+
+.badge-neutral {
+  background: rgba(245, 158, 11, 0.22);
+  color: #fde047;
+  border: 1px solid rgba(251, 191, 36, 0.55);
+}
+
+.badge-warn {
+  background: rgba(244, 63, 94, 0.22);
+  color: #fda4af;
+  border: 1px solid rgba(251, 113, 133, 0.55);
+}
+
+/* NGŨ HÀNH COLORS (TƯƠNG PHẢN CAO, RÕ NÉT) */
+.hanh-Kim  { color: #ffffff; background: rgba(255, 255, 255, 0.16); border: 1px solid rgba(255, 255, 255, 0.48); }
+.hanh-Mộc  { color: #86efac; background: rgba(34, 197, 94, 0.22);  border: 1px solid rgba(74, 222, 128, 0.55); }
+.hanh-Thủy { color: #7dd3fc; background: rgba(14, 165, 233, 0.24); border: 1px solid rgba(56, 189, 248, 0.55); }
+.hanh-Hỏa  { color: #fda4af; background: rgba(244, 63, 94, 0.24);  border: 1px solid rgba(251, 113, 133, 0.55); }
+.hanh-Thổ  { color: #fde047; background: rgba(234, 179, 8, 0.24);  border: 1px solid rgba(250, 204, 21, 0.55); }
+
+/* DÒNG TRUYỀN DẪN KHÍ GIA ĐẠO (LUẬN TUỔI LẠC VIỆT) */
+.flow-chain {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  padding: 16px;
+  background: rgba(11, 15, 23, 0.65);
+  border: 1px dashed var(--border-gold);
+  border-radius: var(--radius-md);
+  margin: 14px 0;
+}
+
+.flow-node {
+  background: var(--bg-card-alt);
+  border: 1px solid var(--border-gold);
+  border-radius: var(--radius-sm);
+  padding: 10px 14px;
+  min-width: 150px;
+}
+
+.flow-node.youngest-node {
+  background: linear-gradient(145deg, rgba(16, 185, 129, 0.18), rgba(24, 34, 53, 0.95));
+  border: 2px solid var(--jade-primary);
+  box-shadow: 0 0 18px rgba(16, 185, 129, 0.25);
+}
+
+.flow-arrow {
+  font-size: 1.2rem;
+  color: var(--gold-primary);
+  font-weight: 900;
+}
+
+/* BÀN CỜ LÁ SỐ TỬ VI 12 CUNG (GRID 4x4 CHUẨN ĐÔNG PHƯƠNG) */
+.tuvi-board {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-template-rows: repeat(4, minmax(175px, auto));
+  gap: 6px;
+  background: rgba(229, 184, 92, 0.22);
+  padding: 6px;
+  border-radius: var(--radius-md);
+  border: 2px solid var(--gold-primary);
+}
+
+.tuvi-cell {
+  background: #0e1522;
+  border: 1px solid rgba(229, 184, 92, 0.28);
+  border-radius: 6px;
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  cursor: pointer;
+  transition: all 0.18s ease;
+  position: relative;
+}
+
+.tuvi-cell:hover, .tuvi-cell.selected {
+  border-color: var(--gold-light);
+  background: #162136;
+  box-shadow: inset 0 0 12px rgba(229, 184, 92, 0.22);
+}
+
+.tuvi-cell.is-menh {
+  border: 1.5px solid var(--gold-primary);
+  background: linear-gradient(180deg, rgba(229, 184, 92, 0.11) 0%, #0e1522 100%);
+}
+
+.tuvi-center {
+  grid-column: 2 / 4;
+  grid-row: 2 / 4;
+  background: radial-gradient(circle at center, #182338 0%, #0c121e 100%);
+  border: 1.5px solid var(--gold-primary);
+  border-radius: 8px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.cell-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px dashed rgba(255, 255, 255, 0.1);
+  padding-bottom: 4px;
+  margin-bottom: 6px;
+  font-size: 0.72rem;
+}
+
+.cell-cung-name {
+  font-weight: 800;
+  color: var(--gold-light);
+  font-size: 0.78rem;
+  letter-spacing: 0.3px;
+}
+
+.cell-chinh-tinh {
+  text-align: center;
+  margin: 4px 0 6px;
+  min-height: 36px;
+}
+
+.star-chinh {
+  display: block;
+  font-weight: 800;
+  font-size: 0.88rem;
+  color: #fde047;
+}
+
+.cell-substars {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px;
+  font-size: 0.7rem;
+  flex: 1;
+}
+
+.star-cat {
+  color: #6ee7b7;
+  display: block;
+}
+
+.star-sat {
+  color: #fda4af;
+  display: block;
+}
+
+.cell-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px dashed rgba(255, 255, 255, 0.1);
+  padding-top: 4px;
+  margin-top: 6px;
+  font-size: 0.68rem;
+  color: var(--text-muted);
+}
+
+/* QUẺ DỊCH 6 HÀO RENDER */
+.hexagram-box {
+  display: flex;
+  flex-direction: column-reverse;
+  gap: 7px;
+  width: 120px;
+  margin: 10px auto;
+}
+
+.hex-line {
+  height: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.hex-yang {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, #e5b85c, #f9df9b, #e5b85c);
+  border-radius: 3px;
+}
+
+.hex-yin-part {
+  width: 44%;
+  height: 100%;
+  background: linear-gradient(90deg, #38bdf8, #93c5fd);
+  border-radius: 3px;
+}
+
+.hex-line.moving .hex-yang,
+.hex-line.moving .hex-yin-part {
+  background: linear-gradient(90deg, #f43f5e, #fb7185);
+  box-shadow: 0 0 8px rgba(244, 63, 94, 0.6);
+}
+
+/* TABLES */
+.table-wrap {
+  overflow-x: auto;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-subtle);
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+}
+
+.data-table th, .data-table td {
+  padding: 10px 12px;
+  text-align: left;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.data-table th {
+  background: rgba(229, 184, 92, 0.12);
+  color: var(--gold-light);
+  font-weight: 700;
+}
+
+.data-table tr:hover {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+/* MODAL ĐỌC TÀI LIỆU TÀNG KINH CÁC */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(5, 8, 14, 0.85);
+  backdrop-filter: blur(8px);
+  z-index: 100;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+
+.modal-backdrop.open {
+  display: flex;
+}
+
+.modal-content {
+  background: var(--bg-card);
+  border: 1.5px solid var(--gold-primary);
+  border-radius: var(--radius-lg);
+  max-width: 900px;
+  width: 100%;
+  max-height: 88vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.8);
+}
+
+.modal-header {
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border-gold);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.modal-body {
+  padding: 20px;
+  overflow-y: auto;
+  font-size: 0.95rem;
+  line-height: 1.75;
+  white-space: pre-wrap;
+}
+
+/* MOBILE BOTTOM NAVIGATION DOCK */
+.mobile-dock {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(11, 15, 23, 0.96);
+  backdrop-filter: blur(16px);
+  border-top: 1px solid var(--border-gold);
+  display: none;
+  grid-template-columns: repeat(6, 1fr);
+  padding: 6px 4px max(8px, env(safe-area-inset-bottom, 8px));
+  z-index: 60;
+}
+
+.dock-item {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  font-size: 0.66rem;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 4px 2px;
+}
+
+.dock-item .dock-icon {
+  font-size: 1.15rem;
+}
+
+.dock-item.active {
+  color: var(--gold-primary);
+}
+
+/* ============================================================================
+   CUSTOMER-FRIENDLY UX COMPONENTS (MODE SELECTOR, SUMMARY CARDS, LIFE READING)
+   ============================================================================ */
+.mode-selector-bar {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.mode-pill {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1.5px solid var(--border-subtle);
+  color: var(--text-main);
+  padding: 11px 14px;
+  border-radius: 10px;
+  font-size: 0.86rem;
+  font-weight: 700;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.2s ease;
+}
+
+.mode-pill:hover {
+  border-color: var(--gold-primary);
+  background: rgba(229, 184, 92, 0.1);
+}
+
+.mode-pill.active {
+  background: linear-gradient(135deg, rgba(229, 184, 92, 0.22), rgba(16, 185, 129, 0.16));
+  border-color: var(--gold-primary);
+  color: var(--gold-light);
+  box-shadow: 0 4px 14px rgba(229, 184, 92, 0.22);
+}
+
+.helper-details {
+  background: rgba(229, 184, 92, 0.07);
+  border: 1px dashed var(--border-gold);
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-size: 0.85rem;
+}
+
+.helper-details summary {
+  cursor: pointer;
+  color: var(--gold-light);
+  list-style: none;
+}
+
+.helper-details-body {
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  color: var(--text-main);
+  line-height: 1.65;
+}
+
+.collapsible-card .collapsible-summary {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  color: var(--gold-light);
+  font-size: 0.96rem;
+  list-style: none;
+}
+
+.summary-3-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  margin-top: 14px;
+}
+
+.summary-box {
+  background: rgba(255, 255, 255, 0.035);
+  border: 1px solid var(--border-subtle);
+  border-radius: 12px;
+  padding: 14px;
+  font-size: 0.9rem;
+  line-height: 1.65;
+}
+
+.summary-box-title {
+  font-weight: 800;
+  font-size: 0.94rem;
+  color: var(--gold-light);
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.palace-quick-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 12px 0;
+}
+
+.palace-pill-btn {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-main);
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.palace-pill-btn:hover, .palace-pill-btn.active {
+  background: var(--gold-primary);
+  color: #0b0f17;
+  border-color: var(--gold-light);
+  font-weight: 800;
+}
+
+/* ============================================================================
+   NÂNG CẤP DÀNH CHO NGƯỜI LỚN TUỔI (CỠ CHỮ LỚN, NỀN SÁNG GIẤY DÓ, LỊCH BLOC, TTS)
+   ============================================================================ */
+
+html.font-lg {
+  font-size: 18.5px;
+}
+
+html.font-xl {
+  font-size: 21px;
+}
+
+html.font-lg .form-input,
+html.font-lg .form-select,
+html.font-lg .btn-primary,
+html.font-lg .btn-secondary,
+html.font-xl .form-input,
+html.font-xl .form-select,
+html.font-xl .btn-primary,
+html.font-xl .btn-secondary {
+  min-height: 48px;
+  font-size: 1rem;
+}
+
+/* CHẾ ĐỘ NỀN SÁNG (GIẤY DÓ / LỊCH BLOC TRUYỀN THỐNG DỊU MẮT CHO NGƯỜI LỚN TUỔI) */
+body.theme-light {
+  color-scheme: light;
+  --bg-deep: #fcf6e8;
+  --bg-card: #ffffff;
+  --bg-card-alt: #f7efe0;
+  --bg-glass: rgba(252, 246, 232, 0.96);
+  --gold-primary: #b45309;
+  --gold-light: #991b1b;
+  --gold-dark: #78350f;
+  --jade-primary: #047857;
+  --jade-light: #065f46;
+  --crimson-warn: #be123c;
+  --amber-warn: #b45309;
+  --text-main: #111827;
+  --text-muted: #374151;
+  --border-gold: rgba(180, 83, 9, 0.42);
+  --border-subtle: rgba(17, 24, 39, 0.16);
+  --shadow-royal: 0 6px 22px rgba(120, 80, 20, 0.12);
+  background: radial-gradient(circle at 50% 0%, #fffdf9 0%, #fcf6e8 70%, #f5ebd6 100%) !important;
+  color: #111827 !important;
+}
+
+body.theme-light .app-header {
+  background: rgba(255, 252, 245, 0.96) !important;
+  border-bottom: 2px solid rgba(180, 83, 9, 0.35);
+  box-shadow: 0 4px 14px rgba(120, 80, 20, 0.1);
+}
+
+body.theme-light .brand-title {
+  background: linear-gradient(90deg, #991b1b, #b45309, #78350f);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+body.theme-light .card,
+body.theme-light .card-highlight,
+body.theme-light .tuvi-cell,
+body.theme-light .tuvi-center,
+body.theme-light .modal-content,
+body.theme-light #childrenSectionBox {
+  background: #ffffff !important;
+  color: #111827 !important;
+  border-color: rgba(180, 83, 9, 0.38) !important;
+}
+
+body.theme-light .form-input,
+body.theme-light .form-select,
+body.theme-light .zodiac-helper-select {
+  background-color: #ffffff !important;
+  color: #111827 !important;
+  border: 1.5px solid #b45309 !important;
+  font-weight: 700;
+}
+
+body.theme-light select option,
+body.theme-light .form-select option,
+body.theme-light .zodiac-helper-select option {
+  background-color: #ffffff !important;
+  color: #111827 !important;
+  font-weight: 600;
+}
+
+body.theme-light .badge-good {
+  background: #d1fae5 !important;
+  color: #065f46 !important;
+  border-color: #059669 !important;
+}
+
+body.theme-light .badge-neutral {
+  background: #fef3c7 !important;
+  color: #92400e !important;
+  border-color: #d97706 !important;
+}
+
+body.theme-light .badge-warn {
+  background: #ffe4e6 !important;
+  color: #9f1239 !important;
+  border-color: #e11d48 !important;
+}
+
+body.theme-light .hanh-Kim  { color: #1e293b !important; background: #e2e8f0 !important; border: 1px solid #64748b !important; }
+body.theme-light .hanh-Mộc  { color: #065f46 !important; background: #d1fae5 !important; border: 1px solid #059669 !important; }
+body.theme-light .hanh-Thủy { color: #075985 !important; background: #e0f2fe !important; border: 1px solid #0284c7 !important; }
+body.theme-light .hanh-Hỏa  { color: #9f1239 !important; background: #ffe4e6 !important; border: 1px solid #e11d48 !important; }
+body.theme-light .hanh-Thổ  { color: #92400e !important; background: #fef3c7 !important; border: 1px solid #d97706 !important; }
+
+body.theme-light .btn-secondary,
+body.theme-light .btn-pill,
+body.theme-light .tab-btn,
+body.theme-light .mode-pill,
+body.theme-light .palace-pill-btn {
+  background: #f8f0e0 !important;
+  color: #111827 !important;
+  border-color: rgba(180, 83, 9, 0.4) !important;
+}
+
+body.theme-light .tab-btn.active,
+body.theme-light .mode-pill.active,
+body.theme-light .palace-pill-btn.active {
+  background: linear-gradient(135deg, #b45309, #991b1b) !important;
+  color: #ffffff !important;
+  border-color: #78350f !important;
+}
+
+body.theme-light .data-table th {
+  background: #f3e8d2 !important;
+  color: #78350f !important;
+}
+
+body.theme-light .data-table td,
+body.theme-light .card-title,
+body.theme-light b,
+body.theme-light strong {
+  color: #111827;
+}
+
+body.theme-light .star-chinh {
+  color: #991b1b !important;
+}
+
+body.theme-light .star-cat {
+  color: #065f46 !important;
+}
+
+body.theme-light .star-sat {
+  color: #be123c !important;
+}
+
+body.theme-light .mobile-dock {
+  background: rgba(255, 252, 245, 0.98) !important;
+  border-top: 2px solid rgba(180, 83, 9, 0.35);
+}
+
+/* CHỌN NHANH TUỔI CON GIÁP (CAN CHI + CON GIÁP) — NỀN ĐẶC TƯƠNG PHẢN CAO */
+.zodiac-helper-select {
+  width: 100%;
+  margin-top: 6px;
+  padding: 9px 12px;
+  border-radius: 8px;
+  background-color: #111827;
+  border: 1.5px solid #d97706;
+  color: #fde047;
+  font-size: 0.88rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+/* TỜ LỊCH BLOC TRUYỀN THỐNG CHỮ ĐẠI (TAB 2) */
+.lich-bloc-card {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  padding: 18px;
+  border-radius: 16px;
+  border: 2px solid var(--gold-primary);
+  background: linear-gradient(135deg, rgba(185, 28, 28, 0.18), rgba(229, 184, 92, 0.12));
+  margin-bottom: 16px;
+  text-align: center;
+}
+
+.lich-bloc-side {
+  padding: 12px;
+  border-radius: 12px;
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid var(--border-gold);
+}
+
+body.theme-light .lich-bloc-side {
+  background: #fffcf5;
+}
+
+.lich-bloc-label {
+  font-size: 0.82rem;
+  font-weight: 800;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  color: var(--gold-light);
+}
+
+.lich-bloc-big-num {
+  font-size: 3.1rem;
+  font-weight: 900;
+  line-height: 1.1;
+  margin: 6px 0;
+  color: var(--gold-primary);
+}
+
+.lich-bloc-sub {
+  font-size: 0.92rem;
+  font-weight: 700;
+}
+
+/* BỘ NÚT CHỌN VIỆC CẦN LÀM (ĐỘNG THỔ, CƯỚI HỎI, KHAI TRƯƠNG...) */
+.purpose-filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.purpose-pill {
+  padding: 9px 14px;
+  border-radius: 10px;
+  border: 1px solid var(--border-gold);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text-main);
+  font-size: 0.86rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.purpose-pill:hover,
+.purpose-pill.active {
+  background: linear-gradient(135deg, rgba(229, 184, 92, 0.28), rgba(16, 185, 129, 0.22));
+  border-color: var(--gold-primary);
+  color: var(--gold-light);
+  box-shadow: 0 3px 10px rgba(229, 184, 92, 0.25);
+}
+
+/* CHẾ ĐỘ BÀN CỜ TỬ VI CHỮ TO (THU GỌN SAO PHỤ NHỎ CHO NGƯỜI LỚN TUỔI) */
+.tuvi-board.senior-simple-board .cell-substars {
+  display: none;
+}
+
+.tuvi-board.senior-simple-board .star-chinh {
+  font-size: 1.02rem;
+  margin: 4px 0;
+}
+
+.tuvi-board.senior-simple-board .cell-cung-name {
+  font-size: 0.98rem;
+}
+
+/* THANH ĐIỀU KHIỂN GIỌNG ĐỌC NỔI (FLOATING TTS BAR) */
+.tts-floating-bar {
+  position: fixed;
+  bottom: 76px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 95;
+  background: rgba(15, 23, 42, 0.96);
+  border: 2px solid var(--gold-primary);
+  border-radius: 999px;
+  padding: 8px 16px;
+  display: none;
+  align-items: center;
+  gap: 10px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.65);
+  max-width: 96vw;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.tts-floating-bar.active {
+  display: flex;
+}
+
+body.theme-light .tts-floating-bar {
+  background: #fffdf9;
+  color: #1c1917;
+}
+
+/* THÔNG BÁO NHANH (TOAST COPY ZALO) */
+.senior-toast {
+  position: fixed;
+  top: 82px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 120;
+  background: #065f46;
+  color: #ffffff;
+  border: 2px solid #34d399;
+  padding: 12px 22px;
+  border-radius: 12px;
+  font-weight: 800;
+  font-size: 0.95rem;
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.5);
+  display: none;
+  text-align: center;
+  max-width: 92vw;
+}
+
+.senior-toast.show {
+  display: block;
+}
+
+/* ============================================================================
+   SÂN KHẤU MÔ PHỎNG GIEO QUẺ ĐỘNG (MAI RÙA · THẺ TRE · 3 ĐỒNG XU CỔ)
+   ============================================================================ */
+.divination-method-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.div-method-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 12px 10px;
+  border-radius: 12px;
+  border: 1.5px solid var(--border-gold);
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--text-main);
+  font-weight: 800;
+  font-size: 0.88rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.div-method-btn:hover,
+.div-method-btn.active {
+  background: linear-gradient(135deg, rgba(229, 184, 92, 0.26), rgba(16, 185, 129, 0.18));
+  border-color: var(--gold-primary);
+  color: var(--gold-light);
+  box-shadow: 0 4px 16px rgba(229, 184, 92, 0.25);
+  transform: translateY(-2px);
+}
+
+.divination-stage-grid {
+  display: grid;
+  grid-template-columns: 1.35fr 1fr;
+  gap: 16px;
+  align-items: stretch;
+}
+
+.divination-arena {
+  background: radial-gradient(circle at center, #1b2842 0%, #0b101b 100%);
+  border: 2px solid var(--gold-primary);
+  border-radius: 14px;
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 330px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: inset 0 0 36px rgba(229, 184, 92, 0.14);
+}
+
+body.theme-light .divination-arena {
+  background: radial-gradient(circle at center, #fffdf7 0%, #f5ebd6 100%);
+  border-color: #b45309;
+  box-shadow: inset 0 0 28px rgba(180, 83, 9, 0.12);
+}
+
+/* 1. ĐỒNG XU CỔ LỤC HÀO (3 COINS 3D FLIP) */
+.coins-plate {
+  width: 260px;
+  height: 170px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(229, 184, 92, 0.16) 0%, rgba(15, 23, 42, 0.75) 80%);
+  border: 2px dashed rgba(229, 184, 92, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  padding: 12px;
+  position: relative;
+}
+
+body.theme-light .coins-plate {
+  background: radial-gradient(circle, rgba(217, 119, 6, 0.15) 0%, rgba(254, 243, 199, 0.85) 85%);
+  border-color: #b45309;
+}
+
+.ancient-coin {
+  width: 68px;
+  height: 68px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 30%, #fde68a, #d97706 65%, #78350f 100%);
+  border: 3px solid #fef08a;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.55), inset 0 0 8px rgba(120, 53, 15, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+  transform-style: preserve-3d;
+}
+
+.ancient-coin.coin-yin {
+  background: radial-gradient(circle at 30% 30%, #94a3b8, #475569 65%, #1e293b 100%);
+  border-color: #cbd5e1;
+}
+
+.ancient-coin::after {
+  content: '';
+  width: 18px;
+  height: 18px;
+  background: #0f172a;
+  border: 2px solid #fde047;
+  border-radius: 2px;
+  display: block;
+}
+
+.ancient-coin.coin-yin::after {
+  border-color: #94a3b8;
+}
+
+.coin-face-label {
+  position: absolute;
+  top: 4px;
+  font-size: 0.62rem;
+  font-weight: 900;
+  color: #451a03;
+  letter-spacing: 0.5px;
+}
+
+.ancient-coin.coin-yin .coin-face-label {
+  color: #f8fafc;
+}
+
+.coin-bottom-label {
+  position: absolute;
+  bottom: 4px;
+  font-size: 0.62rem;
+  font-weight: 900;
+  color: #451a03;
+}
+
+.ancient-coin.coin-yin .coin-bottom-label {
+  color: #cbd5e1;
+}
+
+@keyframes coinTossAnim {
+  0% { transform: translateY(0) rotateX(0deg) rotateY(0deg) scale(1); }
+  35% { transform: translateY(-58px) rotateX(540deg) rotateY(360deg) scale(1.18); }
+  70% { transform: translateY(8px) rotateX(900deg) rotateY(720deg) scale(0.96); }
+  100% { transform: translateY(0) rotateX(1080deg) rotateY(1080deg) scale(1); }
+}
+
+.ancient-coin.tossing {
+  animation: coinTossAnim 0.65s ease-out;
+}
+
+/* 2. MAI RÙA LỬA THIÊNG (TORTOISE SHELL & SACRED FIRE CRACKS) */
+.tortoise-wrap {
+  position: relative;
+  width: 220px;
+  height: 190px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tortoise-svg {
+  width: 190px;
+  height: 175px;
+  filter: drop-shadow(0 8px 18px rgba(0, 0, 0, 0.55));
+  transition: transform 0.3s ease;
+}
+
+@keyframes tortoiseHeatShake {
+  0%, 100% { transform: scale(1) rotate(0deg); filter: drop-shadow(0 0 12px rgba(245, 158, 11, 0.4)); }
+  25% { transform: scale(1.04) rotate(-2.5deg); filter: drop-shadow(0 0 28px rgba(239, 68, 68, 0.85)); }
+  50% { transform: scale(1.06) rotate(2.5deg); filter: drop-shadow(0 0 36px rgba(251, 191, 36, 0.95)); }
+  75% { transform: scale(1.03) rotate(-1.5deg); filter: drop-shadow(0 0 24px rgba(245, 158, 11, 0.75)); }
+}
+
+.tortoise-svg.heating {
+  animation: tortoiseHeatShake 0.65s ease-in-out;
+}
+
+.crack-path {
+  stroke: #fde047;
+  stroke-width: 2.8;
+  stroke-linecap: round;
+  fill: none;
+  filter: drop-shadow(0 0 6px #f59e0b);
+  stroke-dasharray: 120;
+  stroke-dashoffset: 120;
+  transition: stroke-dashoffset 0.45s ease-out;
+}
+
+.crack-path.revealed {
+  stroke-dashoffset: 0;
+}
+
+/* 3. ỐNG THẺ TRE / CỎ THI ĐẠI DIỄN (BAMBOO STALKS) */
+.bamboo-stage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 175px;
+}
+
+.bamboo-bundles-row {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 26px;
+  height: 135px;
+  margin-bottom: 8px;
+}
+
+.bamboo-group {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 3px;
+  padding: 8px 12px;
+  background: rgba(16, 185, 129, 0.08);
+  border-bottom: 4px solid #d97706;
+  border-radius: 8px;
+  transition: all 0.35s ease;
+}
+
+.bamboo-stalk {
+  width: 5px;
+  height: 92px;
+  background: linear-gradient(180deg, #fde68a 0%, #10b981 35%, #047857 100%);
+  border-radius: 3px;
+  position: relative;
+  transform-origin: bottom center;
+  transition: transform 0.35s ease;
+}
+
+.bamboo-stalk::after {
+  content: '';
+  position: absolute;
+  top: 26px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: #fde047;
+}
+
+@keyframes bambooShuffleAnim {
+  0%, 100% { transform: translateX(0) rotate(0deg); }
+  25% { transform: translateX(-10px) rotate(-6deg); }
+  50% { transform: translateX(10px) rotate(6deg); }
+  75% { transform: translateX(-6px) rotate(-3deg); }
+}
+
+.bamboo-bundles-row.shuffling .bamboo-group {
+  animation: bambooShuffleAnim 0.6s ease-in-out;
+}
+
+/* BẢNG LẬP 6 HÀO TRỰC TIẾP (6-LINE BUILDER STACK) */
+.hao-builder-panel {
+  background: rgba(15, 23, 42, 0.72);
+  border: 1.5px solid var(--border-gold);
+  border-radius: 14px;
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+body.theme-light .hao-builder-panel {
+  background: #fffdf9;
+  border-color: #d97706;
+}
+
+.hao-slot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 7px 10px;
+  border-radius: 8px;
+  border: 1px dashed rgba(229, 184, 92, 0.28);
+  margin-bottom: 6px;
+  font-size: 0.82rem;
+  transition: all 0.25s ease;
+}
+
+.hao-slot.filled {
+  background: rgba(229, 184, 92, 0.1);
+  border-style: solid;
+  border-color: rgba(229, 184, 92, 0.55);
+}
+
+.hao-slot.moving-slot {
+  background: rgba(244, 63, 94, 0.15);
+  border-color: #fb7185;
+}
+
+.hao-bar-preview {
+  flex: 1;
+  max-width: 130px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 12px;
+}
+
+.hao-bar-yang {
+  width: 100%;
+  height: 10px;
+  background: linear-gradient(90deg, #d97706, #fde047, #d97706);
+  border-radius: 3px;
+}
+
+.hao-bar-yin {
+  width: 44%;
+  height: 10px;
+  background: linear-gradient(90deg, #38bdf8, #818cf8);
+  border-radius: 3px;
+}
+
+.hao-slot.moving-slot .hao-bar-yang,
+.hao-slot.moving-slot .hao-bar-yin {
+  background: linear-gradient(90deg, #f43f5e, #fbbf24);
+  box-shadow: 0 0 8px rgba(244, 63, 94, 0.65);
+}
+
+/* ============================================================================
+   5 NÂNG CẤP UX/UI TOÀN DIỆN (UNIFIED YEAR ROW, CROSS-TAB SYNC, TAM HỢP, LA BÀN)
+   ============================================================================ */
+
+/* 1. GỘP Ô NHẬP SỐ NĂM & CHỌN CON GIÁP TRÊN CÙNG 1 HÀNG */
+.unified-year-row {
+  display: flex;
+  align-items: stretch;
+  gap: 6px;
+  width: 100%;
+}
+
+.unified-year-row .form-input {
+  width: 90px;
+  flex-shrink: 0;
+  text-align: center;
+  font-weight: 800;
+  padding: 9px 6px;
+}
+
+.unified-year-row .zodiac-helper-select {
+  flex: 1;
+  min-width: 0;
+  margin-top: 0;
+  padding: 9px 10px;
+}
+
+/* 2. THANH CHỌN NHANH TUỔI GIA ĐÌNH XUYÊN SUỐT CÁC TAB */
+.family-quick-bar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 10px 12px;
+  margin-bottom: 14px;
+  background: rgba(245, 158, 11, 0.08);
+  border: 1px dashed var(--border-gold);
+  border-radius: 10px;
+}
+
+body.theme-light .family-quick-bar {
+  background: #fffbeb;
+  border-color: rgba(180, 83, 9, 0.45);
+}
+
+.family-quick-label {
+  font-size: 0.78rem;
+  font-weight: 800;
+  color: var(--gold-light);
+  margin-right: 2px;
+}
+
+.family-quick-pill {
+  background: #0f172a;
+  color: #ffffff;
+  border: 1px solid var(--border-gold);
+  border-radius: 999px;
+  padding: 5px 12px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  transition: all 0.18s ease;
+}
+
+.family-quick-pill:hover,
+.family-quick-pill.active {
+  background: var(--gold-primary);
+  color: #090d16;
+  border-color: var(--gold-light);
+  box-shadow: 0 2px 10px rgba(245, 158, 11, 0.35);
+}
+
+body.theme-light .family-quick-pill {
+  background: #ffffff;
+  color: #111827;
+  border-color: #b45309;
+}
+
+body.theme-light .family-quick-pill:hover,
+body.theme-light .family-quick-pill.active {
+  background: #b45309;
+  color: #ffffff;
+}
+
+/* 3. LIÊN KẾT TAM HỢP & XUNG CHIẾU TRÊN BÀN CỜ TỬ VI 12 CUNG */
+.tuvi-cell.is-tam-hop {
+  border: 1.5px solid #10b981 !important;
+  box-shadow: inset 0 0 14px rgba(16, 185, 129, 0.22);
+}
+
+.tuvi-cell.is-xung-chieu {
+  border: 1.5px dashed #38bdf8 !important;
+  box-shadow: inset 0 0 14px rgba(56, 189, 248, 0.22);
+}
+
+.rel-tag-badge {
+  display: inline-block;
+  font-size: 0.62rem;
+  font-weight: 800;
+  padding: 1px 6px;
+  border-radius: 999px;
+  margin-left: 4px;
+}
+
+.rel-tag-selected {
+  background: #f59e0b;
+  color: #090d16;
+}
+
+.rel-tag-tamhop {
+  background: rgba(16, 185, 129, 0.25);
+  color: #6ee7b7;
+  border: 1px solid #10b981;
+}
+
+.rel-tag-xungchieu {
+  background: rgba(14, 165, 233, 0.25);
+  color: #7dd3fc;
+  border: 1px solid #38bdf8;
+}
+
+body.theme-light .rel-tag-tamhop {
+  background: #d1fae5;
+  color: #065f46;
+}
+
+body.theme-light .rel-tag-xungchieu {
+  background: #e0f2fe;
+  color: #075985;
+}
+
+/* 4. LA BÀN CỬU CUNG BÁT QUÁI 3x3 TRỰC QUAN Ở TAB 4 (PHONG THỦY) */
+.bagua-compass-wrap {
+  display: grid;
+  grid-template-columns: 1.15fr 1fr;
+  gap: 16px;
+  margin-bottom: 18px;
+  align-items: stretch;
+}
+
+.bagua-compass-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  padding: 10px;
+  background: rgba(15, 23, 42, 0.85);
+  border: 2px solid var(--gold-primary);
+  border-radius: 14px;
+}
+
+body.theme-light .bagua-compass-grid {
+  background: #f8f0e0;
+  border-color: #b45309;
+}
+
+.bagua-cell {
+  background: #111827;
+  border: 1.5px solid var(--border-subtle);
+  border-radius: 10px;
+  padding: 10px 8px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.18s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  min-height: 98px;
+}
+
+body.theme-light .bagua-cell {
+  background: #ffffff;
+}
+
+.bagua-cell.good {
+  border-color: rgba(16, 185, 129, 0.6);
+  background: linear-gradient(160deg, rgba(16, 185, 129, 0.14), rgba(17, 24, 39, 0.95));
+}
+
+body.theme-light .bagua-cell.good {
+  background: #ecfdf5;
+  border-color: #059669;
+}
+
+.bagua-cell.bad {
+  border-color: rgba(244, 63, 94, 0.45);
+  background: linear-gradient(160deg, rgba(244, 63, 94, 0.1), rgba(17, 24, 39, 0.95));
+}
+
+body.theme-light .bagua-cell.bad {
+  background: #fff1f2;
+  border-color: #e11d48;
+}
+
+.bagua-cell:hover,
+.bagua-cell.active-dir {
+  transform: translateY(-2px);
+  border-width: 2px;
+  border-color: var(--gold-light) !important;
+  box-shadow: 0 4px 16px rgba(245, 158, 11, 0.35);
+}
+
+.bagua-center-cell {
+  background: radial-gradient(circle, rgba(245, 158, 11, 0.22) 0%, #0f172a 100%);
+  border: 2px dashed var(--gold-primary);
+  border-radius: 10px;
+  padding: 10px 6px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+}
+
+body.theme-light .bagua-center-cell {
+  background: #fef3c7;
+  border-color: #b45309;
+}
+
+@media (max-width: 960px) {
+  .divination-method-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .divination-stage-grid,
+  .bagua-compass-wrap {
+    grid-template-columns: 1fr;
+  }
+  .lineage-grid, .mode-selector-bar, .summary-3-grid, .lich-bloc-card {
+    grid-template-columns: 1fr;
+  }
+  .grid-2, .grid-3, .grid-4 {
+    grid-template-columns: 1fr;
+  }
+  .tuvi-board:not(.mobile-grid-4x4) {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto;
+  }
+  .tuvi-board:not(.mobile-grid-4x4) .tuvi-center {
+    grid-column: 1 / -1;
+    grid-row: 1;
+  }
+  .tuvi-board.mobile-grid-4x4 {
+    min-width: 760px;
+  }
+  .mobile-dock {
+    display: grid;
+  }
+}
