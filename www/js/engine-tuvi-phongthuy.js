@@ -894,6 +894,7 @@
     // Quẻ Hỗ (hào 2,3,4 làm Hạ quái Hỗ; hào 3,4,5 làm Thượng quái Hỗ)
     const hoHa = findQuaiByLines([lines6[1], lines6[2], lines6[3]]);
     const hoThuong = findQuaiByLines([lines6[2], lines6[3], lines6[4]]);
+    const linesHo = [...hoHa.lines, ...hoThuong.lines];
 
     // Quẻ Biến (Đảo âm dương tại hào động 1..6)
     const linesBien = [...lines6];
@@ -943,10 +944,15 @@
       haoDong,
       quaiThuong,
       quaiHa,
+      hoThuong,
+      hoHa,
+      bienThuong,
+      bienHa,
       queChuName,
       queHoName,
       queBienName,
       lines6,
+      linesHo,
       linesBien,
       theQuai,
       dungQuai,

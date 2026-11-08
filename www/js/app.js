@@ -55,7 +55,14 @@
   function attachZodiacSelectToYearInput(inputId, minYear = 1935, maxYear = 2035, onChangeCallback = null) {
     const inp = document.getElementById(inputId);
     if (!inp) return;
-    let sel = inp.parentElement.querySelector('.zodiac-helper-select');
+    let wrapper = inp.closest('.unified-year-row');
+    if (!wrapper) {
+      wrapper = document.createElement('div');
+      wrapper.className = 'unified-year-row';
+      inp.parentNode.insertBefore(wrapper, inp);
+      wrapper.appendChild(inp);
+    }
+    let sel = wrapper.querySelector('.zodiac-helper-select');
     if (!sel) {
       sel = document.createElement('select');
       sel.className = 'zodiac-helper-select';
@@ -65,7 +72,7 @@
         opts.push(`<option value="${y}">${getYearOptionLabel(y)}</option>`);
       }
       sel.innerHTML = opts.join('');
-      inp.insertAdjacentElement('afterend', sel);
+      wrapper.appendChild(sel);
 
       sel.addEventListener('change', () => {
         inp.value = sel.value;
@@ -78,6 +85,105 @@
       });
     }
     sel.value = String(inp.value);
+  }
+
+  function renderAllFamilyQuickBars() {
+    const fYear = parseInt(document.getElementById('inputFatherYear')?.value, 10) || 1988;
+    const mYear = parseInt(document.getElementById('inputMotherYear')?.value, 10) || 1990;
+    const fInfo = AL.getYearInfo(fYear);
+    const mInfo = AL.getYearInfo(mYear);
+
+    const members = [
+      { role: 'Chồng', icon: '👨', year: fYear, gender: 'Nam', canChi: fInfo.canChi, hanh: fInfo.lacVietHanh },
+      { role: 'Vợ', icon: '👩', year: mYear, gender: 'Nữ', canChi: mInfo.canChi, hanh: mInfo.lacVietHanh },
+      ...currentChildrenYears.map((cy, idx) => {
+        const cInfo = AL.getYearInfo(cy);
+        const isLast = idx === currentChildrenYears.length - 1;
+        return {
+          role: isLast ? `Con Út (#${idx + 1})` : `Con #${idx + 1}`,
+          icon: '👶',
+          year: cy,
+          gender: 'Nam',
+          canChi: cInfo.canChi,
+          hanh: cInfo.lacVietHanh
+        };
+      })
+    ];
+
+    // 1. Tab 2: Trạch Cát
+    const tcBar = document.getElementById('trachCatFamilyQuickBar');
+    if (tcBar) {
+      const curOwner = parseInt(document.getElementById('inputTrachCatOwnerYear')?.value, 10) || 1990;
+      tcBar.innerHTML = `
+        <span class="family-quick-label">⚡ Chọn nhanh Gia Chủ từ Hồ sơ Gia đình:</span>
+        ${members.map((mb, i) => `
+          <button type="button" class="family-quick-pill ${curOwner === mb.year ? 'active' : ''}" data-idx="${i}">
+            ${mb.icon} ${mb.role}: ${mb.year} (${mb.canChi})
+          </button>
+        `).join('')}
+      `;
+      tcBar.querySelectorAll('.family-quick-pill').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const mb = members[parseInt(btn.getAttribute('data-idx'), 10)];
+          if (!mb) return;
+          const inp = document.getElementById('inputTrachCatOwnerYear');
+          if (inp) inp.value = mb.year;
+          runTrachCatAnalysis();
+          showSeniorToast(`✅ Đã chọn Gia Chủ: ${mb.role} sinh năm ${mb.year} (${mb.canChi})`);
+        });
+      });
+    }
+
+    // 2. Tab 3: Tử Vi
+    const tvBar = document.getElementById('tuViFamilyQuickBar');
+    if (tvBar) {
+      const curTvYear = parseInt(document.getElementById('inputTuViYear')?.value, 10) || 1990;
+      const curTvGender = document.getElementById('inputTuViGender')?.value || 'Nam';
+      tvBar.innerHTML = `
+        <span class="family-quick-label">⚡ Chọn nhanh Người xem Tử Vi:</span>
+        ${members.map((mb, i) => `
+          <button type="button" class="family-quick-pill ${(curTvYear === mb.year && curTvGender === mb.gender) ? 'active' : ''}" data-idx="${i}">
+            ${mb.icon} ${mb.role}: ${mb.year} (${mb.canChi})
+          </button>
+        `).join('')}
+      `;
+      tvBar.querySelectorAll('.family-quick-pill').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const mb = members[parseInt(btn.getAttribute('data-idx'), 10)];
+          if (!mb) return;
+          if (document.getElementById('inputTuViYear')) document.getElementById('inputTuViYear').value = mb.year;
+          if (document.getElementById('inputTuViGender')) document.getElementById('inputTuViGender').value = mb.gender;
+          if (document.getElementById('inputTuViName')) document.getElementById('inputTuViName').value = `${mb.role} (${mb.canChi})`;
+          runTuViGeneration();
+          showSeniorToast(`✅ Đã lập Lá Số Tử Vi cho ${mb.role} (${mb.year} - ${mb.canChi})`);
+        });
+      });
+    }
+
+    // 3. Tab 4: Phong Thủy
+    const ptBar = document.getElementById('phongThuyFamilyQuickBar');
+    if (ptBar) {
+      const curPtYear = parseInt(document.getElementById('inputPhongThuyYear')?.value, 10) || 1984;
+      const curPtGender = document.getElementById('inputPhongThuyGender')?.value || 'Nam';
+      ptBar.innerHTML = `
+        <span class="family-quick-label">⚡ Chọn nhanh Trạch Chủ từ Hồ sơ Gia đình:</span>
+        ${members.map((mb, i) => `
+          <button type="button" class="family-quick-pill ${(curPtYear === mb.year && curPtGender === mb.gender) ? 'active' : ''}" data-idx="${i}">
+            ${mb.icon} ${mb.role}: ${mb.year} (${mb.canChi})
+          </button>
+        `).join('')}
+      `;
+      ptBar.querySelectorAll('.family-quick-pill').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const mb = members[parseInt(btn.getAttribute('data-idx'), 10)];
+          if (!mb) return;
+          if (document.getElementById('inputPhongThuyYear')) document.getElementById('inputPhongThuyYear').value = mb.year;
+          if (document.getElementById('inputPhongThuyGender')) document.getElementById('inputPhongThuyGender').value = mb.gender;
+          runPhongThuyAnalysis();
+          showSeniorToast(`✅ Đã xem Phong Thủy cho ${mb.role} (${mb.year} - ${mb.canChi})`);
+        });
+      });
+    }
   }
 
   function showSeniorToast(msg) {
@@ -271,9 +377,9 @@
       const label = isLast ? `Con thứ ${idx + 1} (🌟 Con Út)` : `Con thứ ${idx + 1}`;
       return `
         <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;flex-wrap:wrap;padding:8px;background:rgba(255,255,255,0.03);border-radius:8px;">
-          <span class="badge ${isLast ? 'badge-good' : 'badge-neutral'}" style="min-width:160px;">${label}</span>
-          <input type="number" class="form-input child-year-input" data-idx="${idx}" value="${yr}" min="1940" max="2045" style="width:105px;" />
-          <div style="flex:1;min-width:240px;">
+          <span class="badge ${isLast ? 'badge-good' : 'badge-neutral'}" style="min-width:155px;">${label}</span>
+          <div class="unified-year-row" style="flex:1;min-width:270px;">
+            <input type="number" class="form-input child-year-input" data-idx="${idx}" value="${yr}" min="1940" max="2045" />
             ${buildYearSelectHtml(yr, 1960, 2038, 'child-zodiac-select', idx)}
           </div>
           <span class="badge hanh-${yInfo.lacVietHanh}">${yInfo.canChi} · Mạng ${yInfo.lacVietHanh}</span>
@@ -323,10 +429,11 @@
     saveUserState();
     const fYear = parseInt(document.getElementById('inputFatherYear').value, 10) || 1988;
     const mYear = parseInt(document.getElementById('inputMotherYear').value, 10) || 1990;
-    const fSel = document.getElementById('inputFatherYear')?.parentElement?.querySelector('.zodiac-helper-select');
+    const fSel = document.getElementById('inputFatherYear')?.closest('.form-group')?.querySelector('.zodiac-helper-select');
     if (fSel) fSel.value = String(fYear);
-    const mSel = document.getElementById('inputMotherYear')?.parentElement?.querySelector('.zodiac-helper-select');
+    const mSel = document.getElementById('inputMotherYear')?.closest('.form-group')?.querySelector('.zodiac-helper-select');
     if (mSel) mSel.value = String(mYear);
+    renderAllFamilyQuickBars();
     const res = LT.analyzeFamilyLacViet(fYear, mYear, currentChildrenYears);
     const recYears = LT.recommendChildYears(fYear, mYear, 2025, 2036);
 
@@ -657,8 +764,9 @@
     const ownerYear = parseInt(document.getElementById('inputTrachCatOwnerYear').value, 10) || 1990;
     const buildYear = parseInt(document.getElementById('inputBuildYear').value, 10) || yy;
 
-    const ownerSel = document.getElementById('inputTrachCatOwnerYear')?.parentElement?.querySelector('.zodiac-helper-select');
+    const ownerSel = document.getElementById('inputTrachCatOwnerYear')?.closest('.form-group')?.querySelector('.zodiac-helper-select');
     if (ownerSel) ownerSel.value = String(ownerYear);
+    renderAllFamilyQuickBars();
 
     const evalRes = TC.evaluateDayFull(dd, mm, yy, ownerYear);
     const monthScan = TC.scanGoodDaysInMonth(mm, yy, ownerYear);
@@ -919,13 +1027,41 @@
   // --------------------------------------------------------------------------
   // TAB 3: LÁ SỐ TỬ VI LẠC VIỆT 12 CUNG (ĐỊNH TÍNH & ĐỊNH LƯỢNG)
   // --------------------------------------------------------------------------
+  let isMobileGrid4x4 = false;
+
+  function getPalaceRelBadgeHtml(chiIdx) {
+    if (selectedPalaceIdx === null || selectedPalaceIdx === undefined) return '';
+    if (chiIdx === selectedPalaceIdx) {
+      return '<span class="rel-tag-badge rel-tag-selected">ĐANG XEM</span>';
+    }
+    const th1 = (selectedPalaceIdx + 4) % 12;
+    const th2 = (selectedPalaceIdx + 8) % 12;
+    const xc = (selectedPalaceIdx + 6) % 12;
+    if (chiIdx === th1 || chiIdx === th2) {
+      return '<span class="rel-tag-badge rel-tag-tamhop">🔺 TAM HỢP</span>';
+    }
+    if (chiIdx === xc) {
+      return '<span class="rel-tag-badge rel-tag-xungchieu">⚡ XUNG CHIẾU</span>';
+    }
+    return '';
+  }
+
   function renderTuViCell(p) {
     const isSelected = selectedPalaceIdx === p.chiIdx;
+    const th1 = (selectedPalaceIdx + 4) % 12;
+    const th2 = (selectedPalaceIdx + 8) % 12;
+    const xc = (selectedPalaceIdx + 6) % 12;
+    const isTamHop = p.chiIdx === th1 || p.chiIdx === th2;
+    const isXungChieu = p.chiIdx === xc;
     return `
-      <div class="tuvi-cell ${p.isMenh ? 'is-menh' : ''} ${isSelected ? 'selected' : ''}" data-chi-idx="${p.chiIdx}">
+      <div class="tuvi-cell ${p.isMenh ? 'is-menh' : ''} ${isSelected ? 'selected' : ''} ${isTamHop ? 'is-tam-hop' : ''} ${isXungChieu ? 'is-xung-chieu' : ''}" data-chi-idx="${p.chiIdx}">
         <div class="cell-top">
           <span style="color:var(--text-muted);font-weight:600;">${p.canChi} (${p.chiHanh})</span>
-          <span class="cell-cung-name">${p.cungName} ${p.isThan ? '<span class="badge badge-good" style="font-size:0.62rem;padding:1px 6px;">THÂN</span>' : ''}</span>
+          <span class="cell-cung-name">
+            ${p.cungName}
+            ${p.isThan ? '<span class="badge badge-good" style="font-size:0.62rem;padding:1px 6px;">THÂN</span>' : ''}
+            <span class="cell-rel-slot">${getPalaceRelBadgeHtml(p.chiIdx)}</span>
+          </span>
           <span style="font-weight:700;color:var(--gold-primary);">ĐV: ${p.daiVan}</span>
         </div>
         <div class="cell-chinh-tinh">
@@ -952,10 +1088,17 @@
     `;
   }
 
-  function renderSelectedPalaceDetail(chart, chiIdx) {
+  function renderSelectedPalaceDetail(chart, chiIdx, onSelectPalace = null) {
     const p = chart.palaces[chiIdx];
     const box = document.getElementById('tuViPalaceDetailBox');
     if (!box || !p) return;
+
+    const th1Idx = (chiIdx + 4) % 12;
+    const th2Idx = (chiIdx + 8) % 12;
+    const xcIdx = (chiIdx + 6) % 12;
+    const pTh1 = chart.palaces[th1Idx];
+    const pTh2 = chart.palaces[th2Idx];
+    const pXc = chart.palaces[xcIdx];
 
     const cr = p.customerReading || {};
     const chinhNames = p.chinhTinh.map(s => `${s.name} (${s.loai} – hành ${s.hanh})`).join(', ') || 'Vô Chính Diệu (Mượn sao chính tinh cung đối diện xung chiếu)';
@@ -982,6 +1125,20 @@
             <div class="card-subtitle">Đại vận: ${p.daiVan}–${p.daiVan + 9} tuổi · Vòng Tràng Sinh: <b>${p.vongTrangSinh}</b></div>
           </div>
           <span class="badge badge-good">${cr.starHeader || chinhNames}</span>
+        </div>
+
+        <!-- THANH LIÊN KẾT TAM PHƯƠNG TỨ CHÍNH -->
+        <div style="display:flex;align-items:center;flex-wrap:wrap;gap:8px;padding:10px 12px;margin-bottom:12px;background:rgba(16,185,129,0.08);border:1px dashed var(--jade-primary);border-radius:8px;font-size:0.82rem;">
+          <span style="font-weight:800;color:var(--jade-light);">🔗 Tam Phương Tứ Chính hội chiếu:</span>
+          <button type="button" class="family-quick-pill btn-jump-palace" data-chi-idx="${th1Idx}" style="border-color:#10b981;">
+            🔺 Tam Hợp: ${pTh1.cungName} (${pTh1.chi})
+          </button>
+          <button type="button" class="family-quick-pill btn-jump-palace" data-chi-idx="${th2Idx}" style="border-color:#10b981;">
+            🔺 Tam Hợp: ${pTh2.cungName} (${pTh2.chi})
+          </button>
+          <button type="button" class="family-quick-pill btn-jump-palace" data-chi-idx="${xcIdx}" style="border-color:#38bdf8;">
+            ⚡ Xung Chiếu: ${pXc.cungName} (${pXc.chi})
+          </button>
         </div>
 
         <div style="font-size:0.9rem;display:flex;flex-direction:column;gap:10px;">
@@ -1015,6 +1172,15 @@
         </div>
       </div>
     `;
+
+    if (onSelectPalace) {
+      box.querySelectorAll('.btn-jump-palace').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const targetIdx = parseInt(btn.getAttribute('data-chi-idx'), 10);
+          onSelectPalace(targetIdx);
+        });
+      });
+    }
   }
 
   function runTuViGeneration() {
@@ -1026,8 +1192,9 @@
     let mm = parseInt(document.getElementById('inputTuViMonth')?.value, 10) || 6;
     let yy = parseInt(document.getElementById('inputTuViYear')?.value, 10) || 1990;
 
-    const tvYearSel = document.getElementById('inputTuViYear')?.parentElement?.querySelector('.zodiac-helper-select');
+    const tvYearSel = document.getElementById('inputTuViYear')?.closest('.form-group')?.querySelector('.zodiac-helper-select');
     if (tvYearSel) tvYearSel.value = String(yy);
+    renderAllFamilyQuickBars();
 
     if (dd < 1) dd = 1;
     if (dd > 31) dd = 31;
@@ -1111,11 +1278,16 @@
       <div class="card" style="padding:14px 18px;margin-bottom:14px;">
         <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:6px;">
           <div style="font-size:0.86rem;font-weight:700;color:var(--gold-light);">
-            👆 Chọn cung để xem chi tiết:
+            👆 Chọn cung để xem chi tiết (Tự động sáng Tam Hợp & Xung Chiếu):
           </div>
-          <button type="button" class="btn-pill" id="btnToggleSimpleTuViBoard" style="font-weight:700;">
-            ${isSimpleSeniorTuViBoard ? '🔍 Đang Bật: Bàn Cờ Chữ To' : '👓 Bàn Cờ Chữ To'}
-          </button>
+          <div style="display:flex;gap:6px;flex-wrap:wrap;">
+            <button type="button" class="btn-pill" id="btnToggleMobile4x4Board" style="font-weight:700;">
+              ${isMobileGrid4x4 ? '📱 Đang Bật: Bàn Cờ 4×4' : '📱 Khung 4×4 Truyền Thống'}
+            </button>
+            <button type="button" class="btn-pill" id="btnToggleSimpleTuViBoard" style="font-weight:700;">
+              ${isSimpleSeniorTuViBoard ? '🔍 Đang Bật: Bàn Cờ Chữ To' : '👓 Bàn Cờ Chữ To'}
+            </button>
+          </div>
         </div>
         <div class="palace-quick-nav">
           ${p.map(pal => `
@@ -1133,7 +1305,8 @@
     // Hàng 3: Mão (3),  [TRUNG CUNG], Tuất (10)
     // Hàng 4: Dần (2), Sửu (1), Tý (0), Hợi (11)
     const boardHtml = `
-      <div class="tuvi-board ${isSimpleSeniorTuViBoard ? 'senior-simple-board' : ''}" id="tuViMainGridBoard">
+      <div style="overflow-x:auto;">
+        <div class="tuvi-board ${isSimpleSeniorTuViBoard ? 'senior-simple-board' : ''} ${isMobileGrid4x4 ? 'mobile-grid-4x4' : ''}" id="tuViMainGridBoard">
         ${renderTuViCell(p[5])}
         ${renderTuViCell(p[6])}
         ${renderTuViCell(p[7])}
@@ -1170,6 +1343,7 @@
         ${renderTuViCell(p[1])}
         ${renderTuViCell(p[0])}
         ${renderTuViCell(p[11])}
+        </div>
       </div>
     `;
 
@@ -1198,18 +1372,27 @@
     const container = document.getElementById('tuViBoardContainer');
     if (container) {
       container.innerHTML = lifeSummaryHtml + quickNavHtml + `<div id="tuViPalaceDetailBox" style="margin-bottom:16px;"></div>` + boardHtml + gioPhamHtml;
-      renderSelectedPalaceDetail(chart, selectedPalaceIdx);
 
       const selectPalaceFn = (idx) => {
         selectedPalaceIdx = idx;
+        const th1 = (idx + 4) % 12;
+        const th2 = (idx + 8) % 12;
+        const xc = (idx + 6) % 12;
         container.querySelectorAll('.tuvi-cell').forEach(c => {
-          c.classList.toggle('selected', parseInt(c.getAttribute('data-chi-idx'), 10) === idx);
+          const cIdx = parseInt(c.getAttribute('data-chi-idx'), 10);
+          c.classList.toggle('selected', cIdx === idx);
+          c.classList.toggle('is-tam-hop', cIdx === th1 || cIdx === th2);
+          c.classList.toggle('is-xung-chieu', cIdx === xc);
+          const slot = c.querySelector('.cell-rel-slot');
+          if (slot) slot.innerHTML = getPalaceRelBadgeHtml(cIdx);
         });
         container.querySelectorAll('.palace-pill-btn').forEach(b => {
           b.classList.toggle('active', parseInt(b.getAttribute('data-chi-idx'), 10) === idx);
         });
-        renderSelectedPalaceDetail(chart, idx);
+        renderSelectedPalaceDetail(chart, idx, selectPalaceFn);
       };
+
+      renderSelectedPalaceDetail(chart, selectedPalaceIdx, selectPalaceFn);
 
       container.querySelectorAll('.tuvi-cell').forEach(cell => {
         cell.addEventListener('click', (e) => {
@@ -1225,6 +1408,18 @@
           selectPalaceFn(idx);
         });
       });
+
+      const toggleMobile4x4Btn = document.getElementById('btnToggleMobile4x4Board');
+      if (toggleMobile4x4Btn) {
+        toggleMobile4x4Btn.addEventListener('click', () => {
+          isMobileGrid4x4 = !isMobileGrid4x4;
+          const boardEl = document.getElementById('tuViMainGridBoard');
+          if (boardEl) boardEl.classList.toggle('mobile-grid-4x4', isMobileGrid4x4);
+          toggleMobile4x4Btn.innerHTML = isMobileGrid4x4
+            ? '📱 Đang Bật: Bàn Cờ 4×4'
+            : '📱 Khung 4×4 Truyền Thống';
+        });
+      }
 
       const toggleBoardBtn = document.getElementById('btnToggleSimpleTuViBoard');
       if (toggleBoardBtn) {
@@ -1267,16 +1462,100 @@
   // --------------------------------------------------------------------------
   // TAB 4: ĐỊA LÝ PHONG THỦY BÁT TRẠCH – HUYỀN KHÔNG LẠC VIỆT (HÀ ĐỒ PHỐI HẬU THIÊN)
   // --------------------------------------------------------------------------
+  let selectedBaguaDir = null;
+
+  function renderBaguaDirectionDetailHtml(res, dirObj) {
+    if (!dirObj) return '';
+    const isGood = dirObj.good;
+    const roomAdvice = isGood
+      ? `
+        <div>• <b>🚪 Cửa Chính / Ban Công:</b> Đặt tại hướng <b>${dirObj.dir} (${dirObj.star})</b> rất vượng khí, đón cát khí vào nhà.</div>
+        <div>• <b>🛏️ Giường Ngủ Gia Chủ:</b> Quay đầu giường hoặc cửa phòng ngủ về hướng <b>${dirObj.dir}</b> giúp giấc ngủ sâu, tăng cường sức khỏe và hòa khí vợ chồng.</div>
+        <div>• <b>💼 Bàn Làm Việc / Két Sắt:</b> Ngồi nhìn về hướng <b>${dirObj.dir}</b> giúp minh mẫn, quyết đoán và tụ tài lộc.</div>
+      `
+      : `
+        <div>• <b>🔥 Bếp Nấu ("Tọa Hung Hướng Cát"):</b> Rất hợp đặt <b>Lưng Bếp</b> tọa tại cung xấu <b>${dirObj.dir} (${dirObj.star})</b> và quay <b>Mặt Bếp</b> nhìn về 1 trong 4 hướng Cát để thiêu đốt hung khí, hóa hung thành cát!</div>
+        <div>• <b>🚿 Khu Phụ / Kho / Nhà Vệ Sinh:</b> Có thể đặt tại cung hướng <b>${dirObj.dir}</b> để trấn áp các sao xấu (${dirObj.star}), lưu ý giữ thông thoáng và tránh đặt ngay Trung Cung.</div>
+        <div>• <b>🛡️ Hóa Giải Nếu Cửa Chính Trót Mở Hướng ${dirObj.dir}:</b> Dùng hướng Bếp (Sinh Khí / Thiên Y) hoặc thảm trải cửa / đá thạch anh tự nhiên có ngũ hành tương sinh với mệnh <b>${res.yInfo.lacVietHanh}</b> để thông quan.</div>
+      `;
+
+    return `
+      <div style="height:100%;display:flex;flex-direction:column;justify-content:space-between;padding:16px;border-radius:14px;border:2px solid ${isGood ? 'var(--jade-primary)' : 'var(--crimson-warn)'};background:${isGood ? 'rgba(16,185,129,0.08)' : 'rgba(244,63,94,0.08)'};">
+        <div>
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:8px;">
+            <div style="font-size:1.05rem;font-weight:900;color:${isGood ? 'var(--jade-light)' : '#fda4af'};">
+              🧭 Hướng ${dirObj.dir} — Cung ${dirObj.cungLV}
+            </div>
+            <span class="badge ${isGood ? 'badge-good' : 'badge-warn'}">${dirObj.star} (${isGood ? 'Hướng Đại Cát' : 'Hướng Hung - Cần Hóa Giải'})</span>
+          </div>
+          <div style="font-size:0.88rem;line-height:1.6;margin-bottom:10px;padding-bottom:10px;border-bottom:1px dashed var(--border-subtle);">
+            ${dirObj.desc}
+          </div>
+          <div style="font-size:0.85rem;line-height:1.65;display:flex;flex-direction:column;gap:6px;">
+            <div style="font-weight:800;color:var(--gold-light);">🏛️ Ứng Dụng Thực Tế Tại Hướng ${dirObj.dir}:</div>
+            ${roomAdvice}
+          </div>
+        </div>
+        <div style="margin-top:12px;font-size:0.76rem;color:var(--text-muted);">
+          👆 Bấm vào các ô phương vị trên La Bàn 9 Cung bên trái để xem chi tiết từng hướng.
+        </div>
+      </div>
+    `;
+  }
+
   function runPhongThuyAnalysis() {
     saveUserState();
     const birthYear = parseInt(document.getElementById('inputPhongThuyYear').value, 10) || 1984;
-    const ptSel = document.getElementById('inputPhongThuyYear')?.parentElement?.querySelector('.zodiac-helper-select');
+    const ptSel = document.getElementById('inputPhongThuyYear')?.closest('.form-group')?.querySelector('.zodiac-helper-select');
     if (ptSel) ptSel.value = String(birthYear);
+    renderAllFamilyQuickBars();
     const gender = document.getElementById('inputPhongThuyGender').value || 'Nam';
     const res = TV.calculateBatTrachLacViet(birthYear, gender);
 
     const out = document.getElementById('phongThuyResultBox');
     if (!out) return;
+
+    const dirMap = {};
+    res.directions.forEach(d => { dirMap[d.dir] = d; });
+    const firstGood = res.directions.find(d => d.star === 'Sinh Khí') || res.directions.find(d => d.good) || res.directions[0];
+    if (!selectedBaguaDir || !dirMap[selectedBaguaDir]) {
+      selectedBaguaDir = firstGood.dir;
+    }
+
+    // Thứ tự 9 ô La Bàn Cửu Cung truyền thống (Nam trên - Bắc dưới, Đông trái - Tây phải)
+    const compassOrder = [
+      'Đông Nam', 'Nam', 'Tây Nam',
+      'Đông', 'CENTER', 'Tây',
+      'Đông Bắc', 'Bắc', 'Tây Bắc'
+    ];
+
+    const compassCellsHtml = compassOrder.map(key => {
+      if (key === 'CENTER') {
+        return `
+          <div class="bagua-center-cell">
+            <div style="font-size:0.68rem;font-weight:800;color:var(--gold-primary);">TRUNG CUNG</div>
+            <div style="font-size:0.95rem;font-weight:900;color:var(--gold-light);">Quái ${res.quaiData.quai}</div>
+            <div style="font-size:0.74rem;color:var(--text-main);">Phi Tinh Số ${res.starNum}</div>
+            <span class="badge hanh-${res.yInfo.lacVietHanh}" style="font-size:0.66rem;padding:2px 8px;">Mạng ${res.yInfo.lacVietHanh}</span>
+          </div>
+        `;
+      }
+      const d = dirMap[key];
+      if (!d) return '';
+      const isAct = d.dir === selectedBaguaDir;
+      return `
+        <div class="bagua-cell ${d.good ? 'good' : 'bad'} ${isAct ? 'active-dir' : ''}" data-dir="${d.dir}">
+          <div style="font-size:0.72rem;color:var(--text-muted);font-weight:700;">${d.cungLV}</div>
+          <div style="font-size:0.94rem;font-weight:900;color:var(--text-main);">${d.dir}</div>
+          <div style="font-size:0.8rem;font-weight:800;color:${d.good ? 'var(--jade-light)' : '#fda4af'};">
+            ${d.good ? '🌟' : '⚠️'} ${d.star}
+          </div>
+        </div>
+      `;
+    }).join('');
+
+    const goodDirsStr = res.directions.filter(d => d.good).map(d => `${d.dir} (${d.star})`).join(', ');
+    const badDirsStr = res.directions.filter(d => !d.good).map(d => `${d.dir} (${d.star})`).join(', ');
 
     out.innerHTML = `
       <div class="card card-highlight">
@@ -1289,9 +1568,13 @@
               Hà Đồ phối Hậu Thiên Lạc Việt & Huyền Không Lưu Niên
             </div>
           </div>
-          <span class="badge badge-good" style="font-size:0.92rem;padding:6px 14px;">
-            Phi Tinh Số ${res.starNum} — Quái ${res.quaiData.quai}
-          </span>
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+            <span class="badge badge-good" style="font-size:0.9rem;padding:6px 12px;">
+              Phi Tinh Số ${res.starNum} — Quái ${res.quaiData.quai}
+            </span>
+            <button type="button" class="btn-pill" id="btnSpeakPhongThuy">🔊 Nghe Đọc</button>
+            <button type="button" class="btn-pill" id="btnSharePhongThuyZalo" style="border-color:var(--jade-primary);color:var(--jade-light);font-weight:700;">📤 Gửi Zalo</button>
+          </div>
         </div>
 
         <div class="grid-3" style="margin-bottom:16px;">
@@ -1318,6 +1601,22 @@
                 ${res.goodFloors.slice(0, 10).map(f => `<span class="badge badge-good">Tầng ${f.floor} (${f.hanh})</span>`).join('')}
               </div>
             </div>
+          </div>
+        </div>
+
+        <!-- LA BÀN CỬU CUNG BÁT QUÁI 3x3 TRỰC QUAN -->
+        <div class="bagua-compass-wrap">
+          <div>
+            <div style="font-size:0.84rem;font-weight:800;color:var(--gold-light);margin-bottom:6px;display:flex;justify-content:space-between;align-items:center;">
+              <span>🧭 La Bàn Cửu Cung Bát Trạch Lạc Việt (Bấm chọn hướng)</span>
+              <span style="font-size:0.74rem;color:var(--text-muted);">Nam Trên · Bắc Dưới</span>
+            </div>
+            <div class="bagua-compass-grid" id="baguaCompassGrid">
+              ${compassCellsHtml}
+            </div>
+          </div>
+          <div id="baguaDirectionDetailBox">
+            ${renderBaguaDirectionDetailHtml(res, dirMap[selectedBaguaDir])}
           </div>
         </div>
 
@@ -1348,6 +1647,36 @@
         </div>
       </div>
     `;
+
+    out.querySelectorAll('.bagua-cell').forEach(cell => {
+      cell.addEventListener('click', () => {
+        const dirName = cell.getAttribute('data-dir');
+        if (!dirName || !dirMap[dirName]) return;
+        selectedBaguaDir = dirName;
+        out.querySelectorAll('.bagua-cell').forEach(c => {
+          c.classList.toggle('active-dir', c.getAttribute('data-dir') === dirName);
+        });
+        const detailBox = document.getElementById('baguaDirectionDetailBox');
+        if (detailBox) {
+          detailBox.innerHTML = renderBaguaDirectionDetailHtml(res, dirMap[dirName]);
+        }
+      });
+    });
+
+    document.getElementById('btnSpeakPhongThuy')?.addEventListener('click', () => {
+      speakVietnamese(`Kết quả Phong Thủy Bát Trạch Lạc Việt cho gia chủ sinh năm ${res.birthYear} ${res.yInfo.canChi}, giới tính ${res.gender}, thuộc Quái ${res.quaiData.quai}, Phi Tinh số ${res.starNum}, bản mệnh ${res.yInfo.lacVietHanh}. 4 hướng tốt hợp tuổi gồm: ${goodDirsStr}. 4 hướng xấu cần tránh hoặc đặt tọa bếp gồm: ${badDirsStr}.`);
+    });
+
+    document.getElementById('btnSharePhongThuyZalo')?.addEventListener('click', () => {
+      const plain = [
+        `🧭 KẾT QUẢ PHONG THỦY BÁT TRẠCH LẠC VIỆT`,
+        `• Gia chủ: ${res.birthYear} (${res.yInfo.canChi} - ${res.gender}) · Mạng Lạc Việt: ${res.yInfo.lacVietHanh}`,
+        `• Mệnh Trạch: Quái ${res.quaiData.quai} (Phi Tinh số ${res.starNum} - ${res.quaiData.cuuTinh})`,
+        `🌟 4 Hướng Cát (Nên mở Cửa chính, xoay đầu Giường, Bàn làm việc, Mặt Bếp):\n${res.directions.filter(d => d.good).map(d => `  + Hướng ${d.dir} (${d.cungLV} - ${d.star}): ${d.desc}`).join('\n')}`,
+        `⚠️ 4 Hướng Hung (Tránh mở Cửa chính, hợp đặt Lưng Bếp tọa hung):\n${res.directions.filter(d => !d.good).map(d => `  - Hướng ${d.dir} (${d.cungLV} - ${d.star})`).join('\n')}`
+      ].join('\n\n');
+      shareOrCopyZalo(`Phong Thủy Nhà Ở Tuổi ${res.birthYear} (${res.yInfo.canChi})`, plain);
+    });
   }
 
   // --------------------------------------------------------------------------
@@ -1742,27 +2071,32 @@
             <div class="card-title">☯️ Kết Quả Quẻ Dịch (${methodLabels[method] || 'Lạc Việt Độn Toán'})</div>
             <div class="card-subtitle">${res.question} · ${res.timestampStr} · Động hào <b>${res.haoDong}</b></div>
           </div>
-          <span class="badge badge-good">Thể: ${res.theQuai.name} (${res.theHanh}) ↔ Dụng: ${res.dungQuai.name} (${res.dungHanh})</span>
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+            <span class="badge badge-good">Thể: ${res.theQuai.name} (${res.theHanh}) ↔ Dụng: ${res.dungQuai.name} (${res.dungHanh})</span>
+            <button type="button" class="btn-pill" id="btnSpeakDonToan">🔊 Nghe Đọc</button>
+            <button type="button" class="btn-pill" id="btnShareDonToanZalo" style="border-color:var(--jade-primary);color:var(--jade-light);font-weight:700;">📤 Gửi Zalo</button>
+          </div>
         </div>
 
         <div class="grid-3" style="text-align:center;margin-bottom:16px;">
           <div style="padding:14px;background:rgba(255,255,255,0.03);border:1px solid var(--border-gold);border-radius:12px;">
-            <div style="font-size:0.75rem;color:var(--gold-primary);font-weight:700;">1. QUẺ CHỦ</div>
+            <div style="font-size:0.75rem;color:var(--gold-primary);font-weight:700;">1. QUẺ CHỦ (KHỞI ĐẦU)</div>
             <div style="font-weight:800;font-size:0.96rem;margin:6px 0;color:var(--text-main);">${res.queChuName}</div>
             ${renderHexagramLines(res.lines6, res.haoDong)}
             <div style="font-size:0.78rem;color:var(--text-muted);">Thượng: ${res.quaiThuong.symbol} ${res.quaiThuong.name} | Hạ: ${res.quaiHa.symbol} ${res.quaiHa.name}</div>
           </div>
 
           <div style="padding:14px;background:rgba(255,255,255,0.03);border:1px solid var(--border-subtle);border-radius:12px;">
-            <div style="font-size:0.75rem;color:var(--gold-primary);font-weight:700;">2. QUẺ HỖ</div>
+            <div style="font-size:0.75rem;color:var(--gold-primary);font-weight:700;">2. QUẺ HỖ (DIỄN BIẾN)</div>
             <div style="font-weight:800;font-size:0.96rem;margin:6px 0;color:var(--text-main);">${res.queHoName}</div>
-            <div style="padding:22px 10px;font-size:0.82rem;color:var(--text-muted);">
-              Diễn biến trung gian của sự việc.
+            ${renderHexagramLines(res.linesHo || res.lines6, null)}
+            <div style="font-size:0.78rem;color:var(--text-muted);">
+              ${res.hoThuong && res.hoHa ? `Thượng: ${res.hoThuong.symbol} ${res.hoThuong.name} | Hạ: ${res.hoHa.symbol} ${res.hoHa.name}` : 'Diễn biến trung gian'}
             </div>
           </div>
 
           <div style="padding:14px;background:rgba(255,255,255,0.03);border:1px solid var(--jade-primary);border-radius:12px;">
-            <div style="font-size:0.75rem;color:var(--jade-light);font-weight:700;">3. QUẺ BIẾN</div>
+            <div style="font-size:0.75rem;color:var(--jade-light);font-weight:700;">3. QUẺ BIẾN (KẾT CỤC)</div>
             <div style="font-weight:800;font-size:0.96rem;margin:6px 0;color:var(--text-main);">${res.queBienName}</div>
             ${renderHexagramLines(res.linesBien, null)}
             <div style="font-size:0.78rem;color:var(--text-muted);">Động hào ${res.haoDong} ➔ Hành ${res.bienHanh}</div>
@@ -1779,6 +2113,24 @@
         </div>
       </div>
     `;
+
+    document.getElementById('btnSpeakDonToan')?.addEventListener('click', () => {
+      speakVietnamese(`Kết quả Gieo Quẻ Dịch theo phép ${methodLabels[method] || 'Lạc Việt Độn Toán'}. Việc hỏi: ${res.question}. Quẻ Chủ là ${res.queChuName}, động hào ${res.haoDong}. Quẻ Hỗ là ${res.queHoName}. Quẻ Biến là ${res.queBienName}. Quẻ Thể thuộc ${res.theQuai.name} hành ${res.theHanh}, Quẻ Dụng thuộc ${res.dungQuai.name} hành ${res.dungHanh}. Kết luận: ${res.conclusion.replace(/<[^>]+>/g, '')}`);
+    });
+
+    document.getElementById('btnShareDonToanZalo')?.addEventListener('click', () => {
+      const plain = [
+        `☯️ KẾT QUẢ GIEO QUẺ DỊCH — LẠC VIỆT ĐỘN TOÁN (${methodLabels[method] || ''})`,
+        `• Việc hỏi: ${res.question}`,
+        `• Thời khắc khởi quẻ: ${res.timestampStr} (Động hào ${res.haoDong})`,
+        `1. Quẻ Chủ: ${res.queChuName}`,
+        `2. Quẻ Hỗ: ${res.queHoName}`,
+        `3. Quẻ Biến: ${res.queBienName}`,
+        `• Tương quan Thể – Dụng: Quẻ Thể ${res.theQuai.name} (${res.theHanh}) ↔ Quẻ Dụng ${res.dungQuai.name} (${res.dungHanh}) — ${res.theVsDung.desc}`,
+        `📜 Lời đoán: ${res.conclusion.replace(/<[^>]+>/g, '')}`
+      ].join('\n');
+      shareOrCopyZalo(`Kết Quả Quẻ Dịch: ${res.queChuName}`, plain);
+    });
   }
 
   // --------------------------------------------------------------------------

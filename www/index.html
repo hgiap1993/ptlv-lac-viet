@@ -8,7 +8,7 @@
   <meta name="theme-color" content="#0b0f17" />
   <title>Lạc Việt Đạo Quán — Lý Học Đông Phương</title>
   <link rel="manifest" href="manifest.json" />
-  <link rel="stylesheet" href="css/style.css?v=7.0" />
+  <link rel="stylesheet" href="css/style.css?v=8.0" />
 </head>
 <body>
 
@@ -163,6 +163,7 @@
             </div>
           </div>
         </div>
+        <div id="trachCatFamilyQuickBar" class="family-quick-bar"></div>
         <div class="grid-4" style="align-items:end;">
           <div class="form-group">
             <label class="form-label">📆 Ngày Dương Lịch:</label>
@@ -219,6 +220,7 @@
             </div>
           </div>
         </div>
+        <div id="tuViFamilyQuickBar" class="family-quick-bar"></div>
         <div class="grid-4" style="align-items:end;">
           <div class="form-group">
             <label class="form-label">✍️ Họ Tên:</label>
@@ -298,6 +300,7 @@
             </div>
           </div>
         </div>
+        <div id="phongThuyFamilyQuickBar" class="family-quick-bar"></div>
         <div class="grid-3" style="align-items:end;">
           <div class="form-group">
             <label class="form-label">🏠 Năm Sinh Gia Chủ:</label>
@@ -486,16 +489,16 @@
   </nav>
 
   <!-- SCRIPTS HỆ THỐNG -->
-  <script src="js/data-lyhoc.js?v=7.0"></script>
-  <script src="js/engine-amlich.js?v=7.0"></script>
-  <script src="js/engine-luantuoi.js?v=7.0"></script>
-  <script src="js/engine-trachcat.js?v=7.0"></script>
-  <script src="js/engine-tuvi-phongthuy.js?v=7.0"></script>
-  <script src="js/app.js?v=7.0"></script>
+  <script src="js/data-lyhoc.js?v=8.0"></script>
+  <script src="js/engine-amlich.js?v=8.0"></script>
+  <script src="js/engine-luantuoi.js?v=8.0"></script>
+  <script src="js/engine-trachcat.js?v=8.0"></script>
+  <script src="js/engine-tuvi-phongthuy.js?v=8.0"></script>
+  <script src="js/app.js?v=8.0"></script>
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('sw.js?v=7.0').then((reg) => {
+        navigator.serviceWorker.register('sw.js?v=8.0').then((reg) => {
           reg.update();
         }).catch(() => {});
         let refreshing = false;
