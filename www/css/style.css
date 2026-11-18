@@ -708,7 +708,70 @@ select option,
   overflow-y: auto;
   font-size: 0.95rem;
   line-height: 1.75;
-  white-space: pre-wrap;
+  white-space: normal;
+}
+
+.doc-h3 {
+  font-size: 1.12rem;
+  font-weight: 800;
+  color: var(--gold-light);
+  margin: 16px 0 8px;
+}
+
+.doc-h4 {
+  font-size: 1.02rem;
+  font-weight: 700;
+  color: var(--jade-light);
+  margin: 14px 0 6px;
+}
+
+.doc-p {
+  margin: 0 0 10px;
+}
+
+.doc-ul {
+  margin: 4px 0 12px;
+  padding-left: 20px;
+}
+
+.doc-ul li {
+  margin-bottom: 6px;
+}
+
+.doc-quote {
+  margin: 10px 0;
+  padding: 10px 14px;
+  background: rgba(229, 184, 92, 0.1);
+  border-left: 4px solid var(--gold-primary);
+  border-radius: 6px;
+}
+
+.doc-hr {
+  border: none;
+  border-top: 1px dashed var(--border-subtle);
+  margin: 16px 0;
+}
+
+.doc-link {
+  color: var(--gold-light);
+  text-decoration: underline;
+  word-break: break-word;
+}
+
+.doc-code {
+  background: rgba(255, 255, 255, 0.08);
+  padding: 1px 5px;
+  border-radius: 4px;
+  font-size: 0.88em;
+}
+
+.doc-table-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 14px;
+  padding: 7px 10px;
+  border-bottom: 1px solid var(--border-subtle);
+  font-size: 0.9em;
 }
 
 /* MOBILE BOTTOM NAVIGATION DOCK */

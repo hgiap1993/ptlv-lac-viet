@@ -167,6 +167,30 @@
     };
   }
 
+  // Phép cổ "Tay Mẫu Tầm Tử" (Bài 18 Phần A TaiLieuLyHoc.md dòng 5495-5513):
+  // Khởi chữ AN tại Địa Chi tuổi Mẹ, đếm thuận 12 Địa Chi theo 8 cung: AN – CƯ – LỢI – HẠI – SÁT – PHÚ – BẠI – VONG
+  const MAU_TAM_TU_8 = [
+    { key: 'AN',   good: true,  label: 'An (Bình an, thuận hòa)' },
+    { key: 'CƯ',   good: true,  label: 'Cư (An cư, vững vàng)' },
+    { key: 'LỢI',  good: true,  label: 'Lợi (Lợi lộc, dễ nuôi)' },
+    { key: 'HẠI',  good: false, label: 'Hại (Cần lưu ý chăm sóc)' },
+    { key: 'SÁT',  good: false, label: 'Sát (Tránh năm xung, giữ an toàn)' },
+    { key: 'PHÚ',  good: true,  label: 'Phú (Giàu có, vượng tài)' },
+    { key: 'BẠI',  good: false, label: 'Bại (Nên tránh hoặc hóa giải)' },
+    { key: 'VONG', good: false, label: 'Vong (Kỵ cổ truyền, nên tránh)' }
+  ];
+
+  function checkMauTamTu(motherChiIdx, childChiIdx) {
+    const steps = ((childChiIdx - motherChiIdx) % 12 + 12) % 12;
+    const item = MAU_TAM_TU_8[steps % 8];
+    return {
+      steps,
+      key: item.key,
+      good: item.good,
+      label: item.label
+    };
+  }
+
   // 3. Phân tích toàn diện Gia Đạo theo Mô Hình "Tuổi Đầu Vào (Cha Mẹ) -> Tuổi Đầu Ra (Con Út)"
   function analyzeFamilyLacViet(fatherYear, motherYear, childrenYears = []) {
     const father = analyzeSinglePerson(fatherYear, 'Cha (Chồng)');
@@ -199,6 +223,7 @@
       }
 
       const combinedChildScore = Math.round((withFather.totalScore + withMother.totalScore) / 2 + (isBridge ? 10 : 0));
+      const mauTamTu = checkMauTamTu(mother.info.chiIdx, person.info.chiIdx);
 
       return {
         index: idx + 1,
@@ -209,6 +234,7 @@
         withMother,
         isBridge,
         bridgeExplanation,
+        mauTamTu,
         combinedScore: Math.min(99, combinedChildScore)
       };
     });
@@ -364,6 +390,7 @@
       }
 
       const avgScore = Math.min(99, Math.round((withF.totalScore + withM.totalScore) / 2 + bridgeBonus));
+      const mauTamTu = checkMauTamTu(mInfo.chiIdx, cInfo.chiIdx);
       results.push({
         year: y,
         cInfo,
@@ -371,6 +398,7 @@
         withM,
         bridgeTag,
         whyGood,
+        mauTamTu,
         score: avgScore
       });
     }
@@ -383,6 +411,7 @@
     analyzeSinglePerson,
     compareTwoPeople,
     analyzeFamilyLacViet,
-    recommendChildYears
+    recommendChildYears,
+    checkMauTamTu
   };
 })();

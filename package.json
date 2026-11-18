@@ -1,6 +1,6 @@
 {
   "name": "ptlv-ly-hoc-lac-viet",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "PTLV - Ứng dụng Tử Vi, Chọn Ngày Tốt & Luận Tuổi Lạc Việt",
   "main": "www/index.html",
   "dependencies": {

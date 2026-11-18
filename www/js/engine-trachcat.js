@@ -410,6 +410,23 @@
       score -= 20;
     }
 
+    // 9b. Ngày & Giờ Không Vong (dòng 7145-7161 TaiLieuLyHoc.md)
+    const getKhongVongChis = (canIdx, chiIdx) => {
+      const startChi = (chiIdx - canIdx + 12) % 12;
+      return [(startChi + 10) % 12, (startChi + 11) % 12];
+    };
+    const monthKv = getKhongVongChis(full.month.canIdx, full.month.chiIdx);
+    const dayKvHours = getKhongVongChis(full.day.canIdx, full.day.chiIdx);
+    const gioKhongVong = dayKvHours.map(ci => AL.CHI[ci]).join(' – ');
+    if (monthKv.includes(full.day.chiIdx)) {
+      taboos.push({
+        name: 'Ngày Không Vong (Tuần Tháng)',
+        level: 'medium',
+        desc: `Tháng ${full.month.canChi} có Không Vong tại ${monthKv.map(ci => AL.CHI[ci]).join(' – ')}. Việc trọng đại (ký kết, khai trương lớn) nên thận trọng hoặc tránh ngày Không Vong.`
+      });
+      score -= 8;
+    }
+
     // 10. Hoàng Đạo / Hắc Đạo
     const hoangDaoInfo = getHoangDaoDay(lMonth, full.day.chiIdx);
     if (hoangDaoInfo.hoangDao) {
@@ -436,8 +453,8 @@
 
     // 12. Nhị Thập Bát Tú (28 Sao) kèm Ngoại Lệ
     const sao28Arr = window.LYHOC_SAO28 || [];
-    // Chuẩn JDN modulo 28: JDN 2451545 (01/01/2000) là Sao昴 (Mão Nhật Kê - index 17 trong 0..27)
-    const saoIdx = ((full.jd - 2451545 + 17) % 28 + 28) % 28;
+    // Chuẩn JDN modulo 28: JDN 2451545 (01/01/2000, Thứ Bảy) là Sao Vị (Vị Thổ Trĩ - index 16 trong 0..27)
+    const saoIdx = ((full.jd - 2451545 + 16) % 28 + 28) % 28;
     const saoInfo = sao28Arr[saoIdx] || {
       id: saoIdx + 1,
       name: 'Phòng Nhật Thố',
@@ -522,6 +539,7 @@
       blessings,
       gioThoTu: GIO_THO_TU[dChi],
       gioSatChu: GIO_SAT_CHU[lMonth],
+      gioKhongVong,
       hours12,
       quyNhanHours,
       huong,
@@ -548,19 +566,33 @@
     const targetInfo = AL.getYearInfo(buildYear);
     const lunarAge = buildYear - birthYear + 1; // Tuổi mụ (tuổi Âm lịch)
 
-    // 1. Tính Kim Lâu theo đồ hình Bát Quái Lạc Việt (Bài 1 Article dòng 6791-6808 TaiLieuLyHoc.md):
-    // Khởi 10 tuổi ở Cấn -> 11 Chấn -> 12 Khôn (Kim Lâu Thân) -> 13 Ly -> 14 Tốn (Kim Lâu Thê) -> 15 Đoài -> 16 Càn (Kim Lâu Tử) -> 17 Khảm -> 18 Cấn (Kim Lâu Lục Súc) -> 19 Chấn
-    // Sang hàng chục tiếp theo nhảy 1 cung (tức là tương đương quy tắc lấy tuổi mụ chia 9 dư 1, 3, 6, 8 phạm Kim Lâu!)
+    // 1. Tính Kim Lâu theo đồ hình Bát Quái Lạc Việt (Bài 1 Article dòng 6791-6835 TaiLieuLyHoc.md):
+    // Khởi 10 tuổi ở Cấn -> 11 Chấn -> 12 Khôn (Kim Lâu Thân) -> 13 Ly -> 14 Tốn (Kim Lâu Thê) -> 15 Đoài -> 16 Càn (Kim Lâu Tử/Lục Súc) -> 17 Khảm -> 18 Cấn (Kim Lâu Lục Súc);
+    // 20 ở Chấn, 30 Khôn, 40 Ly, 43 rơi vào Càn (Kim Lâu Lục Súc), 44 Khảm (Không phạm).
+    const KL_RING = ['Cấn', 'Chấn', 'Khôn', 'Ly', 'Tốn', 'Đoài', 'Càn', 'Khảm'];
+    const tensKL = Math.floor(lunarAge / 10);
+    const unitsKL = lunarAge % 10;
+    const klPos = lunarAge >= 10
+      ? (((tensKL - 1) + unitsKL) % 8 + 8) % 8
+      : ((lunarAge % 8) + 8) % 8;
+    const klCung = KL_RING[klPos];
     const rem9 = lunarAge % 9;
-    let kimLau = { pham: false, type: 'Không phạm Kim Lâu', desc: `Tuổi mụ ${lunarAge} rơi vào cung tốt trên Bát Quái (khởi Cấn 10 tuổi), hoàn toàn không phạm Kim Lâu.` };
-    if (rem9 === 1) {
-      kimLau = { pham: true, type: 'Phạm Kim Lâu Thân (Dư 1)', desc: `Tuổi mụ ${lunarAge} phạm Kim Lâu Thân — Gây bất lợi cho chính bản mệnh người đứng tuổi xây nhà.` };
-    } else if (rem9 === 3) {
-      kimLau = { pham: true, type: 'Phạm Kim Lâu Thê (Dư 3)', desc: `Tuổi mụ ${lunarAge} phạm Kim Lâu Thê — Gây bất lợi cho người phối ngẫu (vợ/chồng).` };
-    } else if (rem9 === 6) {
-      kimLau = { pham: true, type: 'Phạm Kim Lâu Tử (Dư 6)', desc: `Tuổi mụ ${lunarAge} phạm Kim Lâu Tử — Gây bất lợi cho con cái trong gia đình.` };
-    } else if (rem9 === 8) {
-      kimLau = { pham: true, type: 'Phạm Kim Lâu Lục Súc (Dư 8)', desc: `Tuổi mụ ${lunarAge} phạm Kim Lâu Lục Súc — Ảnh hưởng tài sản, vật nuôi, nhân sự dưới quyền.` };
+    const folkRem9Pham = [1, 3, 6, 8].includes(rem9);
+
+    let kimLau = {
+      pham: false,
+      cung: klCung,
+      type: `Không phạm Kim Lâu (Cung ${klCung})`,
+      desc: `Tuổi mụ ${lunarAge} tính theo Bát Quái Lạc Việt (khởi Cấn 10 tuổi) rơi vào cung ${klCung}, hoàn toàn không phạm Kim Lâu.${folkRem9Pham ? ` (Tham khảo mẹo chia 9 dân gian: dư ${rem9}).` : ''}`
+    };
+    if (klPos === 2) {
+      kimLau = { pham: true, cung: klCung, type: 'Phạm Kim Lâu Thân (Cung Khôn)', desc: `Tuổi mụ ${lunarAge} rơi vào cung Khôn — Phạm Kim Lâu Thân (bất lợi cho chính bản mệnh gia chủ).` };
+    } else if (klPos === 4) {
+      kimLau = { pham: true, cung: klCung, type: 'Phạm Kim Lâu Thê (Cung Tốn)', desc: `Tuổi mụ ${lunarAge} rơi vào cung Tốn — Phạm Kim Lâu Thê (bất lợi cho người phối ngẫu).` };
+    } else if (klPos === 6) {
+      kimLau = { pham: true, cung: klCung, type: 'Phạm Kim Lâu Lục Súc / Tử (Cung Càn)', desc: `Tuổi mụ ${lunarAge} rơi vào cung Càn — Phạm Kim Lâu Lục Súc (ảnh hưởng điền sản, nhân sự, gia súc).` };
+    } else if (klPos === 0 && lunarAge > 10) {
+      kimLau = { pham: true, cung: klCung, type: 'Phạm Kim Lâu Tử (Cung Cấn)', desc: `Tuổi mụ ${lunarAge} rơi vào cung Cấn — Phạm Kim Lâu Tử (bất lợi cho con cái).` };
     }
 
     // 2. Tính Hoang Ốc (Khởi 10 tuổi tại Nhất Kiết, 20 Nhị Nghi, 30 Tam Địa Sát, 40 Tứ Tấn Tài, 50 Ngũ Thọ Tử, 60 Lục Hoang Ốc)

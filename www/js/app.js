@@ -308,7 +308,15 @@
       return;
     }
     window.speechSynthesis.cancel();
-    const clean = text.replace(/<[^>]+>/g, ' ').replace(/[#*>`_~]/g, '').replace(/\s+/g, ' ').trim().slice(0, 1800);
+    const clean = text
+      .replace(/!\[[^\]]*\]\([^)]*\)/g, ' ')
+      .replace(/\[([^\]]+)\]\([^)]*\)/g, '$1')
+      .replace(/https?:\/\/\S+/g, ' ')
+      .replace(/<[^>]+>/g, ' ')
+      .replace(/[#*>`_~|]/g, ' ')
+      .replace(/\s+/g, ' ')
+      .trim()
+      .slice(0, 1800);
     lastSpokenText = clean;
     const utter = new SpeechSynthesisUtterance(clean);
     utter.lang = 'vi-VN';
@@ -482,9 +490,12 @@
                 <div style="font-weight:800;font-size:0.98rem;color:${c.isYoungest ? 'var(--jade-light)' : 'var(--gold-light)'};">
                   ${c.orderTitle}: ${c.person.info.year} (${c.person.info.canChi}) — Mạng ${c.person.info.lacVietHanh}
                 </div>
-                <span class="badge ${c.combinedScore >= 70 ? 'badge-good' : (c.combinedScore >= 55 ? 'badge-neutral' : 'badge-warn')}">
-                  Độ hợp: ${c.combinedScore}/100
-                </span>
+                <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;">
+                  ${c.mauTamTu ? `<span class="badge ${c.mauTamTu.good ? 'badge-good' : 'badge-warn'}" title="Phép cổ Tay Mẫu Tầm Tử (Mẹ ↔ Con)">Mẫu Tầm Tử: ${c.mauTamTu.key}</span>` : ''}
+                  <span class="badge ${c.combinedScore >= 70 ? 'badge-good' : (c.combinedScore >= 55 ? 'badge-neutral' : 'badge-warn')}">
+                    Độ hợp: ${c.combinedScore}/100
+                  </span>
+                </div>
               </div>
               ${c.bridgeExplanation ? `<div style="margin-bottom:10px;padding:10px 12px;background:rgba(16,185,129,0.12);border-left:3px solid var(--jade-primary);font-size:0.88rem;">${c.bridgeExplanation}</div>` : ''}
               <div class="grid-2" style="gap:10px;font-size:0.85rem;">
@@ -554,7 +565,7 @@
                   <td>${item.withF.totalScore}/100</td>
                   <td>${item.withM.totalScore}/100</td>
                   <td style="font-size:0.83rem;">
-                    <div><b>${item.bridgeTag}</b></div>
+                    <div><b>${item.bridgeTag}</b> ${item.mauTamTu ? `<span class="badge ${item.mauTamTu.good ? 'badge-good' : 'badge-neutral'}" style="font-size:0.68rem;padding:1px 6px;margin-left:4px;">Mẫu Tầm Tử: ${item.mauTamTu.key}</span>` : ''}</div>
                     <div style="color:var(--text-muted);margin-top:2px;">${item.whyGood}</div>
                   </td>
                   <td><span class="badge ${item.score >= 78 ? 'badge-good' : (item.score >= 62 ? 'badge-neutral' : 'badge-warn')}">${item.score}/100</span></td>
@@ -742,7 +753,7 @@
     khaitruong: { label: 'Khai Trương / Mở Hàng / Ký Kết', goodTruc: ['Khai', 'Thành', 'Mãn', 'Định', 'Kiến'], keywords: ['khai trương', 'cầu tài', 'giao dịch', 'mở hàng', 'xuất hành'] },
     nhaptrach: { label: 'Nhập Trạch / Về Nhà Mới', goodTruc: ['Thành', 'Khai', 'Định', 'Mãn'], keywords: ['nhập trạch', 'di chuyển', 'xây dựng', 'an sàng'] },
     xuathanh: { label: 'Xuất Hành / Đi Xa / Mua Xe', goodTruc: ['Khai', 'Thành', 'Kiến', 'Mãn', 'Bình'], keywords: ['xuất hành', 'đi xa', 'nhận chức', 'cầu tài'] },
-    cunggio: { label: 'Cúng Giỗ / Tế Tự / Cầu Phúc', goodTruc: ['Mãn', 'Định', 'Thành', 'Khai', 'Chấp', 'Thu'], keywords: ['tế tự', 'cầu phúc', 'cúng', 'mọi việc'] }
+    cunggio: { label: 'Cúng Giỗ / Tế Tự / Cầu Phúc', goodTruc: ['Mãn', 'Định', 'Thành', 'Khai', 'Chấp', 'Thâu'], keywords: ['tế tự', 'cầu phúc', 'cúng', 'mọi việc'] }
   };
 
   function isDayGoodForPurpose(d, purposeKey) {
@@ -865,7 +876,7 @@
             👑 Giờ Quý Nhân Đăng Thiên Môn
           </div>
           <div style="font-size:0.82rem;color:var(--text-muted);margin-bottom:8px;">
-            Nguyệt Tướng: <b>${evalRes.quyNhanHours.nguyetTuong}</b> · Dương Quý: <b>${evalRes.quyNhanHours.duongQuyCung}</b> · Âm Quý: <b>${evalRes.quyNhanHours.amQuyCung}</b> · Kỵ giờ Thọ Tử: <b style="color:#fda4af;">${evalRes.gioThoTu}</b> · Sát Chủ: <b style="color:#fda4af;">${evalRes.gioSatChu}</b>
+            Nguyệt Tướng: <b>${evalRes.quyNhanHours.nguyetTuong}</b> · Dương Quý: <b>${evalRes.quyNhanHours.duongQuyCung}</b> · Âm Quý: <b>${evalRes.quyNhanHours.amQuyCung}</b> · Kỵ giờ Thọ Tử: <b style="color:#fda4af;">${evalRes.gioThoTu}</b> · Sát Chủ: <b style="color:#fda4af;">${evalRes.gioSatChu}</b>${evalRes.gioKhongVong ? ` · Không Vong: <b style="color:#fcd34d;">${evalRes.gioKhongVong}</b>` : ''}
           </div>
           ${evalRes.quyNhanHours.hours.length === 0
             ? `<div style="font-size:0.85rem;">Hôm nay dùng 6 Giờ Hoàng Đạo bên dưới để khởi sự.</div>`
@@ -2136,6 +2147,88 @@
   // --------------------------------------------------------------------------
   // TAB 6: TÀNG KINH CÁC (TRA CỨU KHO TÀI LIỆU LÝ HỌC LẠC VIỆT)
   // --------------------------------------------------------------------------
+  function escapeHtml(str) {
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+
+  function formatInlineMarkdown(escapedLine) {
+    return escapedLine
+      .replace(/!\[([^\]]*)\]\([^)]*\)/g, (_, alt) => (alt && alt !== 'Hình minh họa' ? `<span class="doc-img-note">[Hình: ${alt}]</span>` : ''))
+      .replace(/\[([^\]]+)\]\((https?:\/\/[^)\s]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer" class="doc-link">$1</a>')
+      .replace(/`([^`]+)`/g, '<code class="doc-code">$1</code>')
+      .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
+      .replace(/(^|[^*])\*([^*\n]+)\*/g, '$1<em>$2</em>');
+  }
+
+  function formatDocMarkdownToHtml(rawMd) {
+    const lines = String(rawMd || '').split(/\r?\n/);
+    const out = [];
+    let inList = false;
+    const closeList = () => {
+      if (inList) {
+        out.push('</ul>');
+        inList = false;
+      }
+    };
+
+    lines.forEach((rawLine) => {
+      const trimmed = rawLine.trim();
+      if (!trimmed) {
+        closeList();
+        return;
+      }
+      if (/^---+$/.test(trimmed)) {
+        closeList();
+        out.push('<hr class="doc-hr" />');
+        return;
+      }
+      // Bỏ qua dòng ảnh thuần túy link ngoài khi đọc offline
+      if (/^\[?!\[[^\]]*\]\([^)]*\)\]?(\([^)]*\))?$/.test(trimmed)) {
+        return;
+      }
+      if (trimmed.startsWith('#### ') || trimmed.startsWith('##### ')) {
+        closeList();
+        const content = trimmed.replace(/^#{4,5}\s+/, '');
+        out.push(`<h4 class="doc-h4">${formatInlineMarkdown(escapeHtml(content))}</h4>`);
+        return;
+      }
+      if (trimmed.startsWith('### ') || trimmed.startsWith('## ') || trimmed.startsWith('# ')) {
+        closeList();
+        const content = trimmed.replace(/^#{1,3}\s+/, '');
+        out.push(`<h3 class="doc-h3">${formatInlineMarkdown(escapeHtml(content))}</h3>`);
+        return;
+      }
+      if (trimmed.startsWith('> ')) {
+        closeList();
+        out.push(`<blockquote class="doc-quote">${formatInlineMarkdown(escapeHtml(trimmed.slice(2)))}</blockquote>`);
+        return;
+      }
+      if (/^[-*•]\s+/.test(trimmed)) {
+        if (!inList) {
+          out.push('<ul class="doc-ul">');
+          inList = true;
+        }
+        out.push(`<li>${formatInlineMarkdown(escapeHtml(trimmed.replace(/^[-*•]\s+/, '')))}</li>`);
+        return;
+      }
+      closeList();
+      if (trimmed.startsWith('|') && trimmed.endsWith('|')) {
+        if (/^\|[\s:|-]+\|$/.test(trimmed)) return;
+        const cells = trimmed.slice(1, -1).split('|').map(c => formatInlineMarkdown(escapeHtml(c.trim())));
+        out.push(`<div class="doc-table-row">${cells.map(c => `<span>${c}</span>`).join('')}</div>`);
+        return;
+      }
+      const htmlLine = formatInlineMarkdown(escapeHtml(trimmed));
+      if (htmlLine.trim()) out.push(`<p class="doc-p">${htmlLine}</p>`);
+    });
+    closeList();
+    return out.join('\n');
+  }
+
   function renderTangKinhCac(filterAuthor = 'all', searchKw = '') {
     const list = window.LYHOC_TANGKINHCAC || [];
     const container = document.getElementById('tangKinhCacGrid');
@@ -2144,9 +2237,14 @@
     const kw = searchKw.trim().toLowerCase();
     const filtered = list.filter(item => {
       const matchAuthor = filterAuthor === 'all' || item.filterKey === filterAuthor;
-      const matchKw = !kw || `${item.title} ${item.summary} ${item.category}`.toLowerCase().includes(kw);
+      const matchKw = !kw || `${item.title} ${item.summary} ${item.category} ${item.author} ${item.content || ''}`.toLowerCase().includes(kw);
       return matchAuthor && matchKw;
     });
+
+    if (filtered.length === 0) {
+      container.innerHTML = `<div class="card" style="grid-column:1/-1;text-align:center;color:var(--text-muted);padding:28px;">Không tìm thấy chuyên khảo nào khớp với từ khóa "<b>${escapeHtml(searchKw)}</b>".</div>`;
+      return;
+    }
 
     container.innerHTML = filtered.map(doc => `
       <div class="card" style="display:flex;flex-direction:column;justify-content:space-between;margin-bottom:0;">
@@ -2202,7 +2300,8 @@
     const modal = document.getElementById('docReaderModal');
     document.getElementById('modalDocTitle').textContent = doc.title;
     document.getElementById('modalDocMeta').textContent = `${doc.author} · Chuyên mục: ${doc.category}`;
-    document.getElementById('modalDocBody').textContent = doc.content;
+    document.getElementById('modalDocBody').innerHTML = formatDocMarkdownToHtml(doc.content);
+    document.getElementById('modalDocBody').scrollTop = 0;
     applyModalDocFontSize();
     modal.classList.add('open');
 

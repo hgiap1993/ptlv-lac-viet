@@ -8,7 +8,7 @@
   <meta name="theme-color" content="#0b0f17" />
   <title>Lạc Việt Đạo Quán — Lý Học Đông Phương</title>
   <link rel="manifest" href="manifest.json" />
-  <link rel="stylesheet" href="css/style.css?v=8.1" />
+  <link rel="stylesheet" href="css/style.css?v=8.2" />
 </head>
 <body>
 
@@ -486,16 +486,17 @@
   </nav>
 
   <!-- SCRIPTS HỆ THỐNG -->
-  <script src="js/data-lyhoc.js?v=8.1"></script>
-  <script src="js/engine-amlich.js?v=8.1"></script>
-  <script src="js/engine-luantuoi.js?v=8.1"></script>
-  <script src="js/engine-trachcat.js?v=8.1"></script>
-  <script src="js/engine-tuvi-phongthuy.js?v=8.1"></script>
-  <script src="js/app.js?v=8.1"></script>
+  <script src="js/data-lyhoc.js?v=8.2"></script>
+  <script src="js/engine-amlich.js?v=8.2"></script>
+  <script src="js/engine-luantuoi.js?v=8.2"></script>
+  <script src="js/engine-trachcat.js?v=8.2"></script>
+  <script src="js/engine-tuvi-phongthuy.js?v=8.2"></script>
+  <script src="js/app.js?v=8.2"></script>
   <script>
-    if ('serviceWorker' in navigator) {
+    const isCapacitorNative = Boolean(window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform());
+    if ('serviceWorker' in navigator && !isCapacitorNative) {
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('sw.js?v=8.1').then((reg) => {
+        navigator.serviceWorker.register('sw.js?v=8.2').then((reg) => {
           reg.update();
         }).catch(() => {});
         let refreshing = false;
